@@ -1,9 +1,12 @@
 package com.ecom.webapp.config;
 
+import java.util.Objects;
 import java.util.Properties;
 import javax.sql.DataSource;
+
 import static org.hibernate.cfg.JdbcSettings.DIALECT;
 import static org.hibernate.cfg.JdbcSettings.SHOW_SQL;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -24,7 +27,7 @@ public class HibernateConfig {
     public LocalSessionFactoryBean getSessionFactory() {
         LocalSessionFactoryBean sessionFactory
                 = new LocalSessionFactoryBean();
-        sessionFactory.setPackagesToScan(new String[] {
+        sessionFactory.setPackagesToScan(new String[]{
                 "com.ecom.webapp.model"
         });
         sessionFactory.setDataSource(dataSource());
@@ -37,7 +40,7 @@ public class HibernateConfig {
         DriverManagerDataSource dataSource
                 = new DriverManagerDataSource();
         dataSource.setDriverClassName(
-                env.getProperty("hibernate.connection.driverClass"));
+                Objects.requireNonNull(env.getProperty("hibernate.connection.driverClass")));
         dataSource.setUrl(env.getProperty("hibernate.connection.url"));
         dataSource.setUsername(
                 env.getProperty("hibernate.connection.username"));

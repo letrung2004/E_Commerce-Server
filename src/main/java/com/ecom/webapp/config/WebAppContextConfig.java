@@ -11,7 +11,8 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 @EnableWebMvc
 @EnableTransactionManagement
 @ComponentScan(basePackages = {
-        "com.ecom.webapp.controller",
+        "com.ecom.webapp.controller.admin",
+        "com.ecom.webapp.controller.client",
         "com.ecom.webapp.service",
         "com.ecom.webapp.repository",
 })
