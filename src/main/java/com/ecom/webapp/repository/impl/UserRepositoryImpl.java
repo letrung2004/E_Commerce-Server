@@ -6,6 +6,7 @@ import jakarta.persistence.criteria.CriteriaBuilder;
 import jakarta.persistence.criteria.CriteriaQuery;
 import jakarta.persistence.criteria.Root;
 import org.hibernate.Session;
+import org.hibernate.SessionFactory;
 import org.hibernate.query.Query;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.orm.hibernate5.LocalSessionFactoryBean;
@@ -20,6 +21,9 @@ public class UserRepositoryImpl implements UserRepository {
 
     @Autowired
     private LocalSessionFactoryBean sessionFactory;
+
+    @Autowired
+    private SessionFactory sf;
 
     @Override
     public List<User> getUsers() {
@@ -51,10 +55,12 @@ public class UserRepositoryImpl implements UserRepository {
 
     @Override
     public User getUserByUsername(String username) {
-        Session session = sessionFactory.getObject().getCurrentSession();
-        Query query = session.createQuery("from User where username=:u");
-        query.setParameter("u", username);
-        return (User) query.getSingleResult();
+        try (Session session = this.sf.openSession()){
+            Query query = session.createQuery("from User where username=:u");
+            query.setParameter("u", username);
+            return (User) query.getSingleResult();
+        }
+
     }
 }
 
