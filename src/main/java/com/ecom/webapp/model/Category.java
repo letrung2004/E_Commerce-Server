@@ -22,6 +22,6 @@ public class Category {
     @NotNull
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "store_id", nullable = false)
-    private Store store;
+    private com.ecom.webapp.model.Store store;
 
 }
