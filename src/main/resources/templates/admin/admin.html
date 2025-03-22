@@ -1,11 +1,32 @@
 <!DOCTYPE html>
-<html lang="en">
+<html xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
     <title>Title</title>
+    <th:block th:replace="layout/base :: styles"></th:block>
 </head>
 <body>
-<h1>admin xin chao</h1>
+<header th:replace="layout/base :: header"></header>
 
+
+<div id="layoutSidenav">
+    <!--    sidebar-->
+    <div th:replace="layout/base :: sidebar" id="layoutSidenav_nav"></div>
+
+    <!--content-->
+    <div id="layoutSidenav_content">
+        <!--main-content-->
+        <main>
+            <h1>DASHBOARD</h1>
+        </main>
+
+
+        <!--footer-->
+        <footer th:replace="layout/base :: footer" class="py-4 bg-light mt-auto"></footer>
+
+    </div>
+</div>
+
+<th:block th:replace="layout/base :: scripts"></th:block>
 </body>
 </html>
