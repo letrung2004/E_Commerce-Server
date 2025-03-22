@@ -8,6 +8,7 @@ import jakarta.validation.constraints.Size;
 import lombok.Getter;
 import lombok.Setter;
 import org.hibernate.annotations.ColumnDefault;
+import org.springframework.format.annotation.DateTimeFormat;
 
 import java.time.LocalDate;
 
@@ -31,7 +32,7 @@ public class User {
     @Column(name = "username", nullable = false, length = 45)
     private String username;
 
-    @Size(max = 16, min = 3, message = "Mật khẩu tối thiểu 3 và tối đa 16 ký tự!")
+    @Size(max = 255, min = 3, message = "Mật khẩu tối thiểu 3 và tối đa 16 ký tự!")
     @NotBlank(message = "Không được bỏ trống mục này!")
     @Column(name = "password", nullable = false, length = 255)
     private String password;
@@ -51,6 +52,7 @@ public class User {
     private Byte gender;
 
     @Column(name = "date_of_birth")
+    @DateTimeFormat(pattern = "yyyy-MM-dd")
     private LocalDate dateOfBirth;
 
     @ColumnDefault("1")
