@@ -1,9 +1,8 @@
 package com.ecom.webapp.model;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
+import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.Getter;
@@ -18,30 +17,32 @@ import java.time.LocalDate;
 @Table(name = "user")
 public class User {
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id", nullable = false)
     private Integer id;
 
-    @Size(max = 45)
-    @NotNull
+    @Size(max = 45, message = "Họ tên không được quá 45 ký tự!")
+    @NotBlank(message = "Không được bỏ trống mục này!")
     @Column(name = "full_name", nullable = false, length = 45)
     private String fullName;
 
-    @Size(max = 45)
-    @NotNull
+    @Size(max = 45, message = "Username không được quá 45 ký tự!")
+    @NotBlank(message = "Không được bỏ trống mục này!")
     @Column(name = "username", nullable = false, length = 45)
     private String username;
 
-    @Size(max = 45)
-    @NotNull
-    @Column(name = "password", nullable = false, length = 45)
+    @Size(max = 16, min = 3, message = "Mật khẩu tối thiểu 3 và tối đa 16 ký tự!")
+    @NotBlank(message = "Không được bỏ trống mục này!")
+    @Column(name = "password", nullable = false, length = 255)
     private String password;
 
     @Size(max = 100)
-    @NotNull
+    @Email(message = "Email không hợp lệ", regexp = "^[a-zA-Z0-9_!#$%&'*+/=?`{|}~^.-]+@[a-zA-Z0-9.-]+$")
     @Column(name = "email", nullable = false, length = 100)
     private String email;
 
-    @Size(max = 15)
+    @Size(max = 11, min = 10, message = "Số điện thoại không hợp lệ")
+    @NotBlank(message = "Không được bỏ trống mục này!")
     @Column(name = "phone_number", length = 15)
     private String phoneNumber;
 
@@ -68,4 +69,8 @@ public class User {
     @Column(name = "avatar")
     private String avatar;
 
+    @Override
+    public String toString() {
+        return String.format("%d, %s, %s, %s", this.id, this.fullName, this.email, this.phoneNumber);
+    }
 }

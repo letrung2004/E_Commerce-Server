@@ -4,10 +4,10 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 
 @Controller
-public class DashboardController {
+public class StatisticController {
 
-    @GetMapping("/")
-    public String getAdminPage() {
-        return "admin/admin";
+    @GetMapping("/admin/statis")
+    public String getStatisticPage() {
+        return "admin/statis/statis";
     }
 }
