@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <th:block th:replace="layout/base :: styles"></th:block>
+</head>
+<body>
+<header th:replace="layout/base :: header"></header>
+
+
+<div id="layoutSidenav">
+    <!--    sidebar-->
+    <div th:replace="layout/base :: sidebar" id="layoutSidenav_nav"></div>
+
+    <!--content-->
+    <div id="layoutSidenav_content">
+        <!--main-content-->
+        <main>
+            <div class="d-flex justify-content-between p-3">
+                <h3>Người dùng</h3>
+                <a href="#" class="btn btn-primary">Thêm người dùng</a>
+            </div>
+            <div class="d-flex align-items-center">
+                <table class="table text-center">
+                    <thead class="table-dark">
+                    <tr>
+                        <th>ID</th>
+                        <th>Email</th>
+                        <th>Họ và tên</th>
+                        <th>Vai trò</th>
+                        <th>Tùy chỉnh</th>
+
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr th:each="user : ${users}">
+                        <td th:text="${user.id}"></td>
+                        <td th:text="${user.email}"></td>
+                        <td th:text="${user.fullName}"></td>
+                        <td th:text="${user.role}"></td>
+                        <td>
+                            <a type="button" class="btn btn-outline-secondary"
+                               th:href="@{/admin/user/{id}(id=${user.id})}"
+                            >Chi tiết</a>
+                            <a type="button" class="btn btn-outline-danger"
+                               href="#"
+                            >Xóa</a>
+                        </td>
+
+                    </tr>
+
+                    </tbody>
+                </table>
+            </div>
+        </main>
+
+
+        <!--footer-->
+        <footer th:replace="layout/base :: footer" class="py-4 bg-light mt-auto"></footer>
+
+    </div>
+</div>
+
+<th:block th:replace="layout/base :: scripts"></th:block>
+</body>
+</html>

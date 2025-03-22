@@ -2,6 +2,12 @@ package com.ecom.webapp.repository;
 
 import com.ecom.webapp.model.User;
 
+import java.util.List;
+
 public interface UserRepository {
+    List<User> getUsers();
+    User getById(Integer id);
+    void save(User user);
+    void update(User user);
     User getUserByUsername(String username);
 }
