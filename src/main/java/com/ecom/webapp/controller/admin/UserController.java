@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 @Controller
@@ -30,6 +31,9 @@ public class UserController {
     @GetMapping("/admin/user/{id}")
     public String getUserDetailPage(Model model, @PathVariable("id") Integer id) {
         User user = this.userService.getUserById(id);
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+        model.addAttribute("dateOfBirth_", user.getDateOfBirth().format(formatter));
+
         model.addAttribute("user", user);
         return "admin/user/detail";
     }
@@ -44,7 +48,8 @@ public class UserController {
             });
             return "admin/user/detail";
         }
-
+        System.out.println(userDto);
+        System.out.println(userDto.getDateOfBirth().getClass().getSimpleName());
         this.userService.update(userDto);
 
         return "redirect:/admin/user";
