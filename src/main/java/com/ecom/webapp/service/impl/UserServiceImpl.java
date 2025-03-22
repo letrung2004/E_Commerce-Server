@@ -4,18 +4,44 @@ import com.ecom.webapp.model.User;
 import com.ecom.webapp.model.dto.UserDto;
 import com.ecom.webapp.repository.UserRepository;
 import com.ecom.webapp.service.UserService;
-import jakarta.data.exceptions.EntityExistsException;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
-@Service
+@Service("userDetailsService")
 public class UserServiceImpl implements UserService {
 
     @Autowired
     private UserRepository userRepository;
+
+    @Override
+    public User getUserByUsername(String username) {
+        return this.userRepository.getUserByUsername(username);
+    }
+
+    @Override
+    @Transactional
+    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+        User u = this.getUserByUsername(username);
+        if (u == null) {
+            throw new UsernameNotFoundException("Invalid User!");
+        }
+
+        Set<GrantedAuthority> authorities = new HashSet<>();
+        authorities.add(new SimpleGrantedAuthority(u.getRole()));
+        return new org.springframework.security.core.userdetails.User(
+                u.getUsername(), u.getPassword(), authorities);
+    }
+
 
     @Override
     public List<User> getUsers() {
@@ -48,3 +74,4 @@ public class UserServiceImpl implements UserService {
         this.userRepository.update(user);
     }
 }
+

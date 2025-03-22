@@ -73,5 +73,4 @@ public class User {
     public String toString() {
         return String.format("%d, %s, %s, %s", this.id, this.fullName, this.email, this.phoneNumber);
     }
-
 }

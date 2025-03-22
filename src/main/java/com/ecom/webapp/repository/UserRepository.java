@@ -9,4 +9,5 @@ public interface UserRepository {
     User getById(Integer id);
     void save(User user);
     void update(User user);
+    User getUserByUsername(String username);
 }
