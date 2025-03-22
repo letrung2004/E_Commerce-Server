@@ -49,4 +49,11 @@ public class UserController {
 
         return "redirect:/admin/user";
     }
+
+    @GetMapping("/admin/user/create")
+    public String getCreateUserPage(Model model) {
+        UserDto userDto = new UserDto();
+        model.addAttribute("user", userDto);
+        return "admin/user/create";
+    }
 }
