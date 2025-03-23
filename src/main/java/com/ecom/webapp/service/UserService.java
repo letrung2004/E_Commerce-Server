@@ -10,6 +10,6 @@ public interface UserService extends UserDetailsService {
     User getUserByUsername(String username);
     List<User> getUsers();
     User getUserById(Integer id);
-    void save(User user);
+    void createUser(UserDto user, String username, String rawPassword);
     void update(UserDto userDto);
 }

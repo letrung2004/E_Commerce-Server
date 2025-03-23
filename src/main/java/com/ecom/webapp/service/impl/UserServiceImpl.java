@@ -6,10 +6,12 @@ import com.ecom.webapp.repository.UserRepository;
 import com.ecom.webapp.service.UserService;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -22,6 +24,10 @@ public class UserServiceImpl implements UserService {
 
     @Autowired
     private UserRepository userRepository;
+
+    @Autowired
+    @Lazy
+    private PasswordEncoder passwordEncoder;
 
     @Override
     public User getUserByUsername(String username) {
@@ -54,7 +60,19 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public void save(User user) {
+    public void createUser(UserDto userDto, String username,String rawPassword) {
+        User user = new User();
+        String hashedPassword = passwordEncoder.encode(rawPassword);
+
+        user.setUsername(username);
+        user.setPassword(hashedPassword);
+        user.setFullName(userDto.getFullName());
+        user.setEmail(userDto.getEmail());
+        user.setPhoneNumber(String.valueOf(userDto.getPhoneNumber()));
+        user.setGender(userDto.getGender());
+        user.setRole(userDto.getRole());
+        user.setDateOfBirth(userDto.getDateOfBirth());
+
         this.userRepository.save(user);
     }
 
