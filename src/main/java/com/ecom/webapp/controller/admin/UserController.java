@@ -112,14 +112,19 @@ public class UserController {
 
         sendEmail(userDto.getFullName(), userDto.getEmail(), username, password);
 
-
-
-        System.out.println("Username: " + username);
-        System.out.println("Password: " + password);
-//        System.out.println("HashedPassword: " + hashedPassword);
-
-
         return "redirect:/admin/user";
+    }
 
+    @GetMapping("/admin/user/delete/{id}")
+    public String getDeleteUserPage(Model model, @PathVariable("id") Integer id) {
+        User user = this.userService.getUserById(id);
+        model.addAttribute("user", user);
+        return "admin/user/delete";
+    }
+
+    @PostMapping("/admin/user/delete")
+    public String deleteUser(Model model, @ModelAttribute("user") User user) {
+        this.userService.delteUser(user.getId());
+        return "redirect:/admin/user";
     }
 }

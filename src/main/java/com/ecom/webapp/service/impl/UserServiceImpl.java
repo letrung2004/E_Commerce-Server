@@ -91,5 +91,14 @@ public class UserServiceImpl implements UserService {
         user.setDateOfBirth(userDto.getDateOfBirth());
         this.userRepository.update(user);
     }
+
+    @Override
+    public void delteUser(Integer id) {
+        User user = this.userRepository.getById(id);
+        if (user == null) {
+            throw new EntityNotFoundException("User not found with id " + id);
+        }
+        this.userRepository.delete(user);
+    }
 }
 
