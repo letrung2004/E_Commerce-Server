@@ -91,5 +91,6 @@ public class UserServiceImpl implements UserService {
         user.setDateOfBirth(userDto.getDateOfBirth());
         this.userRepository.update(user);
     }
+
 }
 

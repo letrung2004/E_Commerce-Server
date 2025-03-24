@@ -10,6 +10,7 @@ import org.hibernate.SessionFactory;
 import org.hibernate.query.Query;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.orm.hibernate5.LocalSessionFactoryBean;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -24,6 +25,7 @@ public class UserRepositoryImpl implements UserRepository {
 
     @Autowired
     private SessionFactory sf;
+
 
     @Override
     public List<User> getUsers() {
@@ -55,12 +57,13 @@ public class UserRepositoryImpl implements UserRepository {
 
     @Override
     public User getUserByUsername(String username) {
-        try (Session session = this.sf.openSession()){
+        try (Session session = this.sf.openSession()) {
             Query query = session.createQuery("from User where username=:u");
             query.setParameter("u", username);
             return (User) query.getSingleResult();
         }
-
     }
+
+
 }
 
