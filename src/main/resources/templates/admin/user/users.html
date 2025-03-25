@@ -44,7 +44,7 @@
                                th:href="@{/admin/user/{id}(id=${user.id})}"
                             >Chi tiết</a>
                             <a type="button" class="btn btn-outline-danger"
-                               href="#"
+                               th:href="@{'/admin/user/delete/' + ${user.id}}"
                             >Xóa</a>
                         </td>
 

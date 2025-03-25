@@ -92,5 +92,13 @@ public class UserServiceImpl implements UserService {
         this.userRepository.update(user);
     }
 
+    @Override
+    public void delteUser(Integer id) {
+        User user = this.userRepository.getById(id);
+        if (user == null) {
+            throw new EntityNotFoundException("User not found with id " + id);
+        }
+        this.userRepository.delete(user);
+    }
 }
 
