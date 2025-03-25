@@ -18,4 +18,19 @@ public class ProductServiceImpl implements ProductService {
     public List<Product> getProducts(Map<String, String> params) {
         return this.productRepository.getProducts(params);
     }
+
+    @Override
+    public Product getProductById(int id) {
+        return this.productRepository.getProductById(id);
+    }
+
+    @Override
+    public void addOrUpdate(Product p) {
+        this.productRepository.addOrUpdate(p);
+    }
+
+    @Override
+    public void deleteProduct(int id) {
+        this.productRepository.deleteProduct(id);
+    }
 }

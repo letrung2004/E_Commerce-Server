@@ -1,7 +1,10 @@
 package com.ecom.webapp.controller.client;
 
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-public class ApiUserController {
+@RequestMapping("/api/auth")
+public class ApiAuthController {
+
 }

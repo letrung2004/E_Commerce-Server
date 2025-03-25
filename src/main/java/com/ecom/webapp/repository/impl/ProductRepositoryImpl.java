@@ -20,6 +20,7 @@ import java.util.Map;
 @Repository
 @Transactional
 public class ProductRepositoryImpl implements ProductRepository {
+    private static final int PAGE_SIZE = 20;
     @Autowired
     private LocalSessionFactoryBean sessionFactory;
 
@@ -59,6 +60,42 @@ public class ProductRepositoryImpl implements ProductRepository {
             q.where(predicates.toArray(Predicate[]::new));
         }
         Query query = session.createQuery(q);
+
+        if (params != null) {
+            String page = params.get("page");
+            if (page != null && !page.isEmpty()) {
+                int p = Integer.parseInt(page);
+                int start = (p - 1) * PAGE_SIZE;
+
+                query.setFirstResult(start);
+                query.setMaxResults(PAGE_SIZE);
+            }
+        }
+
         return query.getResultList();
+    }
+
+    @Override
+    public void addOrUpdate(Product p) {
+        Session session = this.sessionFactory.getObject().getCurrentSession();
+        if(p.getId()!=null) {
+            session.merge(p);
+        }
+        else {
+            session.persist(p);
+        }
+    }
+
+    @Override
+    public Product getProductById(int id) {
+        Session session = this.sessionFactory.getObject().getCurrentSession();
+        return session.get(Product.class, id);
+    }
+
+    @Override
+    public void deleteProduct(int id) {
+        Session session = this.sessionFactory.getObject().getCurrentSession();
+        Product p = getProductById(id);
+        session.detach(p);
     }
 }
