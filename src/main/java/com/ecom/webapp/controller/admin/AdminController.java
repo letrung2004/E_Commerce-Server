@@ -10,9 +10,4 @@ public class AdminController {
     public String getAdminPage() {
         return "admin/admin";
     }
-
-    @GetMapping("/login")
-    public String login() {
-        return "auth/login";
-    }
 }
