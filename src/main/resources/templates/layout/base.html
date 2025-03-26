@@ -32,11 +32,7 @@
                     <li><a class="dropdown-item" th:href="@{/admin/my-account}">Tài khoản</a></li>
 
                     <li><hr class="dropdown-divider" /></li>
-                    <li>
-                        <form th:action="@{/logout}" method="post">
-                            <button class="btn btn-default"  type="submit">Đăng xuất</button>
-                        </form>
-                    </li>
+                    <li><a class="dropdown-item" th:href="@{/logout}">Đăng xuất</a></li>
                 </ul>
             </li>
         </ul>

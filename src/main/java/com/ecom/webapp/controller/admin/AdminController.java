@@ -20,6 +20,7 @@ public class AdminController {
         return "admin/admin";
     }
 
+
     @GetMapping("/login")
     public String login() {
         return "auth/login";
