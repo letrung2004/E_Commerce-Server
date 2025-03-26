@@ -26,11 +26,6 @@ import org.springframework.web.servlet.handler.HandlerMappingIntrospector;
 })
 public class SecurityConfig {
 
-    private final UserService userDetailsService;
-
-    public SecurityConfig(UserService userDetailsService) {
-        this.userDetailsService = userDetailsService;
-    }
 
 
     @Bean
@@ -67,7 +62,7 @@ public class SecurityConfig {
                                     if (grantedAuthority.getAuthority().equals("ROLE_ADMIN")) {
                                         response.sendRedirect("/webapp_war_exploded/admin");
                                     } else {
-                                        response.sendRedirect("/user");
+                                        response.sendRedirect("/webapp_war_exploded/staff");
                                     }
                                 } catch (Exception e) {
                                     throw new RuntimeException(e);
