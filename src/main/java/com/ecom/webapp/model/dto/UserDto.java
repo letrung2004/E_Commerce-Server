@@ -28,7 +28,7 @@ public class UserDto {
     @NotBlank(message = "Không được bỏ trống mục này!")
     private String phoneNumber;
 
-    private Byte gender;
+    private boolean gender;
     private LocalDate dateOfBirth;
     private String role;
 

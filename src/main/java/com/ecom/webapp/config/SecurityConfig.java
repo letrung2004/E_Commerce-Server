@@ -30,7 +30,6 @@ import org.springframework.web.servlet.handler.HandlerMappingIntrospector;
         "com.ecom.webapp.repository",
 })
 public class SecurityConfig {
-
     @Bean
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
@@ -48,16 +47,33 @@ public class SecurityConfig {
     }
 
 
+//    @Bean
+//    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+//        http
+//                .authorizeHttpRequests(auth -> auth
+//                        .anyRequest().authenticated()
+//                )
+//                .formLogin(form -> form
+//                        .defaultSuccessUrl("/admin", true)
+//                )
+//                .logout(LogoutConfigurer::permitAll);
+//
+//        return http.build();
+//
+//
+//    }
+
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
                 .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers(HttpMethod.POST, "/api/products/add").permitAll()
-                        .anyRequest().permitAll()
+                        .requestMatchers(HttpMethod.POST,"/api/store-activation").permitAll()
+                        .anyRequest().authenticated()
                 )
                 .formLogin(form -> form
-                        .defaultSuccessUrl("/admin", true)
+                        .defaultSuccessUrl("/redirectByRole", true)
                 )
                 .logout(LogoutConfigurer::permitAll);
 

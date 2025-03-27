@@ -5,11 +5,13 @@ import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.io.Serializable;
+
 @Getter
 @Setter
 @Entity
 @Table(name = "sub_cart")
-public class SubCart {
+public class SubCart implements Serializable {
     @Id
     @Column(name = "id", nullable = false)
     private Integer id;

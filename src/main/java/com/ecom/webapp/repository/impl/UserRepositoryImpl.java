@@ -56,6 +56,12 @@ public class UserRepositoryImpl implements UserRepository {
     }
 
     @Override
+    public void delete(User user) {
+        Session session = sessionFactory.getObject().getCurrentSession();
+        session.remove(session.get(User.class, user.getId()));
+    }
+
+    @Override
     public User getUserByUsername(String username) {
         try (Session session = this.sf.openSession()) {
             Query query = session.createQuery("from User where username=:u");

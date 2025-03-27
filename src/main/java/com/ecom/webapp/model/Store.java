@@ -1,22 +1,28 @@
 package com.ecom.webapp.model;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.Getter;
 import lombok.Setter;
 import org.hibernate.annotations.ColumnDefault;
 
+import java.io.Serializable;
+
 @Getter
 @Setter
 @Entity
 @Table(name = "store")
-public class Store {
+public class Store implements Serializable {
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id", nullable = false)
-    private Integer id;
+    private int id;
 
-    @Size(max = 255)
+    @Size(max = 50, message = "Tên cửa hàng không được quá 50 ký tự!")
+    @Size(min = 2, message = "Tên cửa hàng không được ít hơn 2 ký tự!")
+    @NotBlank(message = "Không được bỏ trống mục này!")
     @Column(name = "name")
     private String name;
 
@@ -30,10 +36,10 @@ public class Store {
 
     @ColumnDefault("1")
     @Column(name = "active")
-    private Byte active;
+    private boolean active = true;
 
     @NotNull
-    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @OneToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "owner_id", nullable = false)
     private com.ecom.webapp.model.User owner;
 

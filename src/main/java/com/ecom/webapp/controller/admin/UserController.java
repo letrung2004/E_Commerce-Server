@@ -7,7 +7,9 @@ import com.ecom.webapp.service.impl.MailService;
 import jakarta.mail.MessagingException;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.bcrypt.BCrypt;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -48,7 +50,7 @@ public class UserController {
     }
 
     @PostMapping("/admin/user/update")
-    public String updateProduct(@Valid @ModelAttribute("user") UserDto userDto, BindingResult bindingResult, Model model) {
+    public String updateUser(@Valid @ModelAttribute("user") UserDto userDto, BindingResult bindingResult, Model model) {
 
         if (bindingResult.hasErrors()) {
             System.out.println("error");
@@ -57,8 +59,7 @@ public class UserController {
             });
             return "admin/user/detail";
         }
-        System.out.println(userDto);
-        System.out.println(userDto.getDateOfBirth().getClass().getSimpleName());
+
         this.userService.update(userDto);
 
         return "redirect:/admin/user";
@@ -114,15 +115,20 @@ public class UserController {
 
         sendEmail(userDto.getFullName(), userDto.getEmail(), username, password);
 
-
-
-        System.out.println("Username: " + username);
-        System.out.println("Password: " + password);
-//        System.out.println("HashedPassword: " + hashedPassword);
-
-
         return "redirect:/admin/user";
+    }
 
+    @GetMapping("/admin/user/delete/{id}")
+    public String getDeleteUserPage(Model model, @PathVariable("id") Integer id) {
+        User user = this.userService.getUserById(id);
+        model.addAttribute("user", user);
+        return "admin/user/delete";
+    }
+
+    @PostMapping("/admin/user/delete")
+    public String deleteUser(Model model, @ModelAttribute("user") User user) {
+        this.userService.deleteUser(user.getId());
+        return "redirect:/admin/user";
     }
 
 }

@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <title>Title</title>
+  <th:block th:replace="layout/base :: styles"></th:block>
+</head>
+<body>
+<header th:replace="layout/base :: header"></header>
+
+
+<div id="layoutSidenav">
+  <!--    sidebar-->
+  <div th:replace="layout/base :: sidebar" id="layoutSidenav_nav"></div>
+
+  <!--content-->
+  <div id="layoutSidenav_content">
+    <!--main-content-->
+    <main>
+<!--      <h1 th:text="${user}"></h1>-->
+      <div class="d-flex justify-content-between p-3">
+        <h3>Tài khoản của tôi</h3>
+        <a th:href="@{/admin}" class="btn btn-primary px-5 fw-bold" id="backBtn" >Quay lại</a>
+
+      </div>
+
+      <div class="d-flex justify-content-center align-items-center">
+        <form th:action="@{/admin/user/update}" method="post" th:object="${user}"
+              class="w-50 d-flex flex-column align-items-center">
+          <input type="hidden" name="id" th:field="*{id}">
+
+          <div class="row w-100 mb-3">
+            <div class="col-md-6">
+              <label for="name" class="form-label">Họ và tên</label>
+              <input type="text" class="form-control" id="name" th:field="*{fullName}" readonly>
+              <p th:if="${#fields.hasErrors('fullName')}" th:errorclass="text-danger"
+                 th:errors="${user.fullName}" class="error-message"></p>
+            </div>
+            <div class="col-md-6">
+              <label for="gender" class="form-label">Giới tính</label>
+              <div class="mt-2 ">
+                <input type="radio" id="male" th:field="*{gender}" value="1" disabled>
+                <label for="male">Nam</label>
+                <input type="radio" id="female" th:field="*{gender}" value="0" disabled class="ms-4">
+                <label for="female">Nữ</label>
+              </div>
+            </div>
+          </div>
+
+          <div class="row w-100 mb-3">
+            <div class="col-md-6">
+              <label for="email" class="form-label">Email</label>
+              <input type="email" class="form-control" id="email" th:field="*{email}" readonly>
+              <p th:if="${#fields.hasErrors('email')}" th:errorclass="text-danger"
+                 th:errors="${user.email}" class="error-message"></p>
+            </div>
+            <div class="col-md-6">
+              <label for="dob" class="form-label">Ngày sinh</label>
+              <input type="date" class="form-control" id="dob" th:field="*{dateOfBirth}" readonly>
+
+            </div>
+
+          </div>
+
+          <div class="row w-100 mb-3">
+            <div class="col-md-6">
+              <label for="phoneNumber" class="form-label">Số điện thoại</label>
+              <input type="text" class="form-control" id="phoneNumber" th:field="*{phoneNumber}" readonly>
+              <p th:if="${#fields.hasErrors('phoneNumber')}" th:errorclass="text-danger"
+                 th:errors="${user.phoneNumber}" class="error-message"></p>
+            </div>
+            <div class="col-md-6">
+              <label for="role" class="form-label">Vai trò</label>
+              <select class="form-select" th:field="*{role}" id="role" disabled>
+                <option th:value="ROLE_ADMIN" th:text="ROLE_ADMIN"></option>
+                <option th:value="ROLE_STAFF" th:text="ROLE_STAFF"></option>
+              </select>
+            </div>
+          </div>
+
+          <div class="d-flex justify-content-end w-100 mt-5">
+            <button type="button" class="btn btn-primary px-5 mx-3" id="editBtn" >Chỉnh sửa</button>
+
+
+            <button type="submit" class="btn btn-primary px-5 mx-3" id="saveBtn" style="display: none;" >Lưu</button>
+
+            <a class="btn btn-danger px-5 fw-bold" id="cancelBtn" style="display: none;" >Hủy</a>
+          </div>
+
+        </form>
+      </div>
+    </main>
+
+
+    <!--footer-->
+    <footer th:replace="layout/base :: footer" class="py-4 bg-light mt-auto"></footer>
+
+  </div>
+</div>
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    // Lấy tất cả các input cần theo dõi
+    const inputs = document.querySelectorAll("input");
+
+    inputs.forEach(input => {
+      input.addEventListener("input", function () {
+        // Tìm phần tử lỗi validation tương ứng
+        const errorMessage = this.closest("div").querySelector(".error-message");
+        if (errorMessage) {
+          errorMessage.style.display = "none"; // Ẩn lỗi khi người dùng nhập
+        }
+      });
+    });
+  });
+
+
+  document.getElementById("editBtn").addEventListener("click", function () {
+    // Bật chế độ chỉnh sửa
+    document.getElementById("name").removeAttribute("readonly");
+    document.getElementById("email").removeAttribute("readonly");
+    document.getElementById("dob").removeAttribute("readonly");
+    document.getElementById("phoneNumber").removeAttribute("readonly");
+    document.getElementById("role").removeAttribute("disabled");
+    document.getElementById("male").removeAttribute("disabled");
+    document.getElementById("female").removeAttribute("disabled");
+
+    document.getElementById("saveBtn").style.display = "inline-block";
+    document.getElementById("cancelBtn").style.display = "inline-block";
+    this.style.display = "none"; // Ẩn nút Chỉnh sửa
+  });
+
+  document.getElementById("cancelBtn").addEventListener("click", function () {
+    // Khóa lại input
+    document.getElementById("name").setAttribute("readonly", true);
+    document.getElementById("email").setAttribute("readonly", true);
+    document.getElementById("dob").setAttribute("readonly", true);
+    document.getElementById("phoneNumber").setAttribute("readonly", true);
+    document.getElementById("role").setAttribute("disabled", true);
+    document.getElementById("male").setAttribute("disabled", true);
+    document.getElementById("female").setAttribute("disabled", true);
+
+    document.getElementById("saveBtn").style.display = "none";
+    document.getElementById("editBtn").style.display = "inline-block";
+    this.style.display = "none"; // Ẩn nút Hủy
+  });
+</script>
+<th:block th:replace="layout/base :: scripts"></th:block>
+</body>
+</html>
