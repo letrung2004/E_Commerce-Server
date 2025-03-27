@@ -71,10 +71,11 @@
             </div>
             <div class="col-md-6">
               <label for="role" class="form-label">Vai trò</label>
-              <select class="form-select" th:field="*{role}" id="role" disabled>
-                <option th:value="ROLE_ADMIN" th:text="ROLE_ADMIN"></option>
-                <option th:value="ROLE_STAFF" th:text="ROLE_STAFF"></option>
-              </select>
+              <input type="text" class="form-control" id="role" th:field="*{role}" readonly>
+<!--              <select class="form-select" th:field="*{role}" id="role" disabled>-->
+<!--                <option th:value="ROLE_ADMIN" th:text="ROLE_ADMIN"></option>-->
+<!--                <option th:value="ROLE_STAFF" th:text="ROLE_STAFF"></option>-->
+<!--              </select>-->
             </div>
           </div>
 
@@ -120,7 +121,6 @@
     document.getElementById("email").removeAttribute("readonly");
     document.getElementById("dob").removeAttribute("readonly");
     document.getElementById("phoneNumber").removeAttribute("readonly");
-    document.getElementById("role").removeAttribute("disabled");
     document.getElementById("male").removeAttribute("disabled");
     document.getElementById("female").removeAttribute("disabled");
 
@@ -135,7 +135,6 @@
     document.getElementById("email").setAttribute("readonly", true);
     document.getElementById("dob").setAttribute("readonly", true);
     document.getElementById("phoneNumber").setAttribute("readonly", true);
-    document.getElementById("role").setAttribute("disabled", true);
     document.getElementById("male").setAttribute("disabled", true);
     document.getElementById("female").setAttribute("disabled", true);
 

@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Shopii for staff</title>
+    <th:block th:replace="staff/staff-base :: styles"></th:block>
+</head>
+<body>
+<header th:replace="staff/staff-base :: header"></header>
+
+
+<div id="layoutSidenav">
+    <!--    sidebar-->
+    <div th:replace="staff/staff-base :: sidebar" id="layoutSidenav_nav"></div>
+
+    <!--content-->
+    <div id="layoutSidenav_content">
+        <!--main-content-->
+        <main>
+            <div class="d-flex justify-content-between p-3">
+                <h3>Người dùng</h3>
+                <a class="btn btn-primary">Quay lại</a>
+            </div>
+            <div class="d-flex align-items-center">
+                <table class="table text-center">
+                    <thead class="table-dark">
+                    <tr>
+                        <th>Tên cửa hàng</th>
+                        <th>Email</th>
+                        <th>Chủ sở hữu</th>
+                        <th>Mặt hàng</th>
+                        <th>Xác nhận</th>
+
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr th:each="store : ${storesUnprocessed}">
+                        <td th:text="${store[0]}"></td>
+                        <td th:text="${store[1]}"></td>
+                        <td th:text="${store[2]}"></td>
+                        <td th:text="${store[3]}"></td>
+                        <td style="display: none" th:text="${store[4]}"></td>
+                        <td>
+                            <button type="button" class="btn btn-outline-secondary approve-btn"
+                                    th:data-store-name="${store[0]}"
+                                    th:data-owner-id="${store[4]}"
+                                    data-bs-toggle="modal" data-bs-target="#confirmModal">
+                                Duyệt
+                            </button>
+
+
+                            <button type="button" class="btn btn-outline-danger reject-btn"
+                                    th:data-store-name="${store[0]}"
+                                    th:data-store-id="${store[5]}"
+                                    data-bs-toggle="modal" data-bs-target="#rejectModal">
+                                Từ chối
+                            </button>
+                        </td>
+
+                    </tr>
+
+                    </tbody>
+                </table>
+            </div>
+        </main>
+
+
+        <!--footer-->
+        <footer th:replace="staff/staff-base :: footer" class="py-4 bg-light mt-auto"></footer>
+
+    </div>
+</div>
+<!-- Modal xác nhận -->
+<div class="modal fade" id="confirmModal" tabindex="-1" aria-labelledby="modalTitle" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="modalTitle">Xác nhận duyệt cửa hàng</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <p>Bạn có chắc muốn duyệt cửa hàng <strong id="storeName"></strong> không?</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Hủy</button>
+
+                <!-- Form gửi POST -->
+                <form id="approveForm" method="post" action="">
+                    <input type="hidden" name="ownerId" id="ownerId">
+                    <button type="submit" class="btn btn-primary">Duyệt</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<!-- Modal hủy -->
+<div class="modal fade" id="rejectModal" tabindex="-1" aria-labelledby="modalTitle" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="modalRejectTitle">Xác nhận từ chối cửa hàng</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <p>Bạn có chắc muốn duyệt cửa hàng <strong id="storeNameRejected"></strong> không?</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Hủy</button>
+
+
+                <form id="rejectForm" method="post" action="">
+                    <input type="hidden" name="storeId" id="storeIdRejected">
+                    <button type="submit" class="btn btn-danger">Từ chối</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        let approveButtons = document.querySelectorAll(".approve-btn");
+        let storeNameElement = document.getElementById("storeName");
+        let ownerIdInput = document.getElementById("ownerId");
+        let approveForm = document.getElementById("approveForm");
+
+        approveButtons.forEach(button => {
+            button.addEventListener("click", function () {
+                let storeName = this.getAttribute("data-store-name");
+                let ownerId = this.getAttribute("data-owner-id");
+
+                storeNameElement.innerText = storeName;
+                ownerIdInput.value = ownerId;
+                approveForm.action = "/webapp_war_exploded/staff/confirm-store/" + ownerId;
+            });
+        });
+    });
+
+    document.addEventListener("DOMContentLoaded", function () {
+        let approveButtons = document.querySelectorAll(".reject-btn");
+        let storeNameElement = document.getElementById("storeNameRejected");
+        let storeIdInput = document.getElementById("storeIdRejected");
+        let approveForm = document.getElementById("rejectForm");
+
+        approveButtons.forEach(button => {
+            button.addEventListener("click", function () {
+                let storeName = this.getAttribute("data-store-name");
+                let storeId = this.getAttribute("data-store-id");
+
+                storeNameElement.innerText = storeName;
+                storeIdInput.value = storeId;
+                approveForm.action = "/webapp_war_exploded/staff/reject-store/" + storeId;
+            });
+        });
+    });
+</script>
+
+<th:block th:replace="staff/staff-base :: scripts"></th:block>
+</body>
+</html>

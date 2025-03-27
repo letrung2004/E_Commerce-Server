@@ -59,8 +59,7 @@ public class UserController {
             });
             return "admin/user/detail";
         }
-        System.out.println(userDto);
-        System.out.println(userDto.getDateOfBirth().getClass().getSimpleName());
+
         this.userService.update(userDto);
 
         return "redirect:/admin/user";
@@ -128,7 +127,7 @@ public class UserController {
 
     @PostMapping("/admin/user/delete")
     public String deleteUser(Model model, @ModelAttribute("user") User user) {
-        this.userService.delteUser(user.getId());
+        this.userService.deleteUser(user.getId());
         return "redirect:/admin/user";
     }
 

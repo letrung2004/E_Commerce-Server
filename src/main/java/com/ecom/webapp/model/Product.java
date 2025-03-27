@@ -7,6 +7,7 @@ import jakarta.validation.constraints.Size;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.io.Serializable;
 import java.math.BigDecimal;
 import java.time.Instant;
 
@@ -14,7 +15,7 @@ import java.time.Instant;
 @Setter
 @Entity
 @Table(name = "product")
-public class Product {
+public class Product implements Serializable {
     @Id
     @Column(name = "id", nullable = false)
     private Integer id;
