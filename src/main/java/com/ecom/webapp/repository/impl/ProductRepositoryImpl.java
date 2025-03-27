@@ -96,6 +96,6 @@ public class ProductRepositoryImpl implements ProductRepository {
     public void deleteProduct(int id) {
         Session session = this.sessionFactory.getObject().getCurrentSession();
         Product p = getProductById(id);
-        session.detach(p);
+        session.remove(p);
     }
 }

@@ -30,4 +30,29 @@ public class CategoryRepositoryImpl implements CategoryRepository {
 
         return session.createQuery(q).getResultList();
     }
+
+    @Override
+    public void addOrUpdateCategory(Category category) {
+        Session session = sessionFactory.getObject().getCurrentSession();
+        if(category.getId()!=null){
+            session.merge(category);
+        }
+        else {
+            session.persist(category);
+        }
+    }
+
+
+    @Override
+    public Category getCategoryById(int id) {
+        Session session = sessionFactory.getObject().getCurrentSession();
+        return session.get(Category.class, id);
+    }
+
+
+    @Override
+    public void deleteCategory(int id) {
+        Session session = sessionFactory.getObject().getCurrentSession();
+        session.remove(getCategoryById(id));
+    }
 }
