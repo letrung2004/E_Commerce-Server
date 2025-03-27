@@ -1,5 +1,6 @@
 package com.ecom.webapp.model;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
@@ -8,7 +9,7 @@ import lombok.Getter;
 import lombok.Setter;
 
 import java.math.BigDecimal;
-import java.time.Instant;
+import java.util.Date;
 
 @Getter
 @Setter
@@ -17,6 +18,7 @@ import java.time.Instant;
 public class Product {
     @Id
     @Column(name = "id", nullable = false)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
     @Size(max = 255)
@@ -41,7 +43,8 @@ public class Product {
     private String image;
 
     @Column(name = "date_created")
-    private Instant dateCreated;
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+    private Date dateCreated;
 
     @Column(name = "star_rate", precision = 2, scale = 1)
     private BigDecimal starRate;
@@ -51,12 +54,10 @@ public class Product {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "category_id")
-    @JsonIgnore
     private Category category;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "store_id")
-    @JsonIgnore
     private com.ecom.webapp.model.Store store;
 
 }

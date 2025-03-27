@@ -14,13 +14,13 @@ import lombok.Setter;
 public class Category {
     @Id
     @Column(name = "id", nullable = false)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
     @Size(max = 50)
     @Column(name = "name", length = 50)
     private String name;
 
-    @NotNull
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "store_id", nullable = false)
     @JsonIgnore
