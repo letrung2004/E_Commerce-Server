@@ -10,13 +10,14 @@ import lombok.Setter;
 import org.hibernate.annotations.ColumnDefault;
 import org.springframework.format.annotation.DateTimeFormat;
 
+import java.io.Serializable;
 import java.time.LocalDate;
 
 @Getter
 @Setter
 @Entity
 @Table(name = "user")
-public class User {
+public class User implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id", nullable = false)
@@ -49,7 +50,7 @@ public class User {
 
     @ColumnDefault("1")
     @Column(name = "gender")
-    private Byte gender;
+    private boolean gender;
 
     @Column(name = "date_of_birth")
     @DateTimeFormat(pattern = "yyyy-MM-dd")
@@ -57,11 +58,11 @@ public class User {
 
     @ColumnDefault("1")
     @Column(name = "active")
-    private Byte active;
+    private boolean active;
 
     @ColumnDefault("0")
     @Column(name = "store_active")
-    private Byte storeActive;
+    private boolean storeActive;
 
     @Size(max = 45)
     @Column(name = "role", length = 45)

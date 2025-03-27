@@ -3,15 +3,15 @@
 <head>
   <meta charset="UTF-8">
   <title>Title</title>
-  <th:block th:replace="layout/base :: styles"></th:block>
+  <th:block th:replace="staff/staff-base :: styles"></th:block>
 </head>
 <body>
-<header th:replace="layout/base :: header"></header>
+<header th:replace="staff/staff-base :: header"></header>
 
 
 <div id="layoutSidenav">
   <!--    sidebar-->
-  <div th:replace="layout/base :: sidebar" id="layoutSidenav_nav"></div>
+  <div th:replace="staff/staff-base :: sidebar" id="layoutSidenav_nav"></div>
 
   <!--content-->
   <div id="layoutSidenav_content">
@@ -20,12 +20,12 @@
 <!--      <h1 th:text="${user}"></h1>-->
       <div class="d-flex justify-content-between p-3">
         <h3>Tài khoản của tôi</h3>
-        <a th:href="@{/admin}" class="btn btn-primary px-5 fw-bold" id="backBtn" >Quay lại</a>
+        <a th:href="@{/staff}" class="btn btn-primary px-5 fw-bold" id="backBtn" >Quay lại</a>
 
       </div>
 
       <div class="d-flex justify-content-center align-items-center">
-        <form th:action="@{/admin/user/update}" method="post" th:object="${user}"
+        <form th:action="@{/staff/user/update}" method="post" th:object="${user}"
               class="w-50 d-flex flex-column align-items-center">
           <input type="hidden" name="id" th:field="*{id}">
 
@@ -71,10 +71,11 @@
             </div>
             <div class="col-md-6">
               <label for="role" class="form-label">Vai trò</label>
-              <select class="form-select" th:field="*{role}" id="role" disabled>
-                <option th:value="ROLE_ADMIN" th:text="ROLE_ADMIN"></option>
-                <option th:value="ROLE_STAFF" th:text="ROLE_STAFF"></option>
-              </select>
+              <input type="text" class="form-control" id="role" th:field="*{role}" readonly>
+<!--              <select class="form-select" th:field="*{role}" id="role" disabled>-->
+<!--                <option th:value="ROLE_ADMIN" th:text="ROLE_ADMIN"></option>-->
+<!--                <option th:value="ROLE_STAFF" th:text="ROLE_STAFF"></option>-->
+<!--              </select>-->
             </div>
           </div>
 
@@ -93,7 +94,7 @@
 
 
     <!--footer-->
-    <footer th:replace="layout/base :: footer" class="py-4 bg-light mt-auto"></footer>
+    <footer th:replace="staff/staff-base :: footer" class="py-4 bg-light mt-auto"></footer>
 
   </div>
 </div>
@@ -120,7 +121,6 @@
     document.getElementById("email").removeAttribute("readonly");
     document.getElementById("dob").removeAttribute("readonly");
     document.getElementById("phoneNumber").removeAttribute("readonly");
-    document.getElementById("role").removeAttribute("disabled");
     document.getElementById("male").removeAttribute("disabled");
     document.getElementById("female").removeAttribute("disabled");
 
@@ -135,7 +135,6 @@
     document.getElementById("email").setAttribute("readonly", true);
     document.getElementById("dob").setAttribute("readonly", true);
     document.getElementById("phoneNumber").setAttribute("readonly", true);
-    document.getElementById("role").setAttribute("disabled", true);
     document.getElementById("male").setAttribute("disabled", true);
     document.getElementById("female").setAttribute("disabled", true);
 

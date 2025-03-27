@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Shopii for staff</title>
+    <th:block th:replace="staff/staff-base :: styles"></th:block>
+</head>
+<body>
+<header th:replace="staff/staff-base :: header"></header>
+
+
+<div id="layoutSidenav">
+    <!--    sidebar-->
+    <div th:replace="staff/staff-base :: sidebar" id="layoutSidenav_nav"></div>
+
+    <!--content-->
+    <div id="layoutSidenav_content">
+        <!--main-content-->
+        <main>
+            <div class="d-flex justify-content-between p-3">
+                <h3>STAFF DASHBOARD</h3>
+            </div>
+        </main>
+
+
+        <!--footer-->
+        <footer th:replace="staff/staff-base :: footer" class="py-4 bg-light mt-auto"></footer>
+
+    </div>
+</div>
+
+<th:block th:replace="staff/staff-base :: scripts"></th:block>
+</body>
+</html>

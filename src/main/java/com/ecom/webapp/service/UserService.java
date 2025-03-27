@@ -12,5 +12,6 @@ public interface UserService extends UserDetailsService {
     User getUserById(Integer id);
     void createUser(UserDto user, String username, String rawPassword);
     void update(UserDto userDto);
-    void delteUser(Integer id);
+    void acceptStoreActivation(int userId);
+    void deleteUser(Integer id);
 }

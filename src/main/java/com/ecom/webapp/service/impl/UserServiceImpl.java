@@ -46,6 +46,7 @@ public class UserServiceImpl implements UserService {
         authorities.add(new SimpleGrantedAuthority(u.getRole()));
         return new org.springframework.security.core.userdetails.User(
                 u.getUsername(), u.getPassword(), authorities);
+
     }
 
 
@@ -69,7 +70,7 @@ public class UserServiceImpl implements UserService {
         user.setFullName(userDto.getFullName());
         user.setEmail(userDto.getEmail());
         user.setPhoneNumber(String.valueOf(userDto.getPhoneNumber()));
-        user.setGender(userDto.getGender());
+        user.setGender(userDto.isGender());
         user.setRole(userDto.getRole());
         user.setDateOfBirth(userDto.getDateOfBirth());
 
@@ -86,19 +87,29 @@ public class UserServiceImpl implements UserService {
         user.setFullName(userDto.getFullName());
         user.setEmail(userDto.getEmail());
         user.setPhoneNumber(String.valueOf(userDto.getPhoneNumber()));
-        user.setGender(userDto.getGender());
+        user.setGender(userDto.isGender());
         user.setRole(userDto.getRole());
         user.setDateOfBirth(userDto.getDateOfBirth());
         this.userRepository.update(user);
     }
 
     @Override
-    public void delteUser(Integer id) {
+    public void deleteUser(Integer id) {
         User user = this.userRepository.getById(id);
         if (user == null) {
             throw new EntityNotFoundException("User not found with id " + id);
         }
         this.userRepository.delete(user);
     }
+
+    public void acceptStoreActivation(int userId) {
+        User user = this.userRepository.getById(userId);
+        if (user == null) {
+            throw new EntityNotFoundException("User not found with id " + userId);
+        }
+        user.setStoreActive(true);
+        this.userRepository.update(user);
+    }
 }
+
 
