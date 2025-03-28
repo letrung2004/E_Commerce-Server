@@ -1,7 +1,9 @@
 package com.ecom.webapp.service.impl;
 
+import com.ecom.webapp.model.Store;
 import com.ecom.webapp.model.User;
 import com.ecom.webapp.model.dto.UserDto;
+import com.ecom.webapp.repository.StoreRepository;
 import com.ecom.webapp.repository.UserRepository;
 import com.ecom.webapp.service.UserService;
 import jakarta.persistence.EntityNotFoundException;
@@ -24,6 +26,8 @@ public class UserServiceImpl implements UserService {
 
     @Autowired
     private UserRepository userRepository;
+    @Autowired
+    private StoreRepository storeRepository;
 
     @Autowired
     @Lazy
@@ -98,6 +102,18 @@ public class UserServiceImpl implements UserService {
         User user = this.userRepository.getById(id);
         if (user == null) {
             throw new EntityNotFoundException("User not found with id " + id);
+        }
+
+        if (!user.isStoreActive()) {
+            Store store = user.getStore();
+            if(store != null) this.storeRepository.deleteStore(store);
+        } else {
+            Store store = user.getStore();
+            if(store != null){
+                store.setOwner(null);
+                this.storeRepository.updateStore(store);
+            }
+
         }
         this.userRepository.delete(user);
     }

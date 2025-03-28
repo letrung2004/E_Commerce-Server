@@ -10,6 +10,6 @@ public interface StoreRepository {
     Store getStoreByUsername(String username);
     Store getStoreById(int id);
     void createStore(Store store);
-    void updateStore(int store);
+    void updateStore(Store store);
     void deleteStore(Store store);
 }
