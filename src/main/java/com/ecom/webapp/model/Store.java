@@ -38,9 +38,9 @@ public class Store implements Serializable {
     @Column(name = "active")
     private boolean active = true;
 
-    @NotNull
+
     @OneToOne(fetch = FetchType.LAZY, optional = false)
-    @JoinColumn(name = "owner_id", nullable = false)
+    @JoinColumn(name = "owner_id", nullable = true, unique = true)
     private com.ecom.webapp.model.User owner;
 
 }

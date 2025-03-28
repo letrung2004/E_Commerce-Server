@@ -72,6 +72,9 @@ public class User implements Serializable {
     @Column(name = "avatar")
     private String avatar;
 
+    @OneToOne(mappedBy = "owner") // mặc định xóa user thì store.owner=null ???
+    private Store store;
+
     @Override
     public String toString() {
         return String.format("%d, %s, %s, %s", this.id, this.fullName, this.email, this.phoneNumber);
