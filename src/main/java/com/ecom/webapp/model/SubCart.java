@@ -6,6 +6,7 @@ import lombok.Getter;
 import lombok.Setter;
 
 import java.io.Serializable;
+import java.util.Set;
 
 @Getter
 @Setter
@@ -13,6 +14,7 @@ import java.io.Serializable;
 @Table(name = "sub_cart")
 public class SubCart implements Serializable {
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id", nullable = false)
     private Integer id;
 
@@ -25,5 +27,9 @@ public class SubCart implements Serializable {
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "store_id", nullable = false)
     private Store store;
+
+    //Composition
+    @OneToMany(mappedBy = "subCart", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+    private Set<SubCartItem> subCartItems;
 
 }

@@ -40,9 +40,17 @@ public class Order implements Serializable {
     @Column(name = "delivery_status", length = 45)
     private String deliveryStatus;
 
-    //Xoa Order thi xoa luon OrderDetail cua no
+    @NotNull(message = "TRống nè")
+    @Size(max = 45)
+    @Column(name = "payment_method", length = 45)
+    private String paymentMethod;
+
+    //Composition
     @OneToMany(mappedBy = "order", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<OrderDetail> orderDetails;
+
+    @OneToOne(mappedBy = "order")
+    private Payment payment;
 
 
 }

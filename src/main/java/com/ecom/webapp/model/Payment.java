@@ -16,11 +16,12 @@ import java.time.Instant;
 @Table(name = "payment")
 public class Payment implements Serializable {
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id", nullable = false)
-    private Integer id;
+    private int id;
 
     @NotNull
-    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @OneToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "order_id", nullable = false)
     private Order order;
 
@@ -42,5 +43,10 @@ public class Payment implements Serializable {
 
     @Column(name = "date_created")
     private Instant dateCreated;
+
+    @PrePersist
+    protected void onCreate() {
+        this.dateCreated = Instant.now();
+    }
 
 }

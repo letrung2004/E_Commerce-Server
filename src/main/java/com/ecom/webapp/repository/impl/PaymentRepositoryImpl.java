@@ -1,31 +1,35 @@
 package com.ecom.webapp.repository.impl;
 
-import com.ecom.webapp.model.SubCartItem;
-import com.ecom.webapp.repository.SubCartItemRepository;
+import com.ecom.webapp.model.Payment;
+import com.ecom.webapp.repository.PaymentRepository;
 import org.hibernate.Session;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.orm.hibernate5.LocalSessionFactoryBean;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
-
 @Repository
 @Transactional
-public class SubCartItemRepositoryImpl implements SubCartItemRepository {
+public class PaymentRepositoryImpl implements PaymentRepository {
 
     @Autowired
     private LocalSessionFactoryBean sessionFactory;
 
     @Override
-    public SubCartItem getSubCartItemById(int subCartItemId) {
+    public Payment getPaymentById(int id) {
         Session session = sessionFactory.getObject().getCurrentSession();
-        return session.get(SubCartItem.class, subCartItemId);
+        return session.get(Payment.class, id);
     }
 
     @Override
-    public void deleteSubCartItem(SubCartItem subCartItem) {
+    public void createPayment(Payment payment) {
         Session session = sessionFactory.getObject().getCurrentSession();
-        session.remove(subCartItem);
+        session.persist(payment);
+    }
+
+    @Override
+    public void updatePayment(Payment payment) {
+        Session session = sessionFactory.getObject().getCurrentSession();
+
     }
 }
