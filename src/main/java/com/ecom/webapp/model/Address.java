@@ -15,7 +15,7 @@ import java.io.Serializable;
 public class Address implements Serializable {
     @Id
     @Column(name = "id", nullable = false)
-    private Integer id;
+    private int id;
 
     @Size(max = 255)
     @NotNull
@@ -34,6 +34,6 @@ public class Address implements Serializable {
     @NotNull
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "user_id", nullable = false)
-    private com.ecom.webapp.model.User user;
+    private User user;
 
 }
