@@ -69,7 +69,7 @@ public class SecurityConfig {
                 .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers(HttpMethod.POST, "/api/products/add").permitAll()
-                        .requestMatchers(HttpMethod.POST,"/api/store-activation").permitAll()
+                        .requestMatchers(HttpMethod.POST,"/api/**").permitAll()
                         .anyRequest().authenticated()
                 )
                 .formLogin(form -> form

@@ -12,6 +12,7 @@ import org.springframework.format.annotation.DateTimeFormat;
 
 import java.io.Serializable;
 import java.time.LocalDate;
+import java.util.Set;
 
 @Getter
 @Setter
@@ -72,8 +73,15 @@ public class User implements Serializable {
     @Column(name = "avatar")
     private String avatar;
 
-    @OneToOne(mappedBy = "owner") // mặc định xóa user thì store.owner=null ???
+    // Xoa user thi ko xoa store (Neu user co store nhung chua duyet thi xoa ca 2, nguoc lai store.setOwner=null)
+    @OneToOne(mappedBy = "owner")
     private Store store;
+
+    // Xoa User thi xoa luon addresses casacade=ALL
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+    private Set<Address> address;
+
+
 
     @Override
     public String toString() {

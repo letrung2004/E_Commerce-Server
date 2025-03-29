@@ -15,8 +15,9 @@ import java.math.BigDecimal;
 @Table(name = "order_detail")
 public class OrderDetail implements Serializable {
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id", nullable = false)
-    private Integer id;
+    private int id;
 
     @NotNull
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
