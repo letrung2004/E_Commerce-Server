@@ -2,6 +2,7 @@ package com.ecom.webapp.service.impl;
 
 import com.ecom.webapp.model.*;
 import com.ecom.webapp.model.dto.OrderDto;
+import com.ecom.webapp.model.responseDto.OrderResponse;
 import com.ecom.webapp.repository.*;
 import com.ecom.webapp.service.OrderService;
 import jakarta.persistence.EntityNotFoundException;
@@ -35,12 +36,14 @@ public class OrderServiceImpl implements OrderService {
 
 
     @Override
-    public List<Order> getOrdersByUsername(String username) {
+    @Transactional
+    public List<OrderResponse> getOrdersByUsername(String username) {
         User user = this.userRepository.getUserByUsername(username);
         if (user == null) {
             throw new EntityNotFoundException("User not found with username: " + username);
         }
-        return this.orderRepository.getOrdersByUser(user);
+        List<Order> orders = this.orderRepository.getOrdersByUser(user);
+        return orders.stream().map(OrderResponse::new).toList();
     }
 
     @Override
