@@ -1,6 +1,7 @@
 package com.ecom.webapp.controller.client;
 
 import com.ecom.webapp.model.Order;
+import com.ecom.webapp.model.dto.ErrorResponse;
 import com.ecom.webapp.model.dto.OrderDto;
 import com.ecom.webapp.service.OrderService;
 import jakarta.validation.Valid;
@@ -37,10 +38,16 @@ public class ApiOrderController {
     }
 
     @PostMapping("/place-order")
-    public ResponseEntity<OrderDto> createOrder(@Valid @RequestBody OrderDto orderDto) {
+    public ResponseEntity<?> createOrder(@Valid @RequestBody OrderDto orderDto) {
         System.out.println(orderDto);
+
+        if (!orderDto.getPaymentMethod().equals("VNPay") && !orderDto.getPaymentMethod().equals("COD")) {
+            return ResponseEntity.badRequest().body(new ErrorResponse("Phương thức thanh toán không hợp lệ!"));
+        }
+
         this.orderService.createOrder(orderDto);
         return new ResponseEntity<>(orderDto, HttpStatus.CREATED);
     }
+
 
 }

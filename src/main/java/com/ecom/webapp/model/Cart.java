@@ -7,6 +7,7 @@ import lombok.Setter;
 import org.hibernate.annotations.ColumnDefault;
 
 import java.io.Serializable;
+import java.util.Set;
 
 @Getter
 @Setter
@@ -14,6 +15,7 @@ import java.io.Serializable;
 @Table(name = "cart")
 public class Cart implements Serializable {
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id", nullable = false)
     private Integer id;
 
@@ -25,5 +27,9 @@ public class Cart implements Serializable {
     @ColumnDefault("0")
     @Column(name = "items_number")
     private Integer itemsNumber;
+
+    //Composition
+    @OneToMany(mappedBy = "cart", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+    private Set<SubCart> subCarts;
 
 }

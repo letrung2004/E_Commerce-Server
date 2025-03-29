@@ -26,6 +26,13 @@ public class OrderServiceImpl implements OrderService {
     private AddressRepository addressRepository;
     @Autowired
     private SubCartItemRepository subCartItemRepository;
+    @Autowired
+    private PaymentRepository paymentRepository;
+    @Autowired
+    private SubCartRepository subCartRepository;
+    @Autowired
+    private CartRepository cartRepository;
+
 
     @Override
     public List<Order> getOrdersByUsername(String username) {
@@ -57,7 +64,7 @@ public class OrderServiceImpl implements OrderService {
         order.setAddress(address);
         order.setShippingFee(new BigDecimal(orderDto.getShippingFree()));
         order.setDeliveryStatus("Chờ xác nhận");
-
+        order.setPaymentMethod(orderDto.getPaymentMethod());
         this.orderRepository.createOrder(order);
 
         for (Integer subCartItemId : orderDto.getSubCartItemIds()) {
@@ -65,17 +72,69 @@ public class OrderServiceImpl implements OrderService {
             if (subCartItem == null) {
                 throw new EntityNotFoundException("SubCartItem not found with id: " + subCartItemId);
             }
+
+            SubCart subCart = subCartItem.getSubCart();
+            Cart cart = subCart.getCart();
+
             OrderDetail orderDetail = new OrderDetail();
             orderDetail.setOrder(order);
             orderDetail.setProduct(subCartItem.getProduct());
             orderDetail.setQuantity(subCartItem.getQuantity());
             orderDetail.setUnitPrice(subCartItem.getUnitPrice());
             total = total.add(BigDecimal.valueOf(subCartItem.getQuantity()).multiply(subCartItem.getUnitPrice()));
+
             this.orderDetailRepository.createOrderDetail(orderDetail);
+            this.subCartItemRepository.deleteSubCartItem(subCartItem);
+
+            subCart.getSubCartItems().remove(subCartItem);
+
+            // Neu subCart khong con item nao thi xoa subCart
+            if (subCart.getSubCartItems().isEmpty()) {
+                System.out.println("subCartItems is empty");
+                this.subCartRepository.deleteSubCart(subCart);
+                cart.getSubCarts().remove(subCart);
+                System.out.println("subCartItems is deleted");
+
+            }
+
+            if (cart.getItemsNumber() != null) {
+                System.out.println("items number before decrease 1: " + cart.getItemsNumber());
+                cart.setItemsNumber(cart.getItemsNumber() - 1);
+                System.out.println("items number after decrease 1: " + cart.getItemsNumber());
+            }
+            if (cart.getSubCarts().isEmpty()) {
+                System.out.println("subCarts is empty");
+                this.cartRepository.deleteCart(cart);
+            } else {
+                this.cartRepository.updateCart(cart);
+            }
+
         }
 
         order.setTotal(total);
+
+        Payment payment = new Payment();
+        payment.setOrder(order);
+        payment.setUser(user);
+        payment.setAmount(order.getTotal());
+        switch (orderDto.getPaymentMethod()) {
+            case "COD":
+                payment.setPaymentMethod("Cash on delivery");
+                payment.setStatus("Chưa thanh toán");
+
+                break;
+            case "VNPay":
+                payment.setPaymentMethod("VNPay");
+                // Goi API hoac service VNPay ...
+                break;
+            default:
+                throw new IllegalArgumentException("Phương thức thanh toán không hợp lệ: " + orderDto.getPaymentMethod());
+        }
+
         this.orderRepository.updateOrder(order);
+
+        this.paymentRepository.createPayment(payment);
+
 
     }
 

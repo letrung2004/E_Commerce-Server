@@ -6,4 +6,5 @@ import java.util.List;
 
 public interface SubCartItemRepository {
     SubCartItem getSubCartItemById(int subCartItemId);
+    void deleteSubCartItem(SubCartItem subCartItem);
 }
