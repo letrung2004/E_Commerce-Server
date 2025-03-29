@@ -20,7 +20,7 @@ public class OrderDetail implements Serializable {
     private int id;
 
     @NotNull
-    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @ManyToOne(fetch = FetchType.EAGER, optional = false)
     @JoinColumn(name = "order_id", nullable = false)
     private Order order;
 

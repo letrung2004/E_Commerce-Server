@@ -1,8 +1,8 @@
 package com.ecom.webapp.controller.client;
 
-import com.ecom.webapp.model.Order;
 import com.ecom.webapp.model.dto.ErrorResponse;
 import com.ecom.webapp.model.dto.OrderDto;
+import com.ecom.webapp.model.responseDto.OrderResponse;
 import com.ecom.webapp.service.OrderService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,11 +31,14 @@ public class ApiOrderController {
         return new ResponseEntity<>(errors, HttpStatus.BAD_REQUEST);
     }
 
-    @GetMapping("/orders")
-    public ResponseEntity<List<Order>> getOrders(@Valid @RequestBody String username) {
+    @GetMapping("/orders/{username}")
+    public ResponseEntity<List<OrderResponse>> getOrders(@PathVariable(value = "username") String username) {
         System.out.println(username);
-        return new ResponseEntity<>(this.orderService.getOrdersByUsername(username), HttpStatus.OK);
+        List<OrderResponse> orders = this.orderService.getOrdersByUsername(username);
+        return new ResponseEntity<>(orders, HttpStatus.OK);
     }
+
+
 
     @PostMapping("/place-order")
     public ResponseEntity<?> createOrder(@Valid @RequestBody OrderDto orderDto) {
@@ -48,6 +51,8 @@ public class ApiOrderController {
         this.orderService.createOrder(orderDto);
         return new ResponseEntity<>(orderDto, HttpStatus.CREATED);
     }
+
+
 
 
 }
