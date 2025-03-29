@@ -70,7 +70,7 @@ public class SecurityConfig {
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers(HttpMethod.POST, "/api/products/add").permitAll()
                         .requestMatchers(HttpMethod.POST,"/api/store-activation").permitAll()
-                        .anyRequest().authenticated()
+                        .anyRequest().permitAll()
                 )
                 .formLogin(form -> form
                         .defaultSuccessUrl("/redirectByRole", true)
