@@ -8,6 +8,7 @@ import lombok.Setter;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
+import java.util.Set;
 
 @Getter
 @Setter
@@ -15,8 +16,9 @@ import java.math.BigDecimal;
 @Table(name = "`order`")
 public class Order implements Serializable {
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id", nullable = false)
-    private Integer id;
+    private int id;
 
     @NotNull
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
@@ -37,5 +39,10 @@ public class Order implements Serializable {
     @Size(max = 45)
     @Column(name = "delivery_status", length = 45)
     private String deliveryStatus;
+
+    //Xoa Order thi xoa luon OrderDetail cua no
+    @OneToMany(mappedBy = "order", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+    private Set<OrderDetail> orderDetails;
+
 
 }

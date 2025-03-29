@@ -63,7 +63,11 @@ public class StoreRepositoryImpl implements StoreRepository {
     @Override
     public Store getStoreByUsername(String username) {
         Session session = sessionFactory.getObject().getCurrentSession();
-        return session.get(Store.class, username);
+        CriteriaBuilder builder = session.getCriteriaBuilder();
+        CriteriaQuery<Store> criteria = builder.createQuery(Store.class);
+        Root<Store> storeRoot = criteria.from(Store.class);
+        criteria.where(builder.equal(storeRoot.get("owner").get("username"), username));
+        return session.createQuery(criteria).getSingleResult();
     }
 
     @Override
@@ -79,8 +83,9 @@ public class StoreRepositoryImpl implements StoreRepository {
     }
 
     @Override
-    public void updateStore(int store) {
-
+    public void updateStore(Store store) {
+        Session session = sessionFactory.getObject().getCurrentSession();
+        session.merge(store);
     }
 
     @Override

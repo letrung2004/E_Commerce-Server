@@ -26,6 +26,6 @@ public class Category implements Serializable {
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "store_id", nullable = false)
     @JsonIgnore
-    private com.ecom.webapp.model.Store store;
+    private Store store;
 
 }

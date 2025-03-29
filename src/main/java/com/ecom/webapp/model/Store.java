@@ -9,6 +9,7 @@ import lombok.Setter;
 import org.hibernate.annotations.ColumnDefault;
 
 import java.io.Serializable;
+import java.util.Set;
 
 @Getter
 @Setter
@@ -38,9 +39,12 @@ public class Store implements Serializable {
     @Column(name = "active")
     private boolean active = true;
 
-    @NotNull
+
     @OneToOne(fetch = FetchType.LAZY, optional = false)
-    @JoinColumn(name = "owner_id", nullable = false)
+    @JoinColumn(name = "owner_id", nullable = true, unique = true)
     private com.ecom.webapp.model.User owner;
+
+    @OneToMany(mappedBy = "store", fetch = FetchType.LAZY, orphanRemoval = true, cascade = CascadeType.ALL)
+    private Set<Category> categories;
 
 }
