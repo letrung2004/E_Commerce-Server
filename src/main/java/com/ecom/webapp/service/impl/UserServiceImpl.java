@@ -1,5 +1,7 @@
 package com.ecom.webapp.service.impl;
 
+import com.cloudinary.Cloudinary;
+import com.cloudinary.utils.ObjectUtils;
 import com.ecom.webapp.model.Store;
 import com.ecom.webapp.model.User;
 import com.ecom.webapp.model.dto.UserDto;
@@ -17,8 +19,10 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.io.IOException;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 @Service("userDetailsService")
@@ -28,6 +32,8 @@ public class UserServiceImpl implements UserService {
     private UserRepository userRepository;
     @Autowired
     private StoreRepository storeRepository;
+    @Autowired
+    private Cloudinary cloudinary;
 
     @Autowired
     @Lazy
@@ -94,6 +100,17 @@ public class UserServiceImpl implements UserService {
         user.setGender(userDto.isGender());
         user.setRole(userDto.getRole());
         user.setDateOfBirth(userDto.getDateOfBirth());
+
+        if (userDto.getFile() != null && !userDto.getFile().isEmpty()) {
+            try {
+                Map res = cloudinary.uploader().upload(userDto.getFile().getBytes(),
+                        ObjectUtils.asMap("resource_type", "auto"));
+                user.setAvatar(res.get("secure_url").toString());
+            } catch (IOException e) {
+                throw new RuntimeException(e.getMessage());
+            }
+        }
+
         this.userRepository.update(user);
     }
 
