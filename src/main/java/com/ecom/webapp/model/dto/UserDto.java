@@ -5,6 +5,7 @@ import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 import lombok.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDate;
 
@@ -28,9 +29,12 @@ public class UserDto {
     @NotBlank(message = "Không được bỏ trống mục này!")
     private String phoneNumber;
 
+    private String avatar;
+
     private boolean gender;
     private LocalDate dateOfBirth;
     private String role;
+    private MultipartFile file;
 
 
 }
