@@ -80,7 +80,7 @@ public class User implements Serializable {
     @OneToOne(mappedBy = "owner")
     private Store store;
 
-    // Xoa User thi xoa luon addresses casacade=ALL
+    // Xoa User thi xoa luon addresses casacade=ALL va orphanRemoval = true
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
     private Set<Address> address;
 
