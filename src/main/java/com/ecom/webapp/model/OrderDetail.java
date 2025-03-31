@@ -37,4 +37,8 @@ public class OrderDetail implements Serializable {
     @Column(name = "unit_price", precision = 10)
     private BigDecimal unitPrice;
 
+    @ColumnDefault("0")
+    @Column(name = "evaluated")
+    private boolean evaluated = false;
+
 }
