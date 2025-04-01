@@ -1,5 +1,6 @@
 package com.ecom.webapp.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
@@ -15,15 +16,21 @@ import java.io.Serializable;
 public class Cart implements Serializable {
     @Id
     @Column(name = "id", nullable = false)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
     @NotNull
-    @ManyToOne(fetch = FetchType.LAZY, optional = false)
-    @JoinColumn(name = "user_id", nullable = false)
+    @OneToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name = "user_id", nullable = false, unique = true)
+    @JsonIgnore
     private com.ecom.webapp.model.User user;
 
     @ColumnDefault("0")
     @Column(name = "items_number")
     private Integer itemsNumber;
 
+
+    public Integer getUserId() {
+        return user != null ? user.getId() : null;
+    }
 }

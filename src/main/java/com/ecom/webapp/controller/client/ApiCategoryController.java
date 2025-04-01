@@ -2,12 +2,16 @@ package com.ecom.webapp.controller.client;
 
 import com.ecom.webapp.model.Category;
 import com.ecom.webapp.service.CategoryService;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/api")
@@ -15,6 +19,15 @@ import java.util.List;
 public class ApiCategoryController {
     @Autowired
     CategoryService categoryService;
+
+    @ExceptionHandler(MethodArgumentNotValidException.class)
+    public ResponseEntity<Map<String, String>> handleValidationExceptions(MethodArgumentNotValidException ex) {
+        Map<String, String> errors = new HashMap<>();
+        ex.getBindingResult().getFieldErrors().forEach(error ->
+                errors.put(error.getField(), error.getDefaultMessage())
+        );
+        return new ResponseEntity<>(errors, HttpStatus.BAD_REQUEST);
+    }
 
     @GetMapping("/categories")
     public ResponseEntity<List<Category>> list() {
@@ -29,7 +42,7 @@ public class ApiCategoryController {
 
     @PostMapping("categories/add")
     @CrossOrigin
-    public ResponseEntity<Category> addCategory(@RequestBody Category category) {
+    public ResponseEntity<Category> addCategory(@Valid @RequestBody Category category) {
         Category newCategory = this.categoryService.addOrUpdate(category);
         return new ResponseEntity<>(newCategory, HttpStatus.CREATED) ;
     }
