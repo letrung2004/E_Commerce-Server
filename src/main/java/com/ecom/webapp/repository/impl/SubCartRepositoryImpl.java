@@ -7,6 +7,7 @@ import jakarta.persistence.NoResultException;
 import jakarta.persistence.criteria.CriteriaBuilder;
 import jakarta.persistence.criteria.CriteriaQuery;
 import jakarta.persistence.criteria.Root;
+import com.ecom.webapp.repository.SubCartRepository;
 import org.hibernate.Session;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.orm.hibernate5.LocalSessionFactoryBean;
@@ -63,11 +64,15 @@ public class SubCartRepositoryImpl implements SubCartRepository {
         }
     }
 
+//     @Override
+//     public void delete(SubCart subCart) {
+//         Session session = sessionFactory.getObject().getCurrentSession();
+//         session.remove(subCart);
+//     }
+
     @Override
-    public void delete(SubCart subCart) {
+    public void deleteSubCart(SubCart subCart) {
         Session session = sessionFactory.getObject().getCurrentSession();
         session.remove(subCart);
     }
-
-
 }

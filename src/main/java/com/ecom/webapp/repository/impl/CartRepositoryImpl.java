@@ -10,6 +10,7 @@ import jakarta.persistence.NoResultException;
 import jakarta.persistence.criteria.CriteriaBuilder;
 import jakarta.persistence.criteria.CriteriaQuery;
 import jakarta.persistence.criteria.Root;
+import com.ecom.webapp.repository.CartRepository;
 import org.hibernate.Session;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.orm.hibernate5.LocalSessionFactoryBean;
@@ -51,17 +52,16 @@ public class CartRepositoryImpl implements CartRepository {
         cart.setItemsNumber(0);
         session.persist(cart);
         return cart;
+
+    @Override
+    public void deleteCart(Cart cart) {
+        Session session = this.sessionFactory.getObject().getCurrentSession();
+        session.remove(cart);
     }
 
     @Override
     public void updateCart(Cart cart) {
         Session session = sessionFactory.getObject().getCurrentSession();
         session.merge(cart);
-    }
-
-    @Override
-    public void deleteCart(Cart cart) {
-        Session session = sessionFactory.getObject().getCurrentSession();
-        session.remove(cart);
     }
 }

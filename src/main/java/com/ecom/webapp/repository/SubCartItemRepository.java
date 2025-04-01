@@ -10,6 +10,7 @@ public interface SubCartItemRepository {
     List<SubCartItem> getSubCartItemsBySubCartId(List<Integer> subCartIds);
     void save(SubCartItem subCartItem);
     SubCartItem getBySubCartIdAndProductId(int subCartId, int productId);
-    void delete(SubCartItem subCartItem);
+//     void delete(SubCartItem subCartItem);
     int countBySubCartId(int subCartId);
+    void deleteSubCartItem(SubCartItem subCartItem);
 }

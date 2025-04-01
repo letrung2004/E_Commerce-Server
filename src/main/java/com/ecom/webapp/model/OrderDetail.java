@@ -20,7 +20,7 @@ public class OrderDetail implements Serializable {
     private int id;
 
     @NotNull
-    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @ManyToOne(fetch = FetchType.EAGER, optional = false)
     @JoinColumn(name = "order_id", nullable = false)
     private Order order;
 
@@ -36,5 +36,9 @@ public class OrderDetail implements Serializable {
     @ColumnDefault("0")
     @Column(name = "unit_price", precision = 10)
     private BigDecimal unitPrice;
+
+    @ColumnDefault("0")
+    @Column(name = "evaluated")
+    private boolean evaluated = false;
 
 }

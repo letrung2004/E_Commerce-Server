@@ -1,5 +1,6 @@
 package com.ecom.webapp.repository.impl;
 
+import com.cloudinary.Cloudinary;
 import com.ecom.webapp.model.User;
 import com.ecom.webapp.repository.UserRepository;
 import jakarta.persistence.criteria.CriteriaBuilder;

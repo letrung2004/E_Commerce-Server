@@ -7,6 +7,7 @@ import lombok.Getter;
 import lombok.Setter;
 
 import java.io.Serializable;
+import java.util.Set;
 
 @Getter
 @Setter
@@ -29,5 +30,8 @@ public class SubCart implements Serializable {
     @JoinColumn(name = "store_id", nullable = false)
     private Store store;
 
+    //Composition
+    @OneToMany(mappedBy = "subCart", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+    private Set<SubCartItem> subCartItems;
 
 }

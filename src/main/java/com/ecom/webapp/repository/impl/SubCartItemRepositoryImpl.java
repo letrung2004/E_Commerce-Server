@@ -29,7 +29,6 @@ public class SubCartItemRepositoryImpl implements SubCartItemRepository {
         return session.get(SubCartItem.class, subCartItemId);
     }
 
-    @Override
     public List<SubCartItem> getSubCartItemsBySubCartId(List<Integer> subCartIds) {
         if (subCartIds.isEmpty())
             return new ArrayList<>();
@@ -75,11 +74,11 @@ public class SubCartItemRepositoryImpl implements SubCartItemRepository {
         }
     }
 
-    @Override
-    public void delete(SubCartItem subCartItem) {
-        Session session = sessionFactory.getObject().getCurrentSession();
-        session.remove(subCartItem);
-    }
+//     @Override
+//     public void delete(SubCartItem subCartItem) {
+//         Session session = sessionFactory.getObject().getCurrentSession();
+//         session.remove(subCartItem);
+//     }
 
     @Override
     public int countBySubCartId(int subCartId) {
@@ -93,4 +92,11 @@ public class SubCartItemRepositoryImpl implements SubCartItemRepository {
 
         return session.createQuery(criteria).getSingleResult().intValue();
     }
+  
+    @Override
+    public void deleteSubCartItem(SubCartItem subCartItem) {
+        Session session = sessionFactory.getObject().getCurrentSession();
+        session.remove(subCartItem);
+    }
+
 }

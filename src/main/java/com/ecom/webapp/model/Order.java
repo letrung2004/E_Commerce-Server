@@ -5,6 +5,7 @@ import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.Getter;
 import lombok.Setter;
+import lombok.ToString;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
@@ -12,6 +13,7 @@ import java.util.Set;
 
 @Getter
 @Setter
+@ToString
 @Entity
 @Table(name = "`order`")
 public class Order implements Serializable {
@@ -40,9 +42,17 @@ public class Order implements Serializable {
     @Column(name = "delivery_status", length = 45)
     private String deliveryStatus;
 
-    //Xoa Order thi xoa luon OrderDetail cua no
+    @NotNull(message = "TRống nè")
+    @Size(max = 45)
+    @Column(name = "payment_method", length = 45)
+    private String paymentMethod;
+
+    //Composition
     @OneToMany(mappedBy = "order", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<OrderDetail> orderDetails;
+
+    @OneToOne(mappedBy = "order")
+    private Payment payment;
 
 
 }

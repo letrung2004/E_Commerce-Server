@@ -1,5 +1,6 @@
 package com.ecom.webapp.model.dto;
 
+import jakarta.persistence.Column;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
@@ -24,6 +25,11 @@ public class OrderDto {
 
 //    @NotBlank(message = "Không được bỏ trống mục này!")
 //    private BigDecimal total;
+
+
+    @Size(max = 45)
+    @NotBlank(message = "Không được bỏ trống mục này!")
+    private String paymentMethod;
 
     @NotNull
     private Set<Integer> subCartItemIds;
