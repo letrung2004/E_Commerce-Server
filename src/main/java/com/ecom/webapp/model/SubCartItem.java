@@ -1,5 +1,7 @@
 package com.ecom.webapp.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
@@ -13,10 +15,12 @@ import java.math.BigDecimal;
 @Setter
 @Entity
 @Table(name = "sub_cart_item")
+@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 public class SubCartItem implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id", nullable = false)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
     @NotNull

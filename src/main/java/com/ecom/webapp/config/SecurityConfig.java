@@ -68,8 +68,9 @@ public class SecurityConfig {
         http
                 .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/api/**").permitAll()
-                        .anyRequest().authenticated()
+                        .requestMatchers(HttpMethod.POST, "/api/products/add").permitAll()
+                        .requestMatchers(HttpMethod.POST,"/api/**").permitAll()
+                        .anyRequest().permitAll()
                 )
                 .formLogin(form -> form
                         .defaultSuccessUrl("/redirectByRole", true)
