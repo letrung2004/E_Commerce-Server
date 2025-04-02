@@ -25,6 +25,11 @@ public class Review implements Serializable {
 
     @NotNull
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name = "store_id", nullable = false)
+    private Store store;
+
+    @NotNull
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "product_id", nullable = false)
     private Product product;
 
@@ -37,5 +42,11 @@ public class Review implements Serializable {
 
     @Column(name = "rate", nullable = false)
     private int rate;
+
+    @PrePersist
+    protected void onCreate() {
+        this.dateCreated = Instant.now();
+    }
+
 
 }

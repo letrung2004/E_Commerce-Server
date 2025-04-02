@@ -52,15 +52,15 @@ public class CartRepositoryImpl implements CartRepository {
         cart.setItemsNumber(0);
         session.persist(cart);
         return cart;
-
+    }
     @Override
-    public void deleteCart(Cart cart) {
+    public void deleteCart(Cart cart){
         Session session = this.sessionFactory.getObject().getCurrentSession();
         session.remove(cart);
     }
 
     @Override
-    public void updateCart(Cart cart) {
+    public void updateCart(Cart cart){
         Session session = sessionFactory.getObject().getCurrentSession();
         session.merge(cart);
     }
