@@ -52,6 +52,7 @@ public class CartRepositoryImpl implements CartRepository {
         cart.setItemsNumber(0);
         session.persist(cart);
         return cart;
+    }
 
     @Override
     public void deleteCart(Cart cart) {
