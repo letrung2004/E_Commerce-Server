@@ -8,4 +8,5 @@ public interface CartService {
     CartDTO getCartDetails(int userId);
     CartDTO handelAddProductToCart(int userId, int productId);
     void handelRemoveProductFromCart(int userId, int productId);
+    boolean updateQuantity(int subCartId, int productId, int quantityChange);
 }

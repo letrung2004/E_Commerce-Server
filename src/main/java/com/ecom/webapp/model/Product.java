@@ -7,6 +7,7 @@ import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.Getter;
 import lombok.Setter;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
@@ -22,20 +23,15 @@ public class Product implements Serializable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
-    @Size(max = 255)
-    @NotNull
     @Column(name = "name", nullable = false)
     private String name;
 
-    @Size(max = 100)
-    @NotNull
     @Column(name = "manufacturer", nullable = false, length = 100)
     private String manufacturer;
 
     @Column(name = "price", precision = 10)
     private BigDecimal price;
 
-    @Size(max = 255)
     @Column(name = "description")
     private String description;
 
@@ -60,5 +56,8 @@ public class Product implements Serializable {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "store_id")
     private com.ecom.webapp.model.Store store;
+
+    @Transient
+    private MultipartFile file;
 
 }

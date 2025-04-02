@@ -1,20 +1,29 @@
 package com.ecom.webapp.service.impl;
 
+import com.cloudinary.Cloudinary;
+import com.cloudinary.utils.ObjectUtils;
 import com.ecom.webapp.model.Product;
 import com.ecom.webapp.model.dto.ProductDTO;
 import com.ecom.webapp.repository.ProductRepository;
 import com.ecom.webapp.service.ProductService;
+import jakarta.data.repository.By;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import java.io.IOException;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
 @Service
 public class ProductServiceImpl implements ProductService {
     @Autowired
     private ProductRepository productRepository;
+    @Autowired
+    private Cloudinary cloudinary;
 
 
     private ProductDTO convertProductToProductDTO(Product p) {
@@ -52,7 +61,17 @@ public class ProductServiceImpl implements ProductService {
 
     @Override
     public Product addOrUpdate(Product p) {
-        System.out.println(new Date());
+        if (p.getFile() != null && !p.getFile().isEmpty()) {
+            try {
+                Map res = cloudinary.uploader().upload(p.getFile().getBytes(),
+                        ObjectUtils.asMap("resource_type", "auto"));
+                p.setImage(res.get("secure_url").toString());
+            } catch (IOException ex) {
+                Logger.getLogger(ProductServiceImpl.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
+//        System.out.println(new Date());
+        p.setActive(Byte.valueOf("1"));
         p.setDateCreated(new Date());
         this.productRepository.addOrUpdate(p);
         return p;
