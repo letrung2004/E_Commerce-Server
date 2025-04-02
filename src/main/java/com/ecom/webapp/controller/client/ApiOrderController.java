@@ -2,15 +2,19 @@ package com.ecom.webapp.controller.client;
 
 import com.ecom.webapp.model.dto.ErrorResponse;
 import com.ecom.webapp.model.dto.OrderDto;
+import com.ecom.webapp.model.dto.OrderUpdateDto;
 import com.ecom.webapp.model.responseDto.OrderResponse;
 import com.ecom.webapp.service.OrderService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.*;
 
+import java.nio.file.attribute.UserPrincipal;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -31,13 +35,23 @@ public class ApiOrderController {
         return new ResponseEntity<>(errors, HttpStatus.BAD_REQUEST);
     }
 
-    @GetMapping("/orders/{username}")
-    public ResponseEntity<List<OrderResponse>> getOrders(@PathVariable(value = "username") String username) {
+    // get all orders by username
+    // @AuthenticationPrincipal UserDetails -> userDetails.getUsername()
+    @GetMapping("/orders")
+    public ResponseEntity<List<OrderResponse>> getOrders(@AuthenticationPrincipal UserDetails userDetails) {
+        String username = userDetails.getUsername();
         System.out.println(username);
         List<OrderResponse> orders = this.orderService.getOrdersByUsername(username);
         return new ResponseEntity<>(orders, HttpStatus.OK);
     }
 
+    // get an order by id
+    @GetMapping("/orders/{id}")
+    public ResponseEntity<OrderResponse> getOrder(@PathVariable(value = "id") String id) {
+        System.out.println(id);
+        int orderId = Integer.parseInt(id);
+        return new ResponseEntity<>(this.orderService.getOrdersById(orderId), HttpStatus.OK);
+    }
 
 
     @PostMapping("/place-order")
@@ -52,7 +66,18 @@ public class ApiOrderController {
         return new ResponseEntity<>(orderDto, HttpStatus.CREATED);
     }
 
+    @PatchMapping("/orders/update")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void updateOrder(@Valid @RequestBody OrderUpdateDto orderUpdateDto) {
+        System.out.println(orderUpdateDto);
+        this.orderService.updateOrder(orderUpdateDto);
+    }
 
 
+    @DeleteMapping("/orders/delete/{id}")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void deleteOrder(@PathVariable(value = "id") int id) {
+        this.orderService.deleteOrder(id);
+    }
 
 }

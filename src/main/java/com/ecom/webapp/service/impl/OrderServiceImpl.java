@@ -2,6 +2,7 @@ package com.ecom.webapp.service.impl;
 
 import com.ecom.webapp.model.*;
 import com.ecom.webapp.model.dto.OrderDto;
+import com.ecom.webapp.model.dto.OrderUpdateDto;
 import com.ecom.webapp.model.responseDto.OrderResponse;
 import com.ecom.webapp.repository.*;
 import com.ecom.webapp.service.OrderService;
@@ -47,8 +48,12 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
-    public Order getOrdersById(int id) {
-        return this.orderRepository.getOrderById(id);
+    public OrderResponse getOrdersById(int id) {
+        Order order = this.orderRepository.getOrderById(id);
+        if (order == null) {
+            throw new EntityNotFoundException("Order not found with id: " + id);
+        }
+        return new OrderResponse(order);
     }
 
     @Override
@@ -142,12 +147,22 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
-    public void updateOrder(Order order) {
-
+    public void updateOrder(OrderUpdateDto orderUpdateDto) {
+        Order order = this.orderRepository.getOrderById(orderUpdateDto.getId());
+        if (order == null) throw new EntityNotFoundException("Order not found with id: " + orderUpdateDto.getId());
+        order.setDeliveryStatus(orderUpdateDto.getStatus());
+        this.orderRepository.updateOrder(order);
     }
 
     @Override
-    public void deleteOrder(Order order) {
+    public void deleteOrder(int id) {
+        Order order = this.orderRepository.getOrderById(id);
+        if (order == null) throw new EntityNotFoundException("Order not found with id: " + id);
+        Payment payment = order.getPayment();
+        if (payment == null) throw new EntityNotFoundException("Payment not found");
+        payment.setOrder(null);
+        this.paymentRepository.updatePayment(payment);
+        this.orderRepository.deleteOrder(order);
 
     }
 }

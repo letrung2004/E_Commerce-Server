@@ -1,9 +1,11 @@
 package com.ecom.webapp.model;
 
+import com.ecom.webapp.model.dto.OrderDto;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 
@@ -15,6 +17,7 @@ import java.util.Set;
 @Setter
 @ToString
 @Entity
+@NoArgsConstructor
 @Table(name = "`order`")
 public class Order implements Serializable {
     @Id
@@ -42,7 +45,7 @@ public class Order implements Serializable {
     @Column(name = "delivery_status", length = 45)
     private String deliveryStatus;
 
-    @NotNull(message = "TRống nè")
+    @NotNull(message = "Phương thức thanh toán không được để trống")
     @Size(max = 45)
     @Column(name = "payment_method", length = 45)
     private String paymentMethod;

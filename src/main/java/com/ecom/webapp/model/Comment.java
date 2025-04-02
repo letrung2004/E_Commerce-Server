@@ -33,7 +33,7 @@ public class Comment implements Serializable {
     @JoinColumn(name = "parent_comment_id")
     private Comment commentParent;
 
-    @OneToMany(mappedBy = "comment", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "commentParent", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Comment> replies;
 
     @Column(name = "date_created")

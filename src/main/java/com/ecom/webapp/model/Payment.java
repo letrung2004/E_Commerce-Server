@@ -20,7 +20,7 @@ public class Payment implements Serializable {
     @Column(name = "id", nullable = false)
     private int id;
 
-    @NotNull
+
     @OneToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "order_id", nullable = false)
     private Order order;
