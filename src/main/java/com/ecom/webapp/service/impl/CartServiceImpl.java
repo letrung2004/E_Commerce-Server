@@ -1,0 +1,128 @@
+package com.ecom.webapp.service.impl;
+
+import com.ecom.webapp.model.*;
+import com.ecom.webapp.model.dto.CartDTO;
+import com.ecom.webapp.repository.*;
+import com.ecom.webapp.service.CartService;
+import com.ecom.webapp.service.UserService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
+
+@Service
+public class CartServiceImpl implements CartService {
+    @Autowired
+    private UserService userService;
+    @Autowired
+    private CartRepository cartRepository;
+    @Autowired
+    private SubCartRepository subCartRepository;
+    @Autowired
+    private SubCartItemRepository subCartItemRepository;
+    @Autowired
+    private ProductRepository productRepository;
+
+
+    @Override
+    @Transactional
+    public CartDTO getCartDetails(int userId) {
+        Cart cart = cartRepository.getCartByUserId(userId);
+
+        if (cart == null) {
+            return null;
+        }
+
+        List<SubCart> subCarts = subCartRepository.getSubCartsByCartId(cart.getId());
+        List<Integer> subCartIds = subCarts.stream().map(SubCart::getId).toList();
+        List<SubCartItem> subCartItems = subCartItemRepository.getSubCartItemsBySubCartId(subCartIds);
+
+        return new CartDTO(cart,subCarts,subCartItems);
+    }
+
+
+    @Override
+    public CartDTO handelAddProductToCart(int userId, int productId) {
+        User user = this.userService.getUserById(userId);
+        if (user == null) {
+            throw new RuntimeException("Khong tim thay nguoi dung");
+        }
+
+        Cart cart = cartRepository.getCartByUserId(userId);
+        if (cart == null) {
+             cart = this.cartRepository.createNewCart(userId);
+        }
+
+        Product product = this.productRepository.getProductById(productId);
+        if (product == null) {
+            throw new RuntimeException("Product not found");
+        }
+
+        int storeId = product.getStore().getId();
+
+        SubCart subCart = this.subCartRepository.getByCartIdAndStoreId(cart.getId(), storeId);
+        if (subCart == null) {
+            subCart = new SubCart();
+            subCart.setCart(cart);
+            subCart.setStore(product.getStore());
+            subCartRepository.save(subCart);
+        }
+
+        SubCartItem subCartItem = this.subCartItemRepository.getBySubCartIdAndProductId(subCart.getId(), productId);
+        if (subCartItem == null) {
+            subCartItem = new SubCartItem();
+            subCartItem.setSubCart(subCart);
+            subCartItem.setProduct(product);
+            subCartItem.setQuantity(1);
+            subCartItem.setUnitPrice(product.getPrice());
+            subCartItemRepository.save(subCartItem);
+        } else {
+            subCartItem.setQuantity(subCartItem.getQuantity() + 1);
+            subCartItemRepository.save(subCartItem);
+        }
+
+
+        System.out.println("SERVICE - subcart item: " + subCartItem.getId() );
+        cart.setItemsNumber(cart.getItemsNumber() + 1);
+        this.cartRepository.updateCart(cart);
+
+
+        return new CartDTO(cart, List.of(subCart), List.of(subCartItem));
+    }
+
+    @Override
+    public void handelRemoveProductFromCart(int userId, int productId) {
+        User user = this.userService.getUserById(userId);
+        if (user == null) {
+            throw new RuntimeException("User not found");
+        }
+        Cart cart = cartRepository.getCartByUserId(userId);
+        if (cart == null) {
+            throw new RuntimeException("Cart not found");
+        }
+        Product product = this.productRepository.getProductById(productId);
+        if (product == null) {
+            throw new RuntimeException("Product not found");
+        }
+        int storeId = product.getStore().getId();
+        SubCart subCart = this.subCartRepository.getByCartIdAndStoreId(cart.getId(), storeId);
+        SubCartItem subCartItem = this.subCartItemRepository.getBySubCartIdAndProductId(subCart.getId(), productId);
+        if (subCartItem == null) throw new RuntimeException("Product not in cart");
+
+        //xoa Cart, SubCart, SubCartItem
+        this.subCartItemRepository.deleteSubCartItem(subCartItem);
+
+        int subCartItemCount = this.subCartItemRepository.countBySubCartId(subCart.getId());
+        if (subCartItemCount == 0) {
+            this.subCartRepository.deleteSubCart(subCart);
+        }
+
+        cart.setItemsNumber(cart.getItemsNumber() - subCartItem.getQuantity());
+        if (cart.getItemsNumber() == 0) {
+            this.cartRepository.deleteCart(cart);
+        } else {
+            this.cartRepository.updateCart(cart);
+        }
+    }
+}

@@ -1,6 +1,9 @@
 package com.ecom.webapp.model.dto;
 
+import com.ecom.webapp.model.Product;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.math.BigDecimal;
@@ -8,6 +11,7 @@ import java.util.Date;
 
 @Getter
 @Setter
+@NoArgsConstructor
 public class ProductDTO {
     private Integer id;
     private String name;
@@ -38,7 +42,9 @@ public class ProductDTO {
         this.storeId = storeId;
     }
 
-    public ProductDTO() {
-
+    public ProductDTO(Product product) {
+        this.id = product.getId();
+        this.name = product.getName();
+        this.image = product.getImage();
     }
 }
