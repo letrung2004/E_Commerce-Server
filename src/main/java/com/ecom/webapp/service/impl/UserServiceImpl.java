@@ -121,17 +121,17 @@ public class UserServiceImpl implements UserService {
             throw new EntityNotFoundException("User not found with id " + id);
         }
 
+        Store store = user.getStore();
         if (!user.isStoreActive()) {
-            Store store = user.getStore();
             if(store != null) this.storeRepository.deleteStore(store);
         } else {
-            Store store = user.getStore();
             if(store != null){
                 store.setOwner(null);
                 this.storeRepository.updateStore(store);
             }
 
         }
+
         this.userRepository.delete(user);
     }
 
