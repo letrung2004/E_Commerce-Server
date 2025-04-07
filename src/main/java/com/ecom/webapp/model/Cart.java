@@ -34,7 +34,7 @@ public class Cart implements Serializable {
     public Integer getUserId() {
         return user != null ? user.getId() : null;
     }
-    //Composition
+    //Composition aaaaaa
     @OneToMany(mappedBy = "cart", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<SubCart> subCarts;
 }
