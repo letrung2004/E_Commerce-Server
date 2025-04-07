@@ -135,6 +135,11 @@ public class UserServiceImpl implements UserService {
         this.userRepository.delete(user);
     }
 
+    @Override
+    public boolean authenticate(String username, String password) {
+        return this.userRepository.authenticate(username, password);
+    }
+
     public void acceptStoreActivation(int userId) {
         User user = this.userRepository.getById(userId);
         if (user == null) {
