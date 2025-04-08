@@ -1,6 +1,8 @@
 package com.ecom.webapp.config;
 
 
+import com.ecom.webapp.filters.JwtFilter;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
@@ -15,23 +17,21 @@ import org.springframework.security.config.annotation.web.configurers.AbstractHt
 import org.springframework.security.config.annotation.web.configurers.LogoutConfigurer;
 
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.web.servlet.handler.HandlerMappingIntrospector;
 
 
 @Configuration
 @EnableWebSecurity
 @EnableMethodSecurity
-@ComponentScan(basePackages = {
-        "com.ecom.webapp.controller.admin",
-        "com.ecom.webapp.controller.client",
-        "com.ecom.webapp.service",
-        "com.ecom.webapp.repository",
-})
+@ComponentScan(basePackages = "com.ecom.webapp")
 public class SecurityConfig {
+    @Autowired
+    private JwtFilter jwtFilter;
+
     @Bean
-    public PasswordEncoder passwordEncoder() {
+    public BCryptPasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
     }
 
@@ -47,38 +47,23 @@ public class SecurityConfig {
     }
 
 
-//    @Bean
-//    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-//        http
-//                .authorizeHttpRequests(auth -> auth
-//                        .anyRequest().authenticated()
-//                )
-//                .formLogin(form -> form
-//                        .defaultSuccessUrl("/admin", true)
-//                )
-//                .logout(LogoutConfigurer::permitAll);
-//
-//        return http.build();
-//
-//
-//    }
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
                 .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/api/**").permitAll()
+                        .requestMatchers("/api/auth/**").permitAll()
+                        .requestMatchers("/api/**").authenticated()
                         .anyRequest().authenticated()
                 )
                 .formLogin(form -> form
                         .defaultSuccessUrl("/redirectByRole", true)
                 )
                 .logout(LogoutConfigurer::permitAll);
+        http.addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
 
         return http.build();
-
-
     }
 }
 

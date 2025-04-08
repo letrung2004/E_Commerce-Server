@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class CartServiceImpl implements CartService {
@@ -124,5 +125,29 @@ public class CartServiceImpl implements CartService {
         } else {
             this.cartRepository.updateCart(cart);
         }
+    }
+
+    @Override
+    public boolean updateQuantity(int subCartId, int productId, int quantityChange) {
+        Optional<SubCart> optionalSubCart = Optional.ofNullable(subCartRepository.getById(subCartId));
+        if (optionalSubCart.isPresent()) {
+            SubCart subCart = optionalSubCart.get();
+
+            for (SubCartItem item : subCart.getSubCartItems()) {
+                if (item.getProduct().getId().equals(productId)) {
+                    int newQuantity = item.getQuantity() + quantityChange;
+
+                    if (newQuantity > 0) {
+                        item.setQuantity(newQuantity);
+                    } else {
+                        subCart.getSubCartItems().remove(item);
+                    }
+
+                    subCartRepository.save(subCart);
+                    return true;
+                }
+            }
+        }
+        return false;
     }
 }

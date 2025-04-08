@@ -8,6 +8,6 @@ public interface SubCartRepository {
     List<SubCart> getSubCartsByCartId(int cartId);
     SubCart getByCartIdAndStoreId(int cartId, int storeId);
     void save(SubCart subCart);
-//     void delete(SubCart subCart);
+    SubCart getById(int subCartId);
     void deleteSubCart(SubCart subCart);
 }

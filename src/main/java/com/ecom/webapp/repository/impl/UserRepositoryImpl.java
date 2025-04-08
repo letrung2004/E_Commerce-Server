@@ -12,6 +12,7 @@ import org.hibernate.query.Query;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.orm.hibernate5.LocalSessionFactoryBean;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -20,13 +21,14 @@ import java.util.List;
 @Repository
 @Transactional
 public class UserRepositoryImpl implements UserRepository {
-
     @Autowired
     private LocalSessionFactoryBean sessionFactory;
 
     @Autowired
     private SessionFactory sf;
 
+    @Autowired
+    private BCryptPasswordEncoder passwordEncoder;
 
     @Override
     public List<User> getUsers() {
@@ -60,6 +62,12 @@ public class UserRepositoryImpl implements UserRepository {
     public void delete(User user) {
         Session session = sessionFactory.getObject().getCurrentSession();
         session.remove(session.get(User.class, user.getId()));
+    }
+
+    @Override
+    public boolean authenticate(String username, String password) {
+        User user = getUserByUsername(username);
+        return this.passwordEncoder.matches(password, user.getPassword());
     }
 
     @Override

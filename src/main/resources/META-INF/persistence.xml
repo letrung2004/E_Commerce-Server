@@ -5,5 +5,7 @@
              version="3.2">
   <persistence-unit name="default">
 
+      <class>com.ecom.webapp.model.Comment</class>
+      <class>com.ecom.webapp.model.Review</class>
   </persistence-unit>
 </persistence>

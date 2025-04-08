@@ -14,4 +14,5 @@ public interface UserService extends UserDetailsService {
     void update(UserDto userDto);
     void acceptStoreActivation(int userId);
     void deleteUser(Integer id);
+    boolean authenticate(String username, String password);
 }

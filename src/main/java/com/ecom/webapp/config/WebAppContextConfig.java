@@ -11,11 +11,7 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 @Configuration
 @EnableWebMvc
 @EnableTransactionManagement
-@ComponentScan(basePackages = {
-        "com.ecom.webapp.controller",
-        "com.ecom.webapp.service",
-        "com.ecom.webapp.repository",
-})
+@ComponentScan(basePackages = "com.ecom.webapp")
 public class WebAppContextConfig implements WebMvcConfigurer {
     public void configureDefaultServletHandling(DefaultServletHandlerConfigurer configurer) {
         configurer.enable();

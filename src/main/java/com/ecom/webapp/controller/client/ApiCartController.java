@@ -54,4 +54,18 @@ public class ApiCartController {
     ) {
        this.cartService.handelRemoveProductFromCart(userId, productId);
     }
+
+    @PatchMapping("/update-quantity")
+    public ResponseEntity<String> updateQuantity(
+            @RequestParam int subCartId,
+            @RequestParam int productId,
+            @RequestParam int quantityChange) {
+        boolean success = cartService.updateQuantity(subCartId, productId, quantityChange);
+
+        if (success) {
+            return ResponseEntity.ok("Cập nhật thành công");
+        }
+        return ResponseEntity.badRequest().body("Cập nhật thất bại");
+    }
+
 }

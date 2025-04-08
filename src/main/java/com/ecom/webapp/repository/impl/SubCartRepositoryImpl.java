@@ -64,11 +64,16 @@ public class SubCartRepositoryImpl implements SubCartRepository {
         }
     }
 
-//     @Override
-//     public void delete(SubCart subCart) {
-//         Session session = sessionFactory.getObject().getCurrentSession();
-//         session.remove(subCart);
-//     }
+    @Override
+    public SubCart getById(int subCartId) {
+        Session session = sessionFactory.getObject().getCurrentSession();
+        CriteriaBuilder builder = session.getCriteriaBuilder();
+        CriteriaQuery<SubCart> criteria = builder.createQuery(SubCart.class);
+        Root<SubCart> root = criteria.from(SubCart.class);
+        criteria.select(root).where(builder.equal(root.get("id"), subCartId));
+        return session.createQuery(criteria).getSingleResult();
+    }
+
 
     @Override
     public void deleteSubCart(SubCart subCart) {
