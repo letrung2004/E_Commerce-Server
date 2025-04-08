@@ -26,7 +26,7 @@ public class ReviewRepositoryImpl implements ReviewRepository {
     private LocalSessionFactoryBean sessionFactory;
 
     @Override
-    public List<Review> getReviews(Store store, String productId) {
+    public List<Review> getReviews(Store store, Integer productId) {
         Session session = sessionFactory.getObject().getCurrentSession();
         CriteriaBuilder builder = session.getCriteriaBuilder();
         CriteriaQuery<Review> criteria = builder.createQuery(Review.class);
@@ -34,7 +34,17 @@ public class ReviewRepositoryImpl implements ReviewRepository {
         criteria.select(root);
 
 
-        return List.of();
+
+        List<Predicate> predicates = new ArrayList<Predicate>();
+        if (productId != null) {
+            Predicate p1 = builder.equal(root.get("product").get("id"), productId);
+            predicates.add(p1);
+        }
+        Predicate p = builder.equal(root.get("store").get("id"), store.getId());
+        predicates.add(p);
+        criteria.where(predicates.toArray(Predicate[]::new));
+
+        return session.createQuery(criteria).getResultList();
     }
 
     @Override

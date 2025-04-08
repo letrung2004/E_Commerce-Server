@@ -7,7 +7,7 @@ import java.util.List;
 import java.util.Map;
 
 public interface ReviewRepository {
-    List<Review> getReviews(Store store, String productId);
+    List<Review> getReviews(Store store, Integer productId);
     void addReview(Review review);
     void updateReview(Review review);
     void deleteReview(Review review);

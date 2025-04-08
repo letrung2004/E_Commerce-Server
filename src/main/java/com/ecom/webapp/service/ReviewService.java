@@ -1,13 +1,12 @@
 package com.ecom.webapp.service;
 
 import com.ecom.webapp.model.Review;
-import com.ecom.webapp.model.responseDto.ReviewRespone;
+import com.ecom.webapp.model.responseDto.ReviewResponse;
 
 import java.util.List;
-import java.util.Map;
 
 public interface ReviewService {
-    List<ReviewRespone> getReviews(int storeId, String productId);
+    List<ReviewResponse> getReviews(int storeId, Integer productId);
     void addReview(Review review);
     void updateReview(Review review);
     void deleteReview(Review review);

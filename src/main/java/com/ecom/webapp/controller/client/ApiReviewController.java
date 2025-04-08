@@ -1,8 +1,7 @@
 package com.ecom.webapp.controller.client;
 
-import com.ecom.webapp.model.responseDto.ReviewRespone;
+import com.ecom.webapp.model.responseDto.ReviewResponse;
 import com.ecom.webapp.repository.CommentRepository;
-import com.ecom.webapp.repository.ReviewRepository;
 import com.ecom.webapp.service.ReviewService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -10,7 +9,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.Map;
 
 @RestController
 @RequestMapping("/api")
@@ -30,18 +28,33 @@ public class ApiReviewController {
 
      */
     @GetMapping("/reviews/{storeId}")
-    public ResponseEntity<List<ReviewRespone>> getAllReviews(
+    public ResponseEntity<List<ReviewResponse>> getAllReviews(
             @PathVariable(value = "storeId") String storeId,
-            @RequestParam String productId) {
-        if (storeId == null || storeId.isEmpty() ) {
-            return new ResponseEntity<>(List.of(), HttpStatus.BAD_REQUEST);
+            @RequestParam(value = "productId", required = false, defaultValue = "") String productId
+    ) {
+        System.out.println("Product Id: " + productId);
+        System.out.println("Store Id: " + storeId);
+
+        int storeID;
+        try {
+            storeID = Integer.parseInt(storeId);
+        } catch (NumberFormatException e) {
+            return ResponseEntity.badRequest().body(List.of());
         }
 
-        int storeID = Integer.parseInt(storeId);
+        Integer prodID = null;
+        if (productId != null && !productId.isEmpty()) {
+            try {
+                prodID = Integer.parseInt(productId);
+            } catch (NumberFormatException e) {
+                return ResponseEntity.badRequest().body(List.of()); // Trả về HTTP 400 nếu productId không hợp lệ
+            }
+        }
 
-        // int check... if (...) {}
 
-        return new ResponseEntity<>(this.reviewService.getReviews(storeID, productId), HttpStatus.OK);
+        List<ReviewResponse> reviews = this.reviewService.getReviews(storeID, prodID);
+        return new ResponseEntity<>(reviews, HttpStatus.OK);
     }
+
 
 }

@@ -1,7 +1,6 @@
 package com.ecom.webapp.controller.client;
 
 import com.ecom.webapp.model.dto.StoreDto;
-import com.ecom.webapp.model.responseDto.ReviewRespone;
 import com.ecom.webapp.repository.CommentRepository;
 import com.ecom.webapp.repository.ReviewRepository;
 import com.ecom.webapp.service.StoreService;
@@ -13,7 +12,6 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 @RestController
