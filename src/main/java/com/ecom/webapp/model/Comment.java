@@ -5,6 +5,7 @@ import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.Getter;
 import lombok.Setter;
+import lombok.ToString;
 
 import java.io.Serializable;
 import java.time.Instant;
@@ -41,5 +42,10 @@ public class Comment implements Serializable {
 
     @OneToOne(mappedBy = "comment")
     private Review review;
+
+    @PrePersist
+    protected void onCreate() {
+        this.dateCreated = Instant.now();
+    }
 
 }

@@ -1,10 +1,9 @@
 package com.ecom.webapp.service.impl;
 
-import com.ecom.webapp.model.Review;
-import com.ecom.webapp.model.Store;
+import com.ecom.webapp.model.*;
+import com.ecom.webapp.model.dto.ReviewDto;
 import com.ecom.webapp.model.responseDto.ReviewResponse;
-import com.ecom.webapp.repository.ReviewRepository;
-import com.ecom.webapp.repository.StoreRepository;
+import com.ecom.webapp.repository.*;
 import com.ecom.webapp.service.ReviewService;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,6 +21,12 @@ public class ReviewServiceImpl implements ReviewService {
     private StoreRepository storeRepository;
     @Autowired
     private ReviewRepository reviewRepository;
+    @Autowired
+    private UserRepository userRepository;
+    @Autowired
+    private ProductRepository productRepository;
+    @Autowired
+    private CommentRepository commentRepository;
 
     @Override
     public List<ReviewResponse> getReviews(int storeId, Integer productId) {
@@ -30,11 +35,41 @@ public class ReviewServiceImpl implements ReviewService {
             throw new EntityNotFoundException("Store not found with id " + storeId);
         }
         List<Review> reviews = this.reviewRepository.getReviews(store, productId);
-       return reviews.stream().map(ReviewResponse::new).toList();
+        return reviews.stream().map(ReviewResponse::new).toList();
     }
 
     @Override
-    public void addReview(Review review) {
+    public void addReview(ReviewDto reviewDto) {
+//                "userId": 3,
+//                "storeId": 8,
+//                "productId": 1,
+//                "commentId": 1,
+//                "dateCreated": null,
+//                "rate": 5
+        User user = this.userRepository.getUserByUsername(reviewDto.getUsername());
+        if (user == null) {
+            throw new EntityNotFoundException("User not found with id " + reviewDto.getUserId());
+        }
+        Product product = this.productRepository.getProductById(reviewDto.getProductId());
+        if (product == null) {
+            throw new EntityNotFoundException("Product not found with id " + reviewDto.getProductId());
+        }
+
+        Review review = new Review();
+        review.setUser(user);
+        review.setProduct(product);
+        review.setStore(product.getStore());
+        review.setRate(reviewDto.getRate());
+
+        if (reviewDto.getComment() != null) {
+            Comment comment = new Comment();
+            comment.setContent(reviewDto.getComment());
+            comment.setUser(user);
+            this.commentRepository.createComment(comment);
+            review.setComment(comment);
+        }
+
+        this.reviewRepository.addReview(review);
 
     }
 

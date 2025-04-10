@@ -32,10 +32,6 @@ public class Review {
     @JoinColumn(name = "product_id", nullable = false)
     private Product product;
 
-    @NotNull
-    @ManyToOne(fetch = FetchType.LAZY, optional = false)
-    @JoinColumn(name = "store_id", nullable = false)
-    private Store store;
 
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "comment_id")
