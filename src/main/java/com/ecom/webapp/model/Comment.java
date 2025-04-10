@@ -5,6 +5,7 @@ import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.Getter;
 import lombok.Setter;
+import lombok.ToString;
 
 import java.io.Serializable;
 import java.time.Instant;
@@ -18,7 +19,7 @@ public class Comment implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id", nullable = false)
-    private Integer id;
+    private int id;
 
     @NotNull
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
@@ -39,7 +40,12 @@ public class Comment implements Serializable {
     @Column(name = "date_created")
     private Instant dateCreated;
 
-//    @OneToOne(mappedBy = "comment")
-//    private Review review;
+    @OneToOne(mappedBy = "comment")
+    private Review review;
+
+    @PrePersist
+    protected void onCreate() {
+        this.dateCreated = Instant.now();
+    }
 
 }

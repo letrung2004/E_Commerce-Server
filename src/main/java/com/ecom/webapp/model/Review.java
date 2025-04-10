@@ -24,13 +24,14 @@ public class Review {
 
     @NotNull
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
-    @JoinColumn(name = "product_id", nullable = false)
-    private Product product;
+    @JoinColumn(name = "store_id", nullable = false)
+    private Store store;
 
     @NotNull
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
-    @JoinColumn(name = "store_id", nullable = false)
-    private Store store;
+    @JoinColumn(name = "product_id", nullable = false)
+    private Product product;
+
 
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "comment_id")
@@ -41,5 +42,11 @@ public class Review {
 
     @Column(name = "rate")
     private Integer rate;
+
+    @PrePersist
+    protected void onCreate() {
+        this.dateCreated = Instant.now();
+    }
+
 
 }

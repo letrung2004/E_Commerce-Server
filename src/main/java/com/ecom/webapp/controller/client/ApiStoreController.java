@@ -1,7 +1,8 @@
 package com.ecom.webapp.controller.client;
 
-import com.ecom.webapp.model.Store;
 import com.ecom.webapp.model.dto.StoreDto;
+import com.ecom.webapp.repository.CommentRepository;
+import com.ecom.webapp.repository.ReviewRepository;
 import com.ecom.webapp.service.StoreService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,10 +17,14 @@ import java.util.Map;
 @RestController
 @RequestMapping("/api")
 @CrossOrigin
-public class ApiHomeController {
+public class ApiStoreController {
 
     @Autowired
     private StoreService storeService;
+    @Autowired
+    private ReviewRepository reviewRepository;
+    @Autowired
+    private CommentRepository commentRepository;
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<Map<String, String>> handleValidationExceptions(MethodArgumentNotValidException ex) {
@@ -37,4 +42,7 @@ public class ApiHomeController {
         this.storeService.createStore(storeDto);
         return new ResponseEntity<>(storeDto, HttpStatus.CREATED);
     }
+
+
+
 }
