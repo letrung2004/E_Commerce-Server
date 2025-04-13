@@ -15,14 +15,15 @@ public class DispatcherServletInit extends AbstractAnnotationConfigDispatcherSer
                 HibernateConfig.class,
                 SecurityConfig.class,
                 MailConfig.class,
-                CloudinaryConfig.class,
+                CloudinaryConfig.class
         };
     }
 
     @Override
     protected Class<?>[] getServletConfigClasses() {
         return new Class[] {
-                WebAppContextConfig.class
+                WebAppContextConfig.class,
+                WebSocketConfig.class
         };
     }
 
