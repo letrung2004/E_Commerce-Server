@@ -5,6 +5,7 @@ import com.cloudinary.utils.ObjectUtils;
 import com.ecom.webapp.model.Store;
 import com.ecom.webapp.model.User;
 import com.ecom.webapp.model.dto.UserDto;
+import com.ecom.webapp.model.responseDto.UserResponse;
 import com.ecom.webapp.repository.StoreRepository;
 import com.ecom.webapp.repository.UserRepository;
 import com.ecom.webapp.service.UserService;
@@ -43,6 +44,13 @@ public class UserServiceImpl implements UserService {
     public User getUserByUsername(String username) {
         return this.userRepository.getUserByUsername(username);
     }
+
+    @Override
+    public UserResponse getUserResponseByUsername(String username) {
+        User user = this.getUserByUsername(username);
+        return new UserResponse(user);
+    }
+
 
     @Override
     @Transactional
