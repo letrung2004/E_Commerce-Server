@@ -143,6 +143,7 @@
             <artifactId>nimbus-jose-jwt</artifactId>
             <version>10.1</version>
         </dependency>
+
         <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-websocket</artifactId>

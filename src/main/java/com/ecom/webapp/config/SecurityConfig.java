@@ -62,7 +62,7 @@ public class SecurityConfig {
                         .requestMatchers("/api/auth/**").permitAll()
                         .requestMatchers("/api/**").permitAll()
                         .requestMatchers("/ws/**").permitAll()
-                        .requestMatchers("/api/chat/history/**").permitAll()    
+                        .requestMatchers("/api/chat/history/**").permitAll()
                         .anyRequest().authenticated()
                 )
                 .formLogin(form -> form
@@ -91,5 +91,6 @@ public class SecurityConfig {
 
         return source;
     }
+
 }
 
