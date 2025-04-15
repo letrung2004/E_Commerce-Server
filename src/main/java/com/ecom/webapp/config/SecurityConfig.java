@@ -59,10 +59,8 @@ public class SecurityConfig {
                 .cors(cors -> cors.configurationSource(corsConfigurationSource()))
                 .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/api/auth/**").permitAll()
-                        .requestMatchers("/api/**").permitAll()
-                        .requestMatchers("/ws/**").permitAll()
-                        .requestMatchers("/api/chat/history/**").permitAll()    
+                        .requestMatchers("/oauth2/**", "/login/**", "/api/auth/**").permitAll()
+                        .requestMatchers("/api/**", "/ws/**", "/api/chat/history/**").permitAll()
                         .anyRequest().authenticated()
                 )
                 .formLogin(form -> form
