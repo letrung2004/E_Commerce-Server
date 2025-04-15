@@ -19,12 +19,15 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 @Service("userDetailsService")
 public class UserServiceImpl implements UserService {
@@ -146,6 +149,34 @@ public class UserServiceImpl implements UserService {
     @Override
     public boolean authenticate(String username, String password) {
         return this.userRepository.authenticate(username, password);
+    }
+
+    @Override
+    public User registerUser(Map<String, String> params, MultipartFile avatar) {
+        User u = new User();
+        u.setFullName(params.get("fullName"));
+        u.setUsername(params.get("username"));
+        u.setPassword(passwordEncoder.encode(params.get("password")));
+        u.setEmail(params.get("email"));
+        u.setPhoneNumber(params.get("phoneNumber"));
+        u.setRole("ROLE_CUSTOMER");
+        u.setActive(true);
+        if (avatar != null &&  !avatar.isEmpty()) {
+            try {
+                u.setAvatar(
+                        cloudinary.uploader().upload(avatar.getBytes(),
+                                ObjectUtils.asMap("resource_type", "auto")
+                        ).get("secure_url").toString()
+                );
+            } catch (IOException ex) {
+                throw new RuntimeException(ex.getMessage());
+            }
+        }
+        else {
+            u.setAvatar(null);
+        }
+        this.userRepository.save(u);
+        return u;
     }
 
     public void acceptStoreActivation(int userId) {
