@@ -6,13 +6,14 @@ import jakarta.validation.constraints.Size;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.io.Serializable;
 import java.time.Instant;
 
 @Getter
 @Setter
 @Entity
 @Table(name = "chat_message")
-public class ChatMessage {
+public class ChatMessage implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id", nullable = false)
@@ -35,6 +36,7 @@ public class ChatMessage {
     @Lob
     @Column(name = "content", nullable = false)
     private String content;
+
 
 
     @PrePersist
