@@ -3,6 +3,7 @@ package com.ecom.webapp.repository.impl;
 import com.cloudinary.Cloudinary;
 import com.ecom.webapp.model.User;
 import com.ecom.webapp.repository.UserRepository;
+import jakarta.persistence.NoResultException;
 import jakarta.persistence.criteria.CriteriaBuilder;
 import jakarta.persistence.criteria.CriteriaQuery;
 import jakarta.persistence.criteria.Root;
@@ -83,6 +84,38 @@ public class UserRepositoryImpl implements UserRepository {
             return null;
         }
         return results.get(0);
+    }
+
+
+    public boolean existUsername(String username) {
+        try {
+            User user = getUserByUsername(username);
+            return user != null;
+        } catch (NoResultException e) {
+            return false;
+        }
+    }
+
+    @Override
+    public boolean existEmail(String email) {
+        try (Session session = this.sf.openSession()) {
+            Query<User> query = session.createQuery("from User where email = :e", User.class);
+            query.setParameter("e", email);
+            User user = query.uniqueResult();
+            return user != null;
+        }
+    }
+
+    @Override
+    public User findByEmail(String email) {
+        try (Session session = this.sf.openSession()) {
+            Query query = session.createQuery("from User where email=:e");
+            query.setParameter("e", email);
+            return (User) query.getSingleResult();
+        }
+        catch (NoResultException e) {
+            return null;
+        }
     }
 
     @Override

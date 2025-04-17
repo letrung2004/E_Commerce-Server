@@ -13,4 +13,7 @@ public interface UserRepository {
     void delete(User user);
     boolean authenticate(String username, String password);
     User getUserByUsername2(String username);
+    boolean existUsername(String username);
+    boolean existEmail(String email);
+    User findByEmail(String email);
 }
