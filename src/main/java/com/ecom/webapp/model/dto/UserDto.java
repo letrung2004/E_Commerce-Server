@@ -21,6 +21,8 @@ public class UserDto {
     @NotBlank(message = "Không được bỏ trống mục này!")
     private String fullName;
 
+    private String username;
+
     @Size(max = 100)
     @Email(message = "Email không hợp lệ", regexp = "^[a-zA-Z0-9_!#$%&'*+/=?`{|}~^.-]+@[a-zA-Z0-9.-]+$")
     private String email;

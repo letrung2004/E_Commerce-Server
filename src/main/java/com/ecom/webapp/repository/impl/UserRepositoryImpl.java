@@ -92,6 +92,18 @@ public class UserRepositoryImpl implements UserRepository {
     }
 
     @Override
+    public User findByEmail(String email) {
+        try (Session session = this.sf.openSession()) {
+            Query query = session.createQuery("from User where email=:e");
+            query.setParameter("e", email);
+            return (User) query.getSingleResult();
+        }
+        catch (NoResultException e) {
+            return null;
+        }
+    }
+
+    @Override
     public User getUserByUsername(String username) {
         try (Session session = this.sf.openSession()) {
             Query query = session.createQuery("from User where username=:u");
