@@ -1,4 +1,5 @@
 package com.ecom.webapp.model.responseDto;
+import com.ecom.webapp.model.Store;
 import com.ecom.webapp.model.User;
 import lombok.Data;
 
@@ -15,6 +16,7 @@ public class UserResponse {
     private boolean gender;
     private LocalDate dateOfBirth;
     private String role;
+    private Integer storeId;
 
     public UserResponse(User user) {
         this.id = user.getId();
@@ -26,5 +28,10 @@ public class UserResponse {
         this.gender = user.isGender();
         this.dateOfBirth = user.getDateOfBirth();
         this.role = user.getRole();
+        if (user.getStore() != null) {
+            this.storeId = user.getStore().getId();
+        } else {
+            this.storeId = null;
+        }
     }
 }

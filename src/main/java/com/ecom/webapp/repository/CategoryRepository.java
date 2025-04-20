@@ -9,4 +9,5 @@ public interface CategoryRepository {
     void addOrUpdateCategory(Category category);
     void deleteCategory(int id);
     Category getCategoryById(int id);
+    List<Category> getCategoriesByStoreId(int storeId);
 }
