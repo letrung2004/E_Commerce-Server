@@ -33,13 +33,13 @@ public class ChatMessageRepositoryImpl implements ChatMessageRepository {
         // In a private chatroom, both chat users are sender or recipient
         // sender -> recipient
         Predicate condition1 = builder.and(
-                builder.equal(chatMessageRoot.get("sender"), sender),
-                builder.equal(chatMessageRoot.get("recipient"), recipient)
+                builder.equal(chatMessageRoot.get("senderUsername"), sender.getUsername()),
+                builder.equal(chatMessageRoot.get("recipientUsername"), recipient.getUsername())
         );
         // sender -> recipient
         Predicate condition2 = builder.and(
-                builder.equal(chatMessageRoot.get("sender"), recipient),
-                builder.equal(chatMessageRoot.get("recipient"), sender)
+                builder.equal(chatMessageRoot.get("senderUsername"), recipient.getUsername()),
+                builder.equal(chatMessageRoot.get("recipientUsername"), sender.getUsername())
         );
 
         Predicate finalPredicate = builder.or(condition1, condition2);

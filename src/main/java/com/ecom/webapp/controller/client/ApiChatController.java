@@ -13,7 +13,7 @@ import java.security.Principal;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/chat")
+@RequestMapping("/api/secure/chat")
 public class ApiChatController {
     @Autowired
     private ChatMessageService chatMessageService;

@@ -2,7 +2,9 @@ package com.ecom.webapp.model.dto;
 
 
 import jakarta.persistence.Column;
+import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.*;
 
@@ -23,6 +25,14 @@ public class StoreDto {
 
     @Size(max = 200, message = "Mô tả không được quá 200 ký tự!")
     private String description;
+
+    @Size(max = 12, message = "Số điện thoại không hợp lệ")
+    @NotBlank(message = "Không được bỏ trống mục này!")
+    private String phoneNumber;
+
+    @NotNull(message = "Address ID must not be null")
+    @Min(value = 1, message = "Address ID must be greater than 0")
+    private int addressId;
 
     @NotBlank(message = "Id người dùng không được bỏ trống!")
     private String username;

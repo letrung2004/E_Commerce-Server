@@ -4,6 +4,7 @@ import com.ecom.webapp.model.User;
 import com.ecom.webapp.model.dto.UserDto;
 import com.ecom.webapp.service.StoreService;
 import com.ecom.webapp.service.UserService;
+import com.ecom.webapp.service.impl.MailService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -26,10 +27,12 @@ public class StaffController {
     @Autowired
     private StoreService storeService;
 
+
     @GetMapping("/staff")
     public String staffPage(Model model) {
         return "staff/dashboard";
     }
+
 
 
 
@@ -54,6 +57,8 @@ public class StaffController {
 
         int ownerId = Integer.parseInt(userId.toString());
         this.userService.acceptStoreActivation(ownerId);
+
+
 
         return "redirect:/staff/approve-stores";
     }

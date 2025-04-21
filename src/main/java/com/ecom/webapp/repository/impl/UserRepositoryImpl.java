@@ -72,6 +72,21 @@ public class UserRepositoryImpl implements UserRepository {
     }
 
     @Override
+    public User getUserByUsername2(String username) {
+        Session session = sessionFactory.getObject().getCurrentSession();
+        CriteriaBuilder builder = session.getCriteriaBuilder();
+        CriteriaQuery<User> criteria = builder.createQuery(User.class);
+        Root<User> root = criteria.from(User.class);
+        criteria.select(root);
+        criteria.where(builder.equal(root.get("username"), username));
+        List<User> results = session.createQuery(criteria).getResultList();
+        if (results.isEmpty()) {
+            return null;
+        }
+        return results.get(0);
+    }
+
+
     public boolean existUsername(String username) {
         try {
             User user = getUserByUsername(username);
