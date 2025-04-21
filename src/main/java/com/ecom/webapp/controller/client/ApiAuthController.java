@@ -87,20 +87,14 @@ public class ApiAuthController {
     @GetMapping("/me")
     public ResponseEntity<?> getCurrentUser(@RequestHeader("Authorization") String authHeader) {
         try {
-            System.out.println("Auth header received: " + authHeader);
+            System.out.println("Auth header: " + authHeader);
             String token = authHeader.substring(7);
             String username = JwtUtils.validateTokenAndGetUsername(token);
-            System.out.println("Username decoded from token: " + username);
+            System.out.println("Username from token: " + username);
 
 
             if (username != null) {
                 UserResponse u = userService.getUserResponseByUsername(username);
-//                UserDto userDTO = new UserDto();
-//                userDTO.setFullName(user.getFullName());
-//                userDTO.setUsername(username);
-//                userDTO.setEmail(user.getEmail());
-//                userDTO.setAvatar(user.getAvatar());
-//                userDTO.setPhoneNumber(user.getPhoneNumber());
                 return ResponseEntity.ok(u);
             } else {
                 return ResponseEntity.status(401).body("Invalid token");

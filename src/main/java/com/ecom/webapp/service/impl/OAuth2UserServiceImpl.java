@@ -79,10 +79,8 @@ public class OAuth2UserServiceImpl extends DefaultOAuth2UserService implements O
 
     @Transactional
     protected User updateExistingUser(User existingUser, OAuth2User oAuth2User) {
-        // Update user with any changed info from Google
         existingUser.setFullName(oAuth2User.getAttribute("name"));
 
-        // You might want to update avatar URL
         String pictureUrl = oAuth2User.getAttribute("picture");
         if (pictureUrl != null) {
             existingUser.setAvatar(pictureUrl);
