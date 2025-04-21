@@ -40,11 +40,23 @@ public class Store implements Serializable {
     private boolean active = true;
 
 
+
     @OneToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "owner_id", nullable = true, unique = true)
     private com.ecom.webapp.model.User owner;
 
     @OneToMany(mappedBy = "store", fetch = FetchType.LAZY, orphanRemoval = true, cascade = CascadeType.ALL)
     private Set<Category> categories;
+
+
+    @Size(max = 12, message = "Số điện thoại không hợp lệ!")
+    @NotBlank(message = "Không được bỏ trống mục này!")
+    @Column(name = "phone_number", nullable = false, length = 12, unique = true)
+    private String phoneNumber;
+
+    @NotNull
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name = "address_id", nullable = false)
+    private Address address;
 
 }

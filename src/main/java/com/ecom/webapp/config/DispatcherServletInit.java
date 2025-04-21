@@ -23,7 +23,7 @@ public class DispatcherServletInit extends AbstractAnnotationConfigDispatcherSer
     protected Class<?>[] getServletConfigClasses() {
         return new Class[] {
                 WebAppContextConfig.class,
-                WebSocketConfig.class
+//                WebSocketConfig.class
         };
     }
 

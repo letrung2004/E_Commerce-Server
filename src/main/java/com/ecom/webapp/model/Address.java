@@ -15,6 +15,7 @@ import java.io.Serializable;
 @Table(name = "address")
 public class Address implements Serializable {
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id", nullable = false)
     private int id;
 

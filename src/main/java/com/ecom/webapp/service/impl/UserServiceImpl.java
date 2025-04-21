@@ -38,6 +38,8 @@ public class UserServiceImpl implements UserService {
     private StoreRepository storeRepository;
     @Autowired
     private Cloudinary cloudinary;
+    @Autowired
+    private MailService mailService;
 
     @Autowired
     @Lazy
@@ -182,6 +184,25 @@ public class UserServiceImpl implements UserService {
         return u;
     }
 
+
+
+    public void sendApprovalEmail(String username, String to, String storeName) {
+        try {
+            String subject = "Cửa hàng của bạn đã được phê duyệt trên Shopii!";
+            String emailContent = "Xin chào người dùng " + username + ",\n\n" +
+                    "Chúc mừng! Cửa hàng \"" + storeName + "\" của bạn đã được quản trị viên phê duyệt và chính thức hoạt động trên nền tảng Shopii.\n\n" +
+                    "Giờ đây bạn có thể bắt đầu đăng sản phẩm, quản lý đơn hàng và tương tác với khách hàng.\n\n" +
+                    "Chúc bạn kinh doanh thành công và phát triển cùng Shopii!\n\n" +
+                    "Trân trọng,\n" +
+                    "Đội ngũ Shopii";
+
+            mailService.sendSimpleMessage(to, subject, emailContent);
+        } catch (Exception e) {
+            System.err.println("Failed to send approval email: " + e.getMessage());
+        }
+    }
+
+
     public void acceptStoreActivation(int userId) {
         User user = this.userRepository.getById(userId);
         if (user == null) {
@@ -189,6 +210,7 @@ public class UserServiceImpl implements UserService {
         }
         user.setStoreActive(true);
         this.userRepository.update(user);
+        sendApprovalEmail(user.getUsername(), user.getEmail(), user.getStore().getName());
     }
 }
 

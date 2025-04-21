@@ -3,6 +3,7 @@ package com.ecom.webapp.controller.client;
 import com.ecom.webapp.model.User;
 import com.ecom.webapp.model.dto.UserDto;
 import com.ecom.webapp.model.dto.UserRegisterDTO;
+import com.ecom.webapp.model.responseDto.UserResponse;
 import com.ecom.webapp.repository.UserRepository;
 import com.ecom.webapp.service.UserService;
 import com.ecom.webapp.utils.JwtUtils;
@@ -93,14 +94,14 @@ public class ApiAuthController {
 
 
             if (username != null) {
-                User user = userService.getUserByUsername(username);
-                UserDto userDTO = new UserDto();
-                userDTO.setFullName(user.getFullName());
-                userDTO.setUsername(username);
-                userDTO.setEmail(user.getEmail());
-                userDTO.setAvatar(user.getAvatar());
-                userDTO.setPhoneNumber(user.getPhoneNumber());
-                return ResponseEntity.ok(userDTO);
+                UserResponse u = userService.getUserResponseByUsername(username);
+//                UserDto userDTO = new UserDto();
+//                userDTO.setFullName(user.getFullName());
+//                userDTO.setUsername(username);
+//                userDTO.setEmail(user.getEmail());
+//                userDTO.setAvatar(user.getAvatar());
+//                userDTO.setPhoneNumber(user.getPhoneNumber());
+                return ResponseEntity.ok(u);
             } else {
                 return ResponseEntity.status(401).body("Invalid token");
             }

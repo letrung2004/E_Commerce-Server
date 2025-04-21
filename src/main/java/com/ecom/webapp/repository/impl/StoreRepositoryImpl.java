@@ -49,7 +49,7 @@ public class StoreRepositoryImpl implements StoreRepository {
         criteria.multiselect(
                 storeRoot.get("name"),
                 userJoin.get("email"),
-                userJoin.get("fullName"),
+                userJoin.get("username"),
                 storeRoot.get("description"),
                 userJoin.get("id"),
                 storeRoot.get("id")

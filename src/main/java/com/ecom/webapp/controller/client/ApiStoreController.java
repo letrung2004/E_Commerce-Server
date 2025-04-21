@@ -15,7 +15,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 @RestController
-@RequestMapping("/api")
+@RequestMapping("/api/secure")
 @CrossOrigin
 public class ApiStoreController {
 
@@ -42,6 +42,8 @@ public class ApiStoreController {
         this.storeService.createStore(storeDto);
         return new ResponseEntity<>(storeDto, HttpStatus.CREATED);
     }
+
+
 
 
 

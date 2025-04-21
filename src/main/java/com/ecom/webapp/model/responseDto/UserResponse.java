@@ -14,6 +14,7 @@ public class UserResponse {
     private String avatar;
     private boolean gender;
     private LocalDate dateOfBirth;
+    private boolean storeActive;
     private String role;
 
     public UserResponse(User user) {
@@ -25,6 +26,7 @@ public class UserResponse {
         this.avatar = user.getAvatar();
         this.gender = user.isGender();
         this.dateOfBirth = user.getDateOfBirth();
+        this.storeActive = user.isStoreActive();
         this.role = user.getRole();
     }
 }
