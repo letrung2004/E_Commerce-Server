@@ -4,11 +4,16 @@ import com.cloudinary.Cloudinary;
 import com.cloudinary.utils.ObjectUtils;
 import com.ecom.webapp.model.Product;
 import com.ecom.webapp.model.dto.ProductDTO;
+import com.ecom.webapp.repository.CategoryRepository;
 import com.ecom.webapp.repository.ProductRepository;
+import com.ecom.webapp.repository.StoreRepository;
 import com.ecom.webapp.service.ProductService;
 import jakarta.data.repository.By;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.io.IOException;
 import java.util.Date;
@@ -24,6 +29,10 @@ public class ProductServiceImpl implements ProductService {
     private ProductRepository productRepository;
     @Autowired
     private Cloudinary cloudinary;
+    @Autowired
+    private StoreRepository storeRepository;
+    @Autowired
+    private CategoryRepository categoryRepository;
 
 
     private ProductDTO convertProductToProductDTO(Product p) {
@@ -59,26 +68,82 @@ public class ProductServiceImpl implements ProductService {
         return convertProductToProductDTO(product);
     }
 
+
     @Override
-    public Product addOrUpdate(Product p) {
-        if (p.getFile() != null && !p.getFile().isEmpty()) {
+    public void deleteProduct(int id) {
+        Product product = this.productRepository.getProductById(id);
+        if (product == null) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Product not found");
+        }
+        this.productRepository.deleteProduct(id);
+    }
+
+    @Override
+    public List<ProductDTO> getProductsByStore(int storeId, Map<String, String> params) {
+        List<Product> products = this.productRepository.getProductsByStore(storeId, params);
+        return products.stream().map(this::convertProductToProductDTO).collect(Collectors.toList());
+    }
+
+    @Override
+    @Transactional
+    public Product addProduct(ProductDTO productDto, int storeId) {
+        Product product = new Product();
+        product.setName(productDto.getName());
+        product.setManufacturer(productDto.getManufacturer());
+        product.setPrice(productDto.getPrice());
+        product.setDescription(productDto.getDescription());
+        product.setStore(storeRepository.getStoreById(storeId));
+        product.setDateCreated(new Date());
+        product.setActive(Byte.valueOf("1"));
+        product.setCategory(categoryRepository.getCategoryById(productDto.getCategoryId()));
+
+        if (productDto.getFile() != null && !productDto.getFile().isEmpty()) {
             try {
-                Map res = cloudinary.uploader().upload(p.getFile().getBytes(),
+                Map res = cloudinary.uploader().upload(productDto.getFile().getBytes(),
                         ObjectUtils.asMap("resource_type", "auto"));
-                p.setImage(res.get("secure_url").toString());
+                product.setImage(res.get("secure_url").toString());
             } catch (IOException ex) {
                 Logger.getLogger(ProductServiceImpl.class.getName()).log(Level.SEVERE, null, ex);
             }
         }
-//        System.out.println(new Date());
-        p.setActive(Byte.valueOf("1"));
-        p.setDateCreated(new Date());
-        this.productRepository.addOrUpdate(p);
-        return p;
+        this.productRepository.addOrUpdate(product);
+        return product;
     }
 
     @Override
-    public void deleteProduct(int id) {
-        this.productRepository.deleteProduct(id);
+    @Transactional
+    public Product updateProduct(ProductDTO productDto, int storeId, int productId) {
+        Product product = this.productRepository.getProductById(productId);
+        if (product == null) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Product not found");
+        }
+        if (productDto.getName() != null)
+            product.setName(productDto.getName());
+
+        if (productDto.getManufacturer() != null)
+            product.setManufacturer(productDto.getManufacturer());
+
+        if (productDto.getPrice() != null)
+            product.setPrice(productDto.getPrice());
+
+        if (productDto.getDescription() != null)
+            product.setDescription(productDto.getDescription());
+
+        if (productDto.getCategoryId() != null)
+            product.setCategory(categoryRepository.getCategoryById(productDto.getCategoryId()));
+
+        if (productDto.getFile() != null && !productDto.getFile().isEmpty()) {
+            try {
+                Map res = cloudinary.uploader().upload(productDto.getFile().getBytes(),
+                        ObjectUtils.asMap("resource_type", "auto"));
+                product.setImage(res.get("secure_url").toString());
+            } catch (IOException ex) {
+                Logger.getLogger(ProductServiceImpl.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
+
+        this.productRepository.addOrUpdate(product);
+        return product;
     }
+
 }

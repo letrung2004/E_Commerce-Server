@@ -10,4 +10,5 @@ public interface ProductRepository {
     void addOrUpdate(Product p);
     Product getProductById(int id);
     void deleteProduct(int id);
+    List<Product> getProductsByStore(int storeId, Map<String, String> params);
 }

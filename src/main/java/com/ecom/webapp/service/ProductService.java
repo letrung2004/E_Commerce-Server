@@ -9,6 +9,8 @@ import java.util.Map;
 public interface ProductService {
     List<ProductDTO> getProducts(Map<String, String> params);
     ProductDTO getProductById(int id);
-    Product addOrUpdate(Product p);
     void deleteProduct(int id);
+    List<ProductDTO> getProductsByStore(int storeId, Map<String, String> params);
+    Product addProduct(ProductDTO productDto, int storeId);
+    Product updateProduct(ProductDTO productDto, int storeId, int productId);
 }

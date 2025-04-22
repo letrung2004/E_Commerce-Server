@@ -1,16 +1,22 @@
 package com.ecom.webapp.controller.client;
 
 import com.ecom.webapp.model.Category;
+import com.ecom.webapp.model.Product;
 import com.ecom.webapp.model.dto.CategoryDto;
+import com.ecom.webapp.model.dto.ProductDTO;
 import com.ecom.webapp.model.dto.StoreDto;
+import com.ecom.webapp.model.responseDto.ProductResponse;
 import com.ecom.webapp.repository.CommentRepository;
 import com.ecom.webapp.repository.ReviewRepository;
 import com.ecom.webapp.service.CategoryService;
+import com.ecom.webapp.service.ProductService;
 import com.ecom.webapp.service.StoreService;
 import jakarta.validation.Valid;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.*;
 
@@ -31,6 +37,8 @@ public class ApiStoreController {
     private CommentRepository commentRepository;
     @Autowired
     private CategoryService categoryService;
+    @Autowired
+    private ProductService productService;
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<Map<String, String>> handleValidationExceptions(MethodArgumentNotValidException ex) {
@@ -73,12 +81,44 @@ public class ApiStoreController {
     public ResponseEntity<Category> updateStoreCategory(@PathVariable(value = "storeId") int storeId,
                                                         @PathVariable(value = "categoryId") int categoryId,
                                                         @Valid @RequestBody CategoryDto categoryDto) {
-        Category updatedCategory = this.categoryService.updateCategory(categoryId,storeId,categoryDto);
+        Category updatedCategory = this.categoryService.updateCategory(categoryId, storeId, categoryDto);
         return ResponseEntity.ok(updatedCategory);
     }
 
 
+    @GetMapping("/store/{storeId}/products")
+    public ResponseEntity<List<ProductDTO>> getStoreProducts(@PathVariable(value = "storeId") int storeId,
+                                                             @RequestParam Map<String, String> params) {
+        return new ResponseEntity<>(this.productService.getProductsByStore(storeId, params), HttpStatus.OK);
+    }
+
+    @PostMapping("/store/{storeId}/products")
+    public ResponseEntity<?> addStoreProduct(@PathVariable(value = "storeId") int storeId,
+                                             @Valid @ModelAttribute ProductDTO productDTO, BindingResult result) throws MethodArgumentNotValidException {
+        if (result.hasErrors()) {
+            throw new MethodArgumentNotValidException(null, result);
+        }
+        Product newPro = productService.addProduct(productDTO, storeId);
+        ProductResponse productResponse = new ProductResponse(newPro);
+        return new ResponseEntity<>(productResponse, HttpStatus.CREATED);
+    }
 
 
+    @PatchMapping("/store/{storeId}/products/{productId}")
+    public ResponseEntity<?> updateStoreProduct(@PathVariable(value = "storeId") int storeId,
+                                                @PathVariable(value = "productId") int productId,
+                                                @ModelAttribute ProductDTO productDTO) {
+        Product updateProduct = productService.updateProduct(productDTO, storeId, productId);
+        ProductResponse productResponse = new ProductResponse(updateProduct);
+        return ResponseEntity.ok(productResponse);
+    }
+
+
+    @DeleteMapping("/store/{storeId}/products/{productId}")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void deleteProduct(@PathVariable(value = "productId") int productId,
+                              @PathVariable(value = "storeId") int storeId) {
+        this.productService.deleteProduct(productId);
+    }
 
 }

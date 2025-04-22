@@ -17,10 +17,9 @@ public class ProductResponse {
     private String productPrice;
     private String description;
     private Date dateCreated;
-    private BigDecimal starRate;
-    private Byte active;
-    private Category category;
-    private Store store;
+    private int categoryId;
+    private int storeId;
+
 
     public ProductResponse(Product product) {
         this.id = product.getId();
@@ -29,11 +28,7 @@ public class ProductResponse {
         this.productPrice = product.getPrice().toString();
         this.description = product.getDescription();
         this.dateCreated = product.getDateCreated();
-        this.starRate = product.getStarRate();
-        this.active = product.getActive();
-        this.category = product.getCategory();
-        this.store = product.getStore();
+        this.categoryId = product.getCategory().getId();
+        this.storeId = product.getStore().getId();
     }
-    public ProductResponse() {}
-
 }

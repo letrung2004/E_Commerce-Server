@@ -98,4 +98,46 @@ public class ProductRepositoryImpl implements ProductRepository {
         Product p = getProductById(id);
         session.remove(p);
     }
+
+
+    @Override
+    public List<Product> getProductsByStore(int storeId, Map<String, String> params) {
+        Session session = this.sessionFactory.getObject().getCurrentSession();
+        CriteriaBuilder b = session.getCriteriaBuilder();
+        CriteriaQuery<Product> q = b.createQuery(Product.class);
+        Root<Product> root = q.from(Product.class);
+        q.select(root);
+
+        List<Predicate> predicates = new ArrayList<>();
+        predicates.add(b.equal(root.get("store").get("id"), storeId));
+
+        if (params != null) {
+            String kw = params.get("q");
+            if (kw != null && !kw.isEmpty()) {
+                predicates.add(b.like(root.get("name"), "%" + kw + "%"));
+            }
+
+            String cateId = params.get("cateId");
+            if (cateId != null && !cateId.isEmpty()) {
+                predicates.add(b.equal(root.get("cateId"), Integer.parseInt(cateId)));
+            }
+        }
+
+        q.where(predicates.toArray(Predicate[]::new));
+        Query query = session.createQuery(q);
+
+        if (params != null) {
+            String page = params.get("page");
+            if (page != null && !page.isEmpty()) {
+                int p = Integer.parseInt(page);
+                int start = (p - 1) * PAGE_SIZE;
+
+                query.setFirstResult(start);
+                query.setMaxResults(PAGE_SIZE);
+            }
+        }
+
+        return query.getResultList();
+    }
+
 }
