@@ -24,55 +24,60 @@ public class ProductRepositoryImpl implements ProductRepository {
     @Autowired
     private LocalSessionFactoryBean sessionFactory;
 
-    @Override
-    public List<Product> getProducts(Map<String, String> params) {
+    private List<Product> getProductsWithFilter(Map<String, String> params, Integer storeId) {
         Session session = this.sessionFactory.getObject().getCurrentSession();
         CriteriaBuilder b = session.getCriteriaBuilder();
         CriteriaQuery<Product> q = b.createQuery(Product.class);
         Root<Product> root = q.from(Product.class);
-        q.select(root); //
+        q.select(root);
 
-        if(params != null) {
-            List<Predicate> predicates = new ArrayList<Predicate>();
+        List<Predicate> predicates = new ArrayList<>();
+        if (storeId != null) {
+            predicates.add(b.equal(root.get("store").get("id"), storeId));
+        }
+        if (params != null) {
             String kw = params.get("q");
-            if(kw!=null && !kw.isEmpty()) {
-                Predicate p1 = b.like(root.get("name"), "%"+kw+"%");
-                predicates.add(p1);
+            if (kw != null && !kw.isEmpty()) {
+                predicates.add(b.like(root.get("name"), "%" + kw + "%"));
             }
 
             String fromPrice = params.get("fromPrice");
-            if(fromPrice!=null && !fromPrice.isEmpty()) {
-                Predicate p2 = b.greaterThanOrEqualTo(root.get("price"), Double.parseDouble(fromPrice));
-                predicates.add(p2);
+            if (fromPrice != null && !fromPrice.isEmpty()) {
+                predicates.add(b.greaterThanOrEqualTo(root.get("price"), Double.parseDouble(fromPrice)));
             }
 
             String toPrice = params.get("toPrice");
-            if(toPrice!=null && !toPrice.isEmpty()) {
-                Predicate p3 = b.lessThanOrEqualTo(root.get("price"), Double.parseDouble(toPrice));
-                predicates.add(p3);
+            if (toPrice != null && !toPrice.isEmpty()) {
+                predicates.add(b.lessThanOrEqualTo(root.get("price"), Double.parseDouble(toPrice)));
             }
 
             String cateId = params.get("cateId");
-            if(cateId!=null && !cateId.isEmpty()) {
-                Predicate p4 = b.equal((root.get("cateId")), Integer.parseInt(cateId));
-                predicates.add(p4);
+            if (cateId != null && !cateId.isEmpty()) {
+                predicates.add(b.equal(root.get("cateId"), Integer.parseInt(cateId)));
             }
+        }
+        if (!predicates.isEmpty()) {
             q.where(predicates.toArray(Predicate[]::new));
         }
-        Query query = session.createQuery(q);
 
+        Query query = session.createQuery(q);
         if (params != null) {
             String page = params.get("page");
             if (page != null && !page.isEmpty()) {
                 int p = Integer.parseInt(page);
                 int start = (p - 1) * PAGE_SIZE;
-
                 query.setFirstResult(start);
                 query.setMaxResults(PAGE_SIZE);
             }
         }
 
         return query.getResultList();
+    }
+
+
+    @Override
+    public List<Product> getProducts(Map<String, String> params) {
+        return getProductsWithFilter(params, null);
     }
 
     @Override
@@ -102,42 +107,9 @@ public class ProductRepositoryImpl implements ProductRepository {
 
     @Override
     public List<Product> getProductsByStore(int storeId, Map<String, String> params) {
-        Session session = this.sessionFactory.getObject().getCurrentSession();
-        CriteriaBuilder b = session.getCriteriaBuilder();
-        CriteriaQuery<Product> q = b.createQuery(Product.class);
-        Root<Product> root = q.from(Product.class);
-        q.select(root);
-
-        List<Predicate> predicates = new ArrayList<>();
-        predicates.add(b.equal(root.get("store").get("id"), storeId));
-
-        if (params != null) {
-            String kw = params.get("q");
-            if (kw != null && !kw.isEmpty()) {
-                predicates.add(b.like(root.get("name"), "%" + kw + "%"));
-            }
-
-            String cateId = params.get("cateId");
-            if (cateId != null && !cateId.isEmpty()) {
-                predicates.add(b.equal(root.get("cateId"), Integer.parseInt(cateId)));
-            }
-        }
-
-        q.where(predicates.toArray(Predicate[]::new));
-        Query query = session.createQuery(q);
-
-        if (params != null) {
-            String page = params.get("page");
-            if (page != null && !page.isEmpty()) {
-                int p = Integer.parseInt(page);
-                int start = (p - 1) * PAGE_SIZE;
-
-                query.setFirstResult(start);
-                query.setMaxResults(PAGE_SIZE);
-            }
-        }
-
-        return query.getResultList();
+        return getProductsWithFilter(params, storeId);
     }
+
+
 
 }
