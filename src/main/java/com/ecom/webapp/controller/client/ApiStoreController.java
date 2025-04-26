@@ -104,13 +104,19 @@ public class ApiStoreController {
     }
 
 
-    @PatchMapping("/store/{storeId}/products/{productId}")
+    @PutMapping("/store/{storeId}/products/{productId}")
     public ResponseEntity<?> updateStoreProduct(@PathVariable(value = "storeId") int storeId,
                                                 @PathVariable(value = "productId") int productId,
                                                 @ModelAttribute ProductDTO productDTO) {
         Product updateProduct = productService.updateProduct(productDTO, storeId, productId);
         ProductResponse productResponse = new ProductResponse(updateProduct);
         return ResponseEntity.ok(productResponse);
+    }
+
+    @GetMapping("/store/{storeId}/products/{productId}")
+    public ResponseEntity<ProductDTO> getStoreProductDetail(@PathVariable(value = "storeId") int storeId,
+                                                            @PathVariable(value = "productId") int productId){
+        return new ResponseEntity<>(this.productService.getProductById(productId), HttpStatus.OK);
     }
 
 
