@@ -13,6 +13,7 @@ import org.springframework.orm.hibernate5.LocalSessionFactoryBean;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -43,17 +44,39 @@ public class ProductRepositoryImpl implements ProductRepository {
 
             String fromPrice = params.get("fromPrice");
             if (fromPrice != null && !fromPrice.isEmpty()) {
-                predicates.add(b.greaterThanOrEqualTo(root.get("price"), Double.parseDouble(fromPrice)));
+                predicates.add(b.greaterThanOrEqualTo(root.get("price"), new BigDecimal(fromPrice)));
             }
 
             String toPrice = params.get("toPrice");
             if (toPrice != null && !toPrice.isEmpty()) {
-                predicates.add(b.lessThanOrEqualTo(root.get("price"), Double.parseDouble(toPrice)));
+                predicates.add(b.lessThanOrEqualTo(root.get("price"), new BigDecimal(toPrice)));
             }
 
             String cateId = params.get("cateId");
             if (cateId != null && !cateId.isEmpty()) {
-                predicates.add(b.equal(root.get("cateId"), Integer.parseInt(cateId)));
+                predicates.add(b.equal(root.get("category").get("id"), Integer.parseInt(cateId)));
+            }
+
+            String minRating = params.get("minRating");
+            if (minRating != null && !minRating.isEmpty()) {
+                predicates.add(b.greaterThanOrEqualTo(root.get("starRate"), new BigDecimal(minRating)));
+            }
+
+            String sort = params.get("sort");
+            if (sort != null && !sort.isEmpty()) {
+                switch (sort) {
+                    case "priceAsc":
+                        q.orderBy(b.asc(root.get("price")));
+                        break;
+                    case "priceDesc":
+                        q.orderBy(b.desc(root.get("price")));
+                        break;
+                    case "newest":
+                        q.orderBy(b.desc(root.get("dateCreated")));
+                        break;
+                    default:
+                        break;
+                }
             }
         }
         if (!predicates.isEmpty()) {
@@ -70,8 +93,8 @@ public class ProductRepositoryImpl implements ProductRepository {
                 query.setMaxResults(PAGE_SIZE);
             }
         }
-
-        return query.getResultList();
+        List<Product> listPro = query.getResultList();
+        return listPro;
     }
 
 
