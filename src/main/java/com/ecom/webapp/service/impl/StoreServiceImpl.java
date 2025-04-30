@@ -4,6 +4,7 @@ import com.ecom.webapp.model.Address;
 import com.ecom.webapp.model.Store;
 import com.ecom.webapp.model.User;
 import com.ecom.webapp.model.dto.StoreDto;
+import com.ecom.webapp.model.responseDto.StoreResponse;
 import com.ecom.webapp.repository.AddressRepository;
 import com.ecom.webapp.repository.StoreRepository;
 import com.ecom.webapp.repository.UserRepository;
@@ -119,5 +120,22 @@ public class StoreServiceImpl implements StoreService {
         sendRejectStoreEmail(store.getOwner().getUsername(), store.getOwner().getEmail());
         this.storeRepository.deleteStore(store);
 
+    }
+
+    @Override
+    public StoreResponse getStoreById(int storeId) {
+        Store store = this.storeRepository.getStoreById(storeId);
+        if (store == null) {
+            throw new EntityNotFoundException("Store not found with id " + storeId);
+        }
+        StoreResponse storeResponse = new StoreResponse();
+        storeResponse.setId(storeId);
+        storeResponse.setName(store.getName());
+        storeResponse.setDescription(store.getDescription());
+        storeResponse.setLogo(store.getLogo());
+        storeResponse.setPhoneNumber(store.getPhoneNumber());
+        storeResponse.setAddressLine(store.getAddress().getAddress());
+        storeResponse.setOwnerName(store.getOwner().getUsername());
+        return storeResponse;
     }
 }

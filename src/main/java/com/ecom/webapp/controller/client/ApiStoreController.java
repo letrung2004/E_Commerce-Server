@@ -8,6 +8,7 @@ import com.ecom.webapp.model.dto.StoreDto;
 import com.ecom.webapp.model.responseDto.ProductResponse;
 import com.ecom.webapp.repository.CommentRepository;
 import com.ecom.webapp.repository.ReviewRepository;
+import com.ecom.webapp.repository.StoreRepository;
 import com.ecom.webapp.service.CategoryService;
 import com.ecom.webapp.service.ProductService;
 import com.ecom.webapp.service.StoreService;
@@ -39,6 +40,8 @@ public class ApiStoreController {
     private CategoryService categoryService;
     @Autowired
     private ProductService productService;
+    @Autowired
+    private StoreRepository storeRepository;
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<Map<String, String>> handleValidationExceptions(MethodArgumentNotValidException ex) {
@@ -125,6 +128,11 @@ public class ApiStoreController {
     public void deleteProduct(@PathVariable(value = "productId") int productId,
                               @PathVariable(value = "storeId") int storeId) {
         this.productService.deleteProduct(productId);
+    }
+
+    @GetMapping("/store/{storeId}")
+    public ResponseEntity<?> getStoreDetail(@PathVariable(value = "storeId") int storeId){
+        return new ResponseEntity<>(this.storeService.getStoreById(storeId), HttpStatus.OK);
     }
 
 }
