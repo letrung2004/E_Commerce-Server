@@ -1,12 +1,14 @@
 package com.ecom.webapp.model.responseDto;
 
 import com.ecom.webapp.model.Order;
+import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.math.BigDecimal;
+import java.time.Instant;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -24,6 +26,8 @@ public class OrderResponse {
     private String deliveryStatus;
     private String paymentMethod;
     private Set<OrderDetailResponse> orderDetails;
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss", timezone = "Asia/Ho_Chi_Minh")
+    private Instant dateCreated;
 
     public OrderResponse(Order order) {
         this.id = order.getId();
@@ -35,6 +39,7 @@ public class OrderResponse {
         this.paymentMethod = order.getPaymentMethod();
         this.orderDetails = order.getOrderDetails().stream()
                 .map(OrderDetailResponse::new).collect(Collectors.toSet());
+        this.dateCreated = order.getDateCreated();
     }
 
 }

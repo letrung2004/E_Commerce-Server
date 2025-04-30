@@ -8,7 +8,7 @@ import com.ecom.webapp.model.responseDto.OrderResponse;
 import java.util.List;
 
 public interface OrderService {
-    List<OrderResponse> getOrdersByUsername(String username);
+    List<OrderResponse> getOrdersByUsername(String username, String status);
     OrderResponse getOrdersById(int id);
     void createOrder(OrderDto order);
     void updateOrder(OrderUpdateDto order);

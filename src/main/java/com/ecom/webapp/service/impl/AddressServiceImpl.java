@@ -22,12 +22,14 @@ public class AddressServiceImpl implements AddressService {
     private UserRepository userRepository;
 
     @Override
-    public List<Address> getAddressesByUserName(String username) {
+    public List<AddressResponse> getAddressesByUserName(String username) {
         User user = this.userRepository.getUserByUsername(username);
         if (user == null) {
             throw new EntityNotFoundException("User not found with name: " + username);
         }
-        return this.addressRepository.getAddressesByUser(user);
+        List<Address> addresses = this.addressRepository.getAddressesByUser(user);
+//        return addresses.stream().map(AddressResponse::new).collect(Collectors.toList());
+        return addresses.stream().map(AddressResponse::new).toList();
     }
 
     @Override
@@ -58,11 +60,13 @@ public class AddressServiceImpl implements AddressService {
     }
 
     @Override
-    public void deleteAddress(AddressDto addressDto) {
-        Address address = this.addressRepository.getAddressById(addressDto.getId());
+    public AddressResponse deleteAddress(int id) {
+        Address address = this.addressRepository.getAddressById(id);
         if (address == null) {
-            throw new EntityNotFoundException("Address not found with id: " + addressDto.getId());
+            throw new EntityNotFoundException("Address not found with id: " + id);
         }
+        AddressResponse addressResponse = new AddressResponse(address);
         this.addressRepository.deleteAddress(address);
+        return addressResponse;
     }
 }
