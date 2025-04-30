@@ -25,7 +25,7 @@ import java.util.List;
 import java.util.Map;
 
 @RestController
-@RequestMapping("/api/secure")
+@RequestMapping("/api")
 @CrossOrigin
 public class ApiStoreController {
 
@@ -50,7 +50,7 @@ public class ApiStoreController {
     }
 
 
-    @PostMapping("/store-activation")
+    @PostMapping("secure/store-activation")
     public ResponseEntity<StoreDto> requestActivationStore(@Valid @RequestBody StoreDto storeDto) {
         System.out.println(storeDto);
         this.storeService.createStore(storeDto);
@@ -63,21 +63,21 @@ public class ApiStoreController {
         return new ResponseEntity<>(categories, HttpStatus.OK);
     }
 
-    @PostMapping("/store/{storeId}/categories")
+    @PostMapping("secure/store/{storeId}/categories")
     public ResponseEntity<Category> addStoreCategory(@PathVariable(value = "storeId") int storeId,
                                                      @Valid @RequestBody CategoryDto categoryDto) {
         Category newCategory = this.categoryService.addCategory(categoryDto, storeId);
         return new ResponseEntity<>(newCategory, HttpStatus.CREATED);
     }
 
-    @DeleteMapping("/store/{storeId}/categories/{id}")
+    @DeleteMapping("secure/store/{storeId}/categories/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void deleteCategory(@PathVariable(value = "id") int id,
                                @PathVariable(value = "storeId") int storeId) {
         this.categoryService.deleteCategory(id);
     }
 
-    @PutMapping("/store/{storeId}/categories/{categoryId}")
+    @PutMapping("secure/store/{storeId}/categories/{categoryId}")
     public ResponseEntity<Category> updateStoreCategory(@PathVariable(value = "storeId") int storeId,
                                                         @PathVariable(value = "categoryId") int categoryId,
                                                         @Valid @RequestBody CategoryDto categoryDto) {
@@ -92,7 +92,7 @@ public class ApiStoreController {
         return new ResponseEntity<>(this.productService.getProductsByStore(storeId, params), HttpStatus.OK);
     }
 
-    @PostMapping("/store/{storeId}/products")
+    @PostMapping("secure/store/{storeId}/products")
     public ResponseEntity<?> addStoreProduct(@PathVariable(value = "storeId") int storeId,
                                              @Valid @ModelAttribute ProductDTO productDTO, BindingResult result) throws MethodArgumentNotValidException {
         if (result.hasErrors()) {
@@ -104,7 +104,7 @@ public class ApiStoreController {
     }
 
 
-    @PutMapping("/store/{storeId}/products/{productId}")
+    @PutMapping("secure/store/{storeId}/products/{productId}")
     public ResponseEntity<?> updateStoreProduct(@PathVariable(value = "storeId") int storeId,
                                                 @PathVariable(value = "productId") int productId,
                                                 @ModelAttribute ProductDTO productDTO) {
@@ -113,14 +113,14 @@ public class ApiStoreController {
         return ResponseEntity.ok(productResponse);
     }
 
-    @GetMapping("/store/{storeId}/products/{productId}")
+    @GetMapping("secure/store/{storeId}/products/{productId}")
     public ResponseEntity<ProductDTO> getStoreProductDetail(@PathVariable(value = "storeId") int storeId,
                                                             @PathVariable(value = "productId") int productId){
         return new ResponseEntity<>(this.productService.getProductById(productId), HttpStatus.OK);
     }
 
 
-    @DeleteMapping("/store/{storeId}/products/{productId}")
+    @DeleteMapping("secure/store/{storeId}/products/{productId}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void deleteProduct(@PathVariable(value = "productId") int productId,
                               @PathVariable(value = "storeId") int storeId) {
