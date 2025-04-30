@@ -22,12 +22,15 @@ public class OrderRepositoryImpl implements OrderRepository {
     private LocalSessionFactoryBean sessionFactory;
 
     @Override
-    public List<Order> getOrdersByUser(User user) {
+    public List<Order> getOrdersByUser(User user, String status) {
         Session session = this.sessionFactory.getObject().getCurrentSession();
         CriteriaBuilder builder = session.getCriteriaBuilder();
         CriteriaQuery<Order> criteria = builder.createQuery(Order.class);
         Root<Order> root = criteria.from(Order.class);
-        criteria.where(builder.equal(root.get("user"), user));
+        if (status.isEmpty())
+            criteria.where(builder.equal(root.get("user"), user));
+        else
+            criteria.where(builder.and(builder.equal(root.get("user"), user), builder.equal(root.get("deliveryStatus"), status)));
         return session.createQuery(criteria).getResultList();
     }
 

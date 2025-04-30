@@ -10,6 +10,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.security.Principal;
+import java.util.List;
+
 @RestController
 @CrossOrigin
 @RequestMapping("/api/secure/address")
@@ -22,5 +25,17 @@ public class ApiAddressController {
     public ResponseEntity<AddressResponse> createAddress(@Valid @RequestBody AddressDto addressDto) {
         System.out.println(addressDto);
         return new ResponseEntity<>(this.addressService.createAddress(addressDto), HttpStatus.CREATED);
+    }
+
+    @GetMapping("/my")
+    public ResponseEntity<List<AddressResponse>> getAllAddresses(Principal principal) {
+        String username = principal.getName();
+        System.out.println("USERNAME: " + username);
+        return new ResponseEntity<>(this.addressService.getAddressesByUserName(username), HttpStatus.OK);
+    }
+
+    @DeleteMapping("/remove/{id}")
+    public ResponseEntity<AddressResponse> removeAddress(@PathVariable("id") int id) {
+        return new ResponseEntity<>(this.addressService.deleteAddress(id), HttpStatus.OK);
     }
 }

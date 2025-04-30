@@ -34,8 +34,8 @@ public class OrderDetail implements Serializable {
     private Integer quantity;
 
     @ColumnDefault("0")
-    @Column(name = "unit_price", precision = 10)
-    private BigDecimal unitPrice;
+    @Column(name = "sub_total", precision = 10)
+    private BigDecimal subTotal;
 
     @ColumnDefault("0")
     @Column(name = "evaluated")

@@ -15,12 +15,13 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.*;
 
 import java.nio.file.attribute.UserPrincipal;
+import java.security.Principal;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 @RestController
-@RequestMapping("/api")
+@RequestMapping("/api/secure/orders")
 public class ApiOrderController {
 
     @Autowired
@@ -34,19 +35,18 @@ public class ApiOrderController {
         );
         return new ResponseEntity<>(errors, HttpStatus.BAD_REQUEST);
     }
-
-    // get all orders by username
-    // @AuthenticationPrincipal UserDetails -> userDetails.getUsername()
-    @GetMapping("/orders")
-    public ResponseEntity<List<OrderResponse>> getOrders(@AuthenticationPrincipal UserDetails userDetails) {
-        String username = userDetails.getUsername();
+    
+    @GetMapping("/all")
+    public ResponseEntity<List<OrderResponse>> getOrders(Principal principal,
+           @RequestParam(value = "status", required = false, defaultValue = "") String status) {
+        String username = principal.getName();
         System.out.println(username);
-        List<OrderResponse> orders = this.orderService.getOrdersByUsername(username);
+        List<OrderResponse> orders = this.orderService.getOrdersByUsername(username, status);
         return new ResponseEntity<>(orders, HttpStatus.OK);
     }
 
     // get an order by id
-    @GetMapping("/orders/{id}")
+    @GetMapping("/{id}")
     public ResponseEntity<OrderResponse> getOrder(@PathVariable(value = "id") String id) {
         System.out.println(id);
         int orderId = Integer.parseInt(id);
@@ -56,7 +56,7 @@ public class ApiOrderController {
 
     @PostMapping("/place-order")
     public ResponseEntity<?> createOrder(@Valid @RequestBody OrderDto orderDto) {
-        System.out.println(orderDto);
+        System.out.println("ORDER-DTO: "+orderDto);
 
         if (!orderDto.getPaymentMethod().equals("VNPay") && !orderDto.getPaymentMethod().equals("COD")) {
             return ResponseEntity.badRequest().body(new ErrorResponse("Phương thức thanh toán không hợp lệ!"));
@@ -66,7 +66,7 @@ public class ApiOrderController {
         return new ResponseEntity<>(orderDto, HttpStatus.CREATED);
     }
 
-    @PatchMapping("/orders/update")
+    @PatchMapping("/update")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void updateOrder(@Valid @RequestBody OrderUpdateDto orderUpdateDto) {
         System.out.println(orderUpdateDto);
@@ -74,7 +74,7 @@ public class ApiOrderController {
     }
 
 
-    @DeleteMapping("/orders/delete/{id}")
+    @DeleteMapping("/delete/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void deleteOrder(@PathVariable(value = "id") int id) {
         this.orderService.deleteOrder(id);

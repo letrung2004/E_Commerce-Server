@@ -57,6 +57,7 @@ public class CartRepositoryImpl implements CartRepository {
     public void deleteCart(Cart cart){
         Session session = this.sessionFactory.getObject().getCurrentSession();
         session.remove(cart);
+        System.out.println("Delete cart");
     }
 
     @Override

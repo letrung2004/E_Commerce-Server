@@ -11,6 +11,7 @@ import lombok.ToString;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
+import java.time.Instant;
 import java.util.Set;
 
 @Getter
@@ -57,5 +58,18 @@ public class Order implements Serializable {
     @OneToOne(mappedBy = "order")
     private Payment payment;
 
+
+    @Column(name = "date_created")
+    private Instant dateCreated;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "store_id")
+    private Store store;
+
+
+    @PrePersist
+    protected void onCreate() {
+        this.dateCreated = Instant.now();
+    }
 
 }

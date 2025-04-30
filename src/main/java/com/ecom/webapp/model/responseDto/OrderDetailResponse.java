@@ -22,6 +22,6 @@ public class OrderDetailResponse {
         this.id = orderDetail.getId();
         this.product = new ProductResponse(orderDetail.getProduct());
         this.quantity = orderDetail.getQuantity();
-        this.unitPrice = orderDetail.getUnitPrice();
+        this.unitPrice = orderDetail.getSubTotal();
     }
 }
