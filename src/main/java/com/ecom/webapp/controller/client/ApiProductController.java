@@ -30,10 +30,5 @@ public class ApiProductController {
         return new ResponseEntity<>(this.productService.getProductById(id), HttpStatus.OK);
     }
 
-//    @DeleteMapping("/products/{id}")
-//    @ResponseStatus(HttpStatus.NO_CONTENT)
-//    public void deleteProduct(@PathVariable(value = "id") int id) {
-//        this.productService.deleteProduct(id);
-//    }
 
 }
