@@ -27,6 +27,8 @@ public class ReviewServiceImpl implements ReviewService {
     private ProductRepository productRepository;
     @Autowired
     private CommentRepository commentRepository;
+    @Autowired
+    private OrderDetailRepository orderDetailRepository;
 
     @Override
     public List<ReviewResponse> getReviews(int storeId, Integer productId) {
@@ -46,32 +48,89 @@ public class ReviewServiceImpl implements ReviewService {
 //                "commentId": 1,
 //                "dateCreated": null,
 //                "rate": 5
+
+
+//        { from front-end
+//            "orderDetailIds": [1,2],
+//            "comments" : ["ok","good"],
+//            "rates" : [4,5],
+//        }
         User user = this.userRepository.getUserByUsername(reviewDto.getUsername());
         if (user == null) {
-            throw new EntityNotFoundException("User not found with id " + reviewDto.getUserId());
+            throw new EntityNotFoundException("User not found with username " + reviewDto.getUsername());
         }
-        Product product = this.productRepository.getProductById(reviewDto.getProductId());
-        if (product == null) {
-            throw new EntityNotFoundException("Product not found with id " + reviewDto.getProductId());
+        List<Integer> orderDetailIds = reviewDto.getOrderDetailIds();
+        List<Integer> rates = reviewDto.getRates();
+        List<String> comments = reviewDto.getComments();
+
+        for (int i = 0; i < orderDetailIds.size(); i++) {
+            int orderDetailId = orderDetailIds.get(i);
+            OrderDetail orderDetail = this.orderDetailRepository.getOrderDetailById(orderDetailId);
+
+            if (orderDetail == null) {
+                throw new EntityNotFoundException("orderDetail not found with id " + orderDetailId);
+            }
+            if (orderDetail.isEvaluated()){
+                throw new EntityNotFoundException("orderDetail is already evaluated, id " + orderDetailId);
+            }
+
+            Review review = new Review();
+            review.setUser(user);
+            review.setProduct(orderDetail.getProduct());
+            review.setStore(orderDetail.getProduct().getStore());
+
+            review.setRate(rates.get(i));
+
+            if (reviewDto.getComments() != null && i < reviewDto.getComments().size()) {
+                Comment comment = new Comment();
+                comment.setContent(comments.get(i));
+                comment.setUser(user);
+                this.commentRepository.createComment(comment);
+                review.setComment(comment);
+            }
+
+            this.reviewRepository.addReview(review);
+            orderDetail.setEvaluated(true);
+            this.orderDetailRepository.updateOrderDetail(orderDetail);
         }
-
-        Review review = new Review();
-        review.setUser(user);
-        review.setProduct(product);
-        review.setStore(product.getStore());
-        review.setRate(reviewDto.getRate());
-
-        if (reviewDto.getComment() != null) {
-            Comment comment = new Comment();
-            comment.setContent(reviewDto.getComment());
-            comment.setUser(user);
-            this.commentRepository.createComment(comment);
-            review.setComment(comment);
-        }
-
-        this.reviewRepository.addReview(review);
 
     }
+
+
+//    @Override
+//    public void addReview(ReviewDto reviewDto) {
+////                "userId": 3,
+////                "storeId": 8,
+////                "productId": 1,
+////                "commentId": 1,
+////                "dateCreated": null,
+////                "rate": 5
+//        User user = this.userRepository.getUserByUsername(reviewDto.getUsername());
+//        if (user == null) {
+//            throw new EntityNotFoundException("User not found with username " + reviewDto.getUsername());
+//        }
+//        Product product = this.productRepository.getProductById(reviewDto.getProductId());
+//        if (product == null) {
+//            throw new EntityNotFoundException("Product not found with id " + reviewDto.getProductId());
+//        }
+//
+//        Review review = new Review();
+//        review.setUser(user);
+//        review.setProduct(product);
+//        review.setStore(product.getStore());
+//        review.setRate(reviewDto.getRate());
+//
+//        if (reviewDto.getComment() != null) {
+//            Comment comment = new Comment();
+//            comment.setContent(reviewDto.getComment());
+//            comment.setUser(user);
+//            this.commentRepository.createComment(comment);
+//            review.setComment(comment);
+//        }
+//
+//        this.reviewRepository.addReview(review);
+//
+//    }
 
     @Override
     public void updateReview(Review review) {

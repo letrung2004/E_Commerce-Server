@@ -11,9 +11,13 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.*;
 
+import java.security.Principal;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/api/secure/reviews")
@@ -23,6 +27,16 @@ public class ApiReviewController {
     private ReviewService reviewService;
     @Autowired
     private CommentRepository commentRepository;
+
+    @ExceptionHandler(MethodArgumentNotValidException.class)
+    public ResponseEntity<Map<String, String>> handleValidationExceptions(MethodArgumentNotValidException ex) {
+        Map<String, String> errors = new HashMap<>();
+        ex.getBindingResult().getFieldErrors().forEach(error ->
+                errors.put(error.getField(), error.getDefaultMessage())
+        );
+        return new ResponseEntity<>(errors, HttpStatus.BAD_REQUEST);
+    }
+
 
     /*
         /reviews?storeId=12$product
@@ -64,11 +78,9 @@ public class ApiReviewController {
     @PostMapping("/add")
     public ResponseEntity<?> createReview(
             @Valid @RequestBody ReviewDto reviewDto,
-            @AuthenticationPrincipal UserDetails userDetails) {
+            Principal principal) {
 
-
-        //Tam thoi 
-        String username = reviewDto.getUsername();
+        String username = principal.getName();
         reviewDto.setUsername(username);
         System.out.println(reviewDto);
 
@@ -77,5 +89,5 @@ public class ApiReviewController {
         return ResponseEntity.ok("Review added successfully!");
     }
 
-    // Khong cho xoa review. Vi chu cua hang xoa cac bai bad review di thi sao
+    // Khong cho xoa review. Vi chủ cua hang xoa cac bai bad review di thi sao
 }
