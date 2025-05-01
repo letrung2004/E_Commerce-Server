@@ -41,7 +41,7 @@ public class ProductDTO {
     @NotNull(message = "Category ID is required")
     private Integer categoryId;
 
-    @NotNull(message = "Store ID is required")
+//    @NotNull(message = "Store ID is required")
     private Integer storeId;
 
     private MultipartFile file;

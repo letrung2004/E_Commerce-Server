@@ -138,4 +138,13 @@ public class StoreServiceImpl implements StoreService {
         storeResponse.setOwnerName(store.getOwner().getUsername());
         return storeResponse;
     }
+
+    @Override
+    public int getStoreIdByUsername(String username) {
+        Store store = this.storeRepository.getStoreByUsername(username);
+        if (store == null) {
+            throw new EntityNotFoundException("Store not found with username: " + username);
+        }
+        return store.getId();
+    }
 }
