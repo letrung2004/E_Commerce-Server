@@ -25,7 +25,7 @@ public class OrderResponse {
     private BigDecimal total;
     private String deliveryStatus;
     private String paymentMethod;
-    private StoreResponse store;
+    private StoreResponse2 store;
     private Set<OrderDetailResponse> orderDetails;
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss", timezone = "Asia/Ho_Chi_Minh")
     private Instant dateCreated;
@@ -38,7 +38,7 @@ public class OrderResponse {
         this.total = order.getTotal();
         this.deliveryStatus = order.getDeliveryStatus();
         this.paymentMethod = order.getPaymentMethod();
-        this.store = new StoreResponse(order.getStore());
+        this.store = new StoreResponse2(order.getStore());
         this.orderDetails = order.getOrderDetails().stream()
                 .map(OrderDetailResponse::new).collect(Collectors.toSet());
         this.dateCreated = order.getDateCreated();
