@@ -36,9 +36,9 @@ public class CommentServiceImpl implements CommentService {
         if (commentParent == null) {
             throw new EntityNotFoundException("Comment parent not found with id: " + commentDto.getCommentParentId());
         }
-        User user = this.userRepository.getById(commentDto.getUserId());
+        User user = this.userRepository.getUserByUsername(commentDto.getUsername());
         if (user == null) {
-            throw new EntityNotFoundException("User not found with id: " + commentDto.getUserId());
+            throw new EntityNotFoundException("User not found with id: " + commentDto.getUsername());
         }
         Comment comment = new Comment();
         comment.setCommentParent(commentParent);
