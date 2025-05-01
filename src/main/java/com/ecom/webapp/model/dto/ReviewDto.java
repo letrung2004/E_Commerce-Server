@@ -3,6 +3,9 @@ package com.ecom.webapp.model.dto;
 import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 
+import java.util.List;
+import java.util.Set;
+
 @Data
 public class ReviewDto {
     private int id;
@@ -12,10 +15,10 @@ public class ReviewDto {
     private String username;
 
     @NotNull(message = "Không được bỏ trống mục này!")
-    private int productId;
+    private List<Integer> orderDetailIds;
 
-    private String comment;
+    private List<String> comments;
 
     @NotNull(message = "Không được bỏ trống mục này!")
-    private int rate;
+    private List<Integer> rates;
 }
