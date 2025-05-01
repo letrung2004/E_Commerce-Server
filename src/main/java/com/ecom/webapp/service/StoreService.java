@@ -15,4 +15,5 @@ public interface StoreService {
     List<Object[]> getStoresUnprocessed();
     void deleteStore(int storeId);
     StoreResponse getStoreById(int storeId);
+    int getStoreIdByUsername(String username);
 }

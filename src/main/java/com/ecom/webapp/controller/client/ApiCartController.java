@@ -46,7 +46,7 @@ public class ApiCartController {
         return ResponseEntity.ok(updatedCart);
     }
 
-    @DeleteMapping("/remove/{userId}/{productId}")
+    @DeleteMapping("/{userId}/remove/{productId}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void deleteUserCart(
             @PathVariable(value = "userId") int userId,

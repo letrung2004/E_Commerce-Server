@@ -12,15 +12,19 @@ import com.ecom.webapp.repository.StoreRepository;
 import com.ecom.webapp.service.CategoryService;
 import com.ecom.webapp.service.ProductService;
 import com.ecom.webapp.service.StoreService;
+import com.ecom.webapp.service.UserService;
 import jakarta.validation.Valid;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.*;
 
+import java.security.Principal;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -40,8 +44,7 @@ public class ApiStoreController {
     private CategoryService categoryService;
     @Autowired
     private ProductService productService;
-    @Autowired
-    private StoreRepository storeRepository;
+
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<Map<String, String>> handleValidationExceptions(MethodArgumentNotValidException ex) {
@@ -66,24 +69,39 @@ public class ApiStoreController {
         return new ResponseEntity<>(categories, HttpStatus.OK);
     }
 
-    @PostMapping("secure/store/{storeId}/categories")
-    public ResponseEntity<Category> addStoreCategory(@PathVariable(value = "storeId") int storeId,
-                                                     @Valid @RequestBody CategoryDto categoryDto) {
+
+    @PostMapping("secure/store/categories")
+    public ResponseEntity<?> addStoreCategory(@Valid @RequestBody CategoryDto categoryDto,
+                                              Principal principal) {
+        if (principal == null || principal.getName() == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Bạn chưa đăng nhập");
+        }
+        String username = principal.getName();
+        int storeId = this.storeService.getStoreIdByUsername(username);
         Category newCategory = this.categoryService.addCategory(categoryDto, storeId);
         return new ResponseEntity<>(newCategory, HttpStatus.CREATED);
     }
 
-    @DeleteMapping("secure/store/{storeId}/categories/{id}")
+
+    @DeleteMapping("secure/store/categories/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void deleteCategory(@PathVariable(value = "id") int id,
-                               @PathVariable(value = "storeId") int storeId) {
+    public void deleteCategory(@PathVariable(value = "id") int id, Principal principal) {
+        if (principal.getName() == null) {
+            ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Bạn chưa đăng nhập");
+        }
+        String username = principal.getName();
         this.categoryService.deleteCategory(id);
     }
 
-    @PutMapping("secure/store/{storeId}/categories/{categoryId}")
-    public ResponseEntity<Category> updateStoreCategory(@PathVariable(value = "storeId") int storeId,
-                                                        @PathVariable(value = "categoryId") int categoryId,
-                                                        @Valid @RequestBody CategoryDto categoryDto) {
+    @PutMapping("secure/store/categories/{categoryId}")
+    public ResponseEntity<?> updateStoreCategory(Principal principal,
+                                                 @PathVariable(value = "categoryId") int categoryId,
+                                                 @Valid @RequestBody CategoryDto categoryDto) {
+        if (principal == null || principal.getName() == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Bạn chưa đăng nhập");
+        }
+        String username = principal.getName();
+        int storeId = this.storeService.getStoreIdByUsername(username);
         Category updatedCategory = this.categoryService.updateCategory(categoryId, storeId, categoryDto);
         return ResponseEntity.ok(updatedCategory);
     }
@@ -95,43 +113,60 @@ public class ApiStoreController {
         return new ResponseEntity<>(this.productService.getProductsByStore(storeId, params), HttpStatus.OK);
     }
 
-    @PostMapping("secure/store/{storeId}/products")
-    public ResponseEntity<?> addStoreProduct(@PathVariable(value = "storeId") int storeId,
+    @PostMapping("secure/store/products")
+    public ResponseEntity<?> addStoreProduct(Principal principal,
                                              @Valid @ModelAttribute ProductDTO productDTO, BindingResult result) throws MethodArgumentNotValidException {
+
         if (result.hasErrors()) {
             throw new MethodArgumentNotValidException(null, result);
         }
+        if (principal == null || principal.getName() == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Bạn chưa đăng nhập");
+        }
+        String username = principal.getName();
+        int storeId = this.storeService.getStoreIdByUsername(username);
         Product newPro = productService.addProduct(productDTO, storeId);
         ProductResponse productResponse = new ProductResponse(newPro);
         return new ResponseEntity<>(productResponse, HttpStatus.CREATED);
     }
 
 
-    @PutMapping("secure/store/{storeId}/products/{productId}")
-    public ResponseEntity<?> updateStoreProduct(@PathVariable(value = "storeId") int storeId,
+    @PutMapping("secure/store/products/{productId}")
+    public ResponseEntity<?> updateStoreProduct(Principal principal,
                                                 @PathVariable(value = "productId") int productId,
                                                 @ModelAttribute ProductDTO productDTO) {
+        if (principal == null || principal.getName() == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Bạn chưa đăng nhập");
+        }
+        String username = principal.getName();
+        int storeId = this.storeService.getStoreIdByUsername(username);
         Product updateProduct = productService.updateProduct(productDTO, storeId, productId);
         ProductResponse productResponse = new ProductResponse(updateProduct);
         return ResponseEntity.ok(productResponse);
     }
 
-    @GetMapping("secure/store/{storeId}/products/{productId}")
-    public ResponseEntity<ProductDTO> getStoreProductDetail(@PathVariable(value = "storeId") int storeId,
-                                                            @PathVariable(value = "productId") int productId){
+    @GetMapping("secure/store/products/{productId}")
+    public ResponseEntity<?> getStoreProductDetail(Principal principal,
+                                                   @PathVariable(value = "productId") int productId) {
+        if (principal == null || principal.getName() == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Bạn chưa đăng nhập");
+        }
         return new ResponseEntity<>(this.productService.getProductById(productId), HttpStatus.OK);
     }
 
 
-    @DeleteMapping("secure/store/{storeId}/products/{productId}")
+    @DeleteMapping("secure/store/products/{productId}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void deleteProduct(@PathVariable(value = "productId") int productId,
-                              @PathVariable(value = "storeId") int storeId) {
+                              Principal principal) {
+        if (principal == null || principal.getName() == null) {
+            ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Bạn chưa đăng nhập");
+        }
         this.productService.deleteProduct(productId);
     }
 
     @GetMapping("/store/{storeId}")
-    public ResponseEntity<?> getStoreDetail(@PathVariable(value = "storeId") int storeId){
+    public ResponseEntity<?> getStoreDetail(@PathVariable(value = "storeId") int storeId) {
         return new ResponseEntity<>(this.storeService.getStoreById(storeId), HttpStatus.OK);
     }
 
