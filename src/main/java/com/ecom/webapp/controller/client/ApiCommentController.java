@@ -8,16 +8,20 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.security.Principal;
+
 @RestController
-@RequestMapping("/api/comment")
+@RequestMapping("/api/secure/comment")
 public class ApiCommentController {
 
     @Autowired
     private CommentService commentService;
 
     @PostMapping("/create")
-    public ResponseEntity<?> createComment(@Valid @RequestBody CommentDto commentDto) {
+    public ResponseEntity<?> createComment(@Valid @RequestBody CommentDto commentDto, Principal principal) {
         System.out.println(commentDto);
+        String username = principal.getName();
+        commentDto.setUsername(username);
         this.commentService.createComment(commentDto);
         return ResponseEntity.ok("Create comment successfully!");
     }

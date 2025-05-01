@@ -10,6 +10,7 @@ import lombok.Data;
 public class CommentDto {
     private int id;
     private int userId;
+    private String username;
 
     @Size(max = 255, message = "Nội dung không được quá 255 ký tự!")
     @NotBlank(message = "Không được bỏ trống mục này!")
