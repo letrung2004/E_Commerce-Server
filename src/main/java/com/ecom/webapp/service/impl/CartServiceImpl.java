@@ -44,7 +44,9 @@ public class CartServiceImpl implements CartService {
 
 
     @Override
-    public CartDTO handelAddProductToCart(int userId, int productId) {
+    @Transactional
+    public CartDTO handelAddProductToCart(int userId, int productId, int quantity) {
+        int actualQuantity = (quantity <= 0) ? 1 : quantity;
         User user = this.userService.getUserById(userId);
         if (user == null) {
             throw new RuntimeException("Khong tim thay nguoi dung");
@@ -69,25 +71,27 @@ public class CartServiceImpl implements CartService {
             subCart.setStore(product.getStore());
             subCartRepository.save(subCart);
         }
-
+        boolean isNewItem = false;
         SubCartItem subCartItem = this.subCartItemRepository.getBySubCartIdAndProductId(subCart.getId(), productId);
         if (subCartItem == null) {
+            isNewItem = true;
             subCartItem = new SubCartItem();
             subCartItem.setSubCart(subCart);
             subCartItem.setProduct(product);
-            subCartItem.setQuantity(1);
+            subCartItem.setQuantity(actualQuantity);
             subCartItem.setUnitPrice(product.getPrice());
             subCartItemRepository.save(subCartItem);
         } else {
-            subCartItem.setQuantity(subCartItem.getQuantity() + 1);
+            subCartItem.setQuantity(subCartItem.getQuantity() + actualQuantity);
             subCartItemRepository.save(subCartItem);
         }
 
 
         System.out.println("SERVICE - subcart item: " + subCartItem.getId() );
-        cart.setItemsNumber(cart.getItemsNumber() + 1);
+        if (isNewItem) {
+            cart.setItemsNumber(cart.getItemsNumber() + 1);
+        }
         this.cartRepository.updateCart(cart);
-
 
         return new CartDTO(cart, List.of(subCart), List.of(subCartItem));
     }
@@ -128,6 +132,7 @@ public class CartServiceImpl implements CartService {
     }
 
     @Override
+    @Transactional
     public boolean updateQuantity(int subCartId, int productId, int quantityChange) {
         Optional<SubCart> optionalSubCart = Optional.ofNullable(subCartRepository.getById(subCartId));
         if (optionalSubCart.isPresent()) {
