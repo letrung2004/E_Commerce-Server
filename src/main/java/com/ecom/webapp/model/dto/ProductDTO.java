@@ -51,5 +51,6 @@ public class ProductDTO {
         this.id = product.getId();
         this.name = product.getName();
         this.image = product.getImage();
+        this.manufacturer = product.getManufacturer();
     }
 }
