@@ -5,6 +5,7 @@ import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.Data;
 
+import java.math.BigDecimal;
 import java.util.Set;
 
 @Data
@@ -18,11 +19,11 @@ public class OrderDto {
     @NotNull(message = "Không được bỏ trống mục này!")
     private int addressId;
 
-    @NotNull(message = "Không được bỏ trống mục này!")
-    private Long shippingFree;
+//    @NotNull(message = "Không được bỏ trống mục này!")
+//    private Long shippingFree;
 
-//    @NotBlank(message = "Không được bỏ trống mục này!")
-//    private BigDecimal total;
+    @NotNull(message = "Không được bỏ trống mục này!")
+    private Long total;
 
 
     @Size(max = 45)

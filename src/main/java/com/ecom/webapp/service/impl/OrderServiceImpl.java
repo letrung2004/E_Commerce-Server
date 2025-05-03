@@ -143,7 +143,7 @@ public class OrderServiceImpl implements OrderService {
                     break;
                 case "VNPay":
                     payment.setPaymentMethod("VNPay");
-                    // Goi API hoac service VNPay ...
+                    payment.setStatus("Chờ thanh toán");
                     break;
                 default:
                     throw new IllegalArgumentException("Phương thức thanh toán không hợp lệ: " + orderDto.getPaymentMethod());
