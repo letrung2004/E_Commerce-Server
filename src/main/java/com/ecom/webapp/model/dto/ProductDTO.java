@@ -41,7 +41,7 @@ public class ProductDTO {
     @NotNull(message = "Category ID is required")
     private Integer categoryId;
 
-    @NotNull(message = "Store ID is required")
+//    @NotNull(message = "Store ID is required")
     private Integer storeId;
 
     private MultipartFile file;
@@ -51,5 +51,6 @@ public class ProductDTO {
         this.id = product.getId();
         this.name = product.getName();
         this.image = product.getImage();
+        this.manufacturer = product.getManufacturer();
     }
 }

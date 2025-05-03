@@ -2,8 +2,10 @@ package com.ecom.webapp.controller.client;
 
 
 import com.ecom.webapp.model.Cart;
+import com.ecom.webapp.model.User;
 import com.ecom.webapp.model.dto.CartDTO;
 import com.ecom.webapp.service.CartService;
+import com.ecom.webapp.service.UserService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -11,15 +13,18 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.*;
 
+import java.security.Principal;
 import java.util.HashMap;
 import java.util.Map;
 
 @RestController
-@RequestMapping("/api/cart")
+@RequestMapping("/api/secure/cart")
 @CrossOrigin
 public class ApiCartController {
     @Autowired
     private CartService cartService;
+    @Autowired
+    private UserService userService;
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<Map<String, String>> handleValidationExceptions(MethodArgumentNotValidException ex) {
@@ -30,36 +35,56 @@ public class ApiCartController {
         return new ResponseEntity<>(errors, HttpStatus.BAD_REQUEST);
     }
 
-    @GetMapping("/{userId}")
-    public ResponseEntity<?> getUserCart(@PathVariable(value = "userId") int userId) {
-        CartDTO cartDTO = cartService.getCartDetails(userId);
+    @GetMapping
+    public ResponseEntity<?> getUserCart(Principal principal) {
+        if (principal == null || principal.getName() == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Bạn chưa đăng nhập");
+        }
+        User user = this.userService.getUserByUsername(principal.getName());
+        CartDTO cartDTO = cartService.getCartDetails(user.getId());
         return new ResponseEntity<>(cartDTO, HttpStatus.OK);
     }
 
 
-    @PostMapping("/{userId}/add/{productId}")
-    public ResponseEntity<CartDTO> addUserCart(
-            @PathVariable(value = "userId") int userId,
-            @PathVariable(value = "productId") int productId) {
-        System.out.println("userId: " + userId + ", productId: " + productId);
-        CartDTO updatedCart = this.cartService.handelAddProductToCart(userId, productId);
+    @PostMapping("/add/{productId}")
+    public ResponseEntity<?> addUserCart(
+            Principal principal,
+            @PathVariable(value = "productId") int productId,
+            @RequestParam(name = "quantity", required = false, defaultValue = "1") int quantity ) {
+
+        if (principal == null || principal.getName() == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Bạn chưa đăng nhập");
+        }
+
+        User user = this.userService.getUserByUsername(principal.getName());
+        int userId = user.getId();
+        System.out.println("userId: " + userId + ", productId: " + productId + ", quantity: " + quantity);
+
+        CartDTO updatedCart = this.cartService.handelAddProductToCart(userId, productId, quantity);
         return ResponseEntity.ok(updatedCart);
     }
 
-    @DeleteMapping("/remove/{userId}/{productId}")
+
+    @DeleteMapping("/remove/{productId}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void deleteUserCart(
-            @PathVariable(value = "userId") int userId,
+            Principal principal,
             @PathVariable(value = "productId") int productId
     ) {
-       this.cartService.handelRemoveProductFromCart(userId, productId);
+        if (principal == null || principal.getName() == null) {
+            ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Bạn chưa đăng nhập");
+        }
+//        problem
+        User user = this.userService.getUserByUsername(principal.getName());
+        int userId = user.getId();
+        this.cartService.handelRemoveProductFromCart(userId, productId);
     }
 
-    @PatchMapping("/update-quantity")
+    @PostMapping("/update-quantity")
     public ResponseEntity<String> updateQuantity(
-            @RequestParam int subCartId,
-            @RequestParam int productId,
-            @RequestParam int quantityChange) {
+            @RequestParam(value = "subCartId") int subCartId,
+            @RequestParam(value = "productId") int productId,
+            @RequestParam(value = "quantityChange") int quantityChange) {
         boolean success = cartService.updateQuantity(subCartId, productId, quantityChange);
 
         if (success) {
