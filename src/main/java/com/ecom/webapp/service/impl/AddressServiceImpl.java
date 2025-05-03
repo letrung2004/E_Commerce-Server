@@ -22,12 +22,12 @@ public class AddressServiceImpl implements AddressService {
     private UserRepository userRepository;
 
     @Override
-    public List<AddressResponse> getAddressesByUserName(String username) {
+    public List<AddressResponse> getAddressesByUserName(String username, Boolean defaultAddress) {
         User user = this.userRepository.getUserByUsername(username);
         if (user == null) {
             throw new EntityNotFoundException("User not found with name: " + username);
         }
-        List<Address> addresses = this.addressRepository.getAddressesByUser(user);
+        List<Address> addresses = this.addressRepository.getAddressesByUser(user, defaultAddress);
 //        return addresses.stream().map(AddressResponse::new).collect(Collectors.toList());
         return addresses.stream().map(AddressResponse::new).toList();
     }
@@ -43,6 +43,7 @@ public class AddressServiceImpl implements AddressService {
         address.setReceiver(addressDto.getReceiver());
         address.setPhoneNumber(addressDto.getPhoneNumber());
         address.setUser(user);
+        address.setDefaultAddress(false);
         this.addressRepository.createAddress(address);
         return new AddressResponse(address);
     }
@@ -56,6 +57,29 @@ public class AddressServiceImpl implements AddressService {
         address.setAddress(addressDto.getAddress());
         address.setReceiver(addressDto.getReceiver());
         address.setPhoneNumber(addressDto.getPhoneNumber());
+        address.setDefaultAddress(addressDto.getDefaultAddress());
+        this.addressRepository.updateAddress(address);
+    }
+
+    @Override
+    public void setDefaultAddress(int id, String username) {
+        User user = this.userRepository.getUserByUsername(username);
+        if (user == null) {
+            throw new EntityNotFoundException("User not found with username: " + username);
+        }
+        Address address = this.addressRepository.getAddressById(id);
+        if (address == null) {
+            throw new EntityNotFoundException("Address not found with id: " + id);
+        }
+        if (address.getDefaultAddress()) {
+            return;
+        }
+        Address oldAddress = this.addressRepository.getDefaultAddressByUser(user);
+        if (oldAddress != null) {
+            oldAddress.setDefaultAddress(false);
+            this.addressRepository.updateAddress(oldAddress);
+        }
+        address.setDefaultAddress(true);
         this.addressRepository.updateAddress(address);
     }
 

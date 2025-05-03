@@ -11,6 +11,7 @@ public class AddressResponse {
     private String receiver;
     private String phoneNumber;
     private String address;
+    private Boolean defaultAddress;
 
     public AddressResponse(Address address) {
         this.id = address.getId();
@@ -18,5 +19,6 @@ public class AddressResponse {
         this.receiver = address.getReceiver();
         this.phoneNumber = address.getPhoneNumber();
         this.address = address.getAddress();
+        this.defaultAddress = address.getDefaultAddress();
     }
 }

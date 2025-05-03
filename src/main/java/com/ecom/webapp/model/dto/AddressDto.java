@@ -24,6 +24,8 @@ public class AddressDto {
     private String phoneNumber;
 
     @Size(max = 45, min=1, message = "Độ dài username không hợp lệ!")
-    @NotBlank(message = "Không được bỏ trống mục này!")
+//    @NotBlank(message = "Không được bỏ trống mục này!")
     private String username;
+
+    private Boolean defaultAddress;
 }
