@@ -116,6 +116,7 @@ public class CartServiceImpl implements CartService {
         if (subCartItem == null) throw new RuntimeException("Product not in cart");
 
         //xoa Cart, SubCart, SubCartItem
+        cart.setItemsNumber(cart.getItemsNumber() - 1);
         this.subCartItemRepository.deleteSubCartItem(subCartItem);
 
         int subCartItemCount = this.subCartItemRepository.countBySubCartId(subCart.getId());
@@ -123,8 +124,8 @@ public class CartServiceImpl implements CartService {
             this.subCartRepository.deleteSubCart(subCart);
         }
 
-        cart.setItemsNumber(cart.getItemsNumber() - subCartItem.getQuantity());
-        if (cart.getItemsNumber() == 0) {
+
+        if (cart.getItemsNumber() <= 0) {
             this.cartRepository.deleteCart(cart);
         } else {
             this.cartRepository.updateCart(cart);
