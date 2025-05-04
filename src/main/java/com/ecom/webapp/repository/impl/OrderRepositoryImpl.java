@@ -31,6 +31,7 @@ public class OrderRepositoryImpl implements OrderRepository {
             criteria.where(builder.equal(root.get("user"), user));
         else
             criteria.where(builder.and(builder.equal(root.get("user"), user), builder.equal(root.get("deliveryStatus"), status)));
+        criteria.orderBy(builder.desc(root.get("id")));
         return session.createQuery(criteria).getResultList();
     }
 
