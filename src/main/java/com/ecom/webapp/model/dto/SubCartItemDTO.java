@@ -11,11 +11,13 @@ import java.math.BigDecimal;
 @Setter
 @AllArgsConstructor
 public class SubCartItemDTO {
+    private int id;
     private ProductDTO product;
     private int quantity;
     private BigDecimal unitPrice;
 
     public SubCartItemDTO(SubCartItem item) {
+        this.id = item.getId();
         this.product = new ProductDTO(item.getProduct());
         this.quantity = item.getQuantity();
         this.unitPrice = item.getUnitPrice();

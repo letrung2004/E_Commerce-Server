@@ -11,9 +11,6 @@ import java.util.Set;
 @Data
 public class OrderDto {
     private int Id;
-
-    @Size(max = 45, min=1, message = "Độ dài username không hợp lệ!")
-    @NotBlank(message = "Không được bỏ trống mục này!")
     private String username;
 
     @NotNull(message = "Không được bỏ trống mục này!")
