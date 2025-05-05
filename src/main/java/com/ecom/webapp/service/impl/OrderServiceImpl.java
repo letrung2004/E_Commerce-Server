@@ -132,6 +132,7 @@ public class OrderServiceImpl implements OrderService {
             order.setTotal(total);
 
             Payment payment = new Payment();
+            payment.setTransactionId(orderDto.getTransactionId());
             payment.setOrder(order);
             payment.setUser(user);
             payment.setAmount(order.getTotal());

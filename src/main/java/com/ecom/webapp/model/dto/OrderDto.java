@@ -16,9 +16,6 @@ public class OrderDto {
     @NotNull(message = "Không được bỏ trống mục này!")
     private int addressId;
 
-//    @NotNull(message = "Không được bỏ trống mục này!")
-//    private Long shippingFree;
-
     @NotNull(message = "Không được bỏ trống mục này!")
     private Long total;
 
@@ -31,5 +28,6 @@ public class OrderDto {
 
 
     private Set<OrderItemDto> subOrderItems;
+    private String transactionId;
 
 }

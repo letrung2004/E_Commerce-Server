@@ -44,6 +44,11 @@ public class Payment implements Serializable {
     @Column(name = "date_created")
     private Instant dateCreated;
 
+    @Size(max = 45)
+    @Column(name = "transaction_id", length = 45)
+    private String transactionId;
+
+
     @PrePersist
     protected void onCreate() {
         this.dateCreated = Instant.now();

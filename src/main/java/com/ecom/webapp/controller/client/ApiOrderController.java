@@ -5,18 +5,15 @@ import com.ecom.webapp.model.dto.OrderDto;
 import com.ecom.webapp.model.dto.OrderUpdateDto;
 import com.ecom.webapp.model.responseDto.OrderResponse;
 import com.ecom.webapp.service.OrderService;
-import com.ecom.webapp.service.vnpay.VNPAYService;
+import com.ecom.webapp.service.impl.VNPayService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.*;
 
-import java.nio.file.attribute.UserPrincipal;
 import java.security.Principal;
 import java.util.Collections;
 import java.util.HashMap;
@@ -30,7 +27,7 @@ public class ApiOrderController {
     @Autowired
     private OrderService orderService;
     @Autowired
-    private VNPAYService vnpayService;
+    private VNPayService vnPayService;
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<Map<String, String>> handleValidationExceptions(MethodArgumentNotValidException ex) {
@@ -60,10 +57,13 @@ public class ApiOrderController {
 
 
     @PostMapping("/place-order")
-    public ResponseEntity<?> createOrder(
+    public synchronized ResponseEntity<?> createOrder(
             @Valid @RequestBody OrderDto orderDto,
             HttpServletRequest request,
             Principal principal) {
+
+        String txnId = String.valueOf(System.currentTimeMillis());
+        orderDto.setTransactionId(txnId);
         System.out.println("ORDER-DTO: "+orderDto);
 
         if (!orderDto.getPaymentMethod().equals("VNPay") && !orderDto.getPaymentMethod().equals("COD")) {
@@ -73,51 +73,16 @@ public class ApiOrderController {
         orderDto.setUsername(username);
         this.orderService.createOrder(orderDto);
 
-        if ("VNPay".equals(orderDto.getPaymentMethod())) {
-            int amount = orderDto.getTotal().intValue();
-
-            String baseUrl = request.getRequestURL().toString().replace(request.getRequestURI(), request.getContextPath());
-            String paymentUrl = vnpayService.createOrder(
-                    request,
-                    amount,
-                    "Thanh toán đơn hàng cho " + orderDto.getUsername(),
-                    baseUrl
-            );
+        // Nếu là thanh toán VNPay, tạo link và trả về
+        if ("VNPay".equalsIgnoreCase(orderDto.getPaymentMethod())) {
+            String paymentUrl = vnPayService.createPaymentUrl(request, orderDto);
             return ResponseEntity.ok(Collections.singletonMap("paymentUrl", paymentUrl));
         }
+
 
         return new ResponseEntity<>(orderDto, HttpStatus.CREATED);
     }
 
-//    @GetMapping("/vnpay-payment-return")
-//    public ResponseEntity<?> handleVnpayReturn(HttpServletRequest request) {
-//        Map<String, String> fields = vnpayService.extractVnpParams(request);
-//
-//        // Kiểm tra checksum hợp lệ
-//        boolean isValidChecksum = vnpayService.validateChecksum(fields);
-//        if (!isValidChecksum) {
-//            return ResponseEntity.badRequest().body("Checksum không hợp lệ");
-//        }
-//
-//        String responseCode = fields.get("vnp_ResponseCode");
-//        String orderIdStr = fields.get("vnp_TxnRef"); // Giả sử vnp_TxnRef = orderId
-//        Long orderId;
-//
-//        try {
-//            orderId = Long.parseLong(orderIdStr);
-//        } catch (NumberFormatException e) {
-//            return ResponseEntity.badRequest().body("Mã đơn hàng không hợp lệ");
-//        }
-//
-//        if ("00".equals(responseCode)) {
-//            // Giao dịch thành công
-//            paymentService.markPaymentAsPaid(orderId);
-//            return ResponseEntity.ok("Thanh toán thành công cho đơn hàng #" + orderId);
-//        } else {
-//            return ResponseEntity.status(HttpStatus.PAYMENT_REQUIRED)
-//                    .body("Thanh toán thất bại. Mã phản hồi: " + responseCode);
-//        }
-//    }
 
 
     @PatchMapping("/update")
