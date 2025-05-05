@@ -30,6 +30,7 @@ public class JwtFilter implements Filter {
     @Override
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
         HttpServletRequest httpRequest = (HttpServletRequest) request;
+        HttpServletResponse httpResponse = (HttpServletResponse) response;
 
         if (httpRequest.getRequestURI().startsWith(String.format("%s/api/secure", httpRequest.getContextPath())) == true) {
 
@@ -37,8 +38,12 @@ public class JwtFilter implements Filter {
             String header = httpRequest.getHeader("Authorization");
 
             if (header == null || !header.startsWith("Bearer ")) {
-                ((HttpServletResponse) response).sendError(HttpServletResponse.SC_UNAUTHORIZED, "Missing or invalid Authorization header.");
+                if (!httpResponse.isCommitted()) { // Dat: Them dieu kien nay
+                    httpResponse.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Missing or invalid Authorization header.");
+                }
                 return;
+
+
             } else {
                 String token = header.substring(7);
                 try {
@@ -64,8 +69,10 @@ public class JwtFilter implements Filter {
                 }
             }
 
-            ((HttpServletResponse) response).sendError(HttpServletResponse.SC_UNAUTHORIZED,
-                    "Token không hợp lệ hoặc hết hạn");
+            if (!httpResponse.isCommitted()) { // Dat: Them dieu kien nay
+                httpResponse.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Token không hợp lệ hoặc hết hạn");
+            }
+            return;
         }
 
         chain.doFilter(request, response);
