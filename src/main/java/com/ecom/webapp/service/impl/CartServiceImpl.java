@@ -156,4 +156,48 @@ public class CartServiceImpl implements CartService {
         }
         return false;
     }
+
+//    @Override
+//    @Transactional
+//    public CartDTO checkoutCart(int userId, List<Integer> productIds) {
+//        if (productIds == null || productIds.isEmpty()) {
+//          return null;
+//        }
+//
+//        Cart cart = cartRepository.getCartByUserId(userId);
+//        if (cart == null) return null;
+//
+//        int removedCount = 0;
+//
+//        for (Integer productId : productIds) {
+//            Product product = productRepository.getProductById(productId);
+//            if (product == null) continue;
+//
+//            int storeId = product.getStore().getId();
+//            SubCart subCart = subCartRepository.getByCartIdAndStoreId(cart.getId(), storeId);
+//            if (subCart == null) continue;
+//
+//            SubCartItem item = subCartItemRepository.getBySubCartIdAndProductId(subCart.getId(), productId);
+//            if (item != null) {
+//                subCartItemRepository.deleteSubCartItem(item);
+//                removedCount++;
+//            }
+//
+//            int remaining = subCartItemRepository.countBySubCartId(subCart.getId());
+//            if (remaining == 0) {
+//                subCartRepository.deleteSubCart(subCart);
+//            }
+//        }
+//        cart.setItemsNumber(cart.getItemsNumber() - removedCount);
+//
+//        if (cart.getItemsNumber() <= 0) {
+//            cartRepository.deleteCart(cart);
+//            return null;
+//        } else {
+//            cartRepository.updateCart(cart);
+//            return this.getCartDetails(userId);
+//        }
+//    }
+
+
 }

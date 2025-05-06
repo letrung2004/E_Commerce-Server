@@ -5,13 +5,14 @@ import com.ecom.webapp.model.dto.StoreDto;
 import com.ecom.webapp.model.responseDto.StoreResponse;
 
 import java.util.List;
+import java.util.Map;
 
 public interface StoreService {
     void createStore(StoreDto storeDto);
     void updateStore(int store);
     Store getStoreByUsername(String username);
 
-    List<Store> getStores();
+    List<StoreDto> getStores(Map<String, String> params);
     List<Object[]> getStoresUnprocessed();
     void deleteStore(int storeId);
     StoreResponse getStoreById(int storeId);

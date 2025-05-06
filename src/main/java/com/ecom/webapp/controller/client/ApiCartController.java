@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.security.Principal;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 @RestController
@@ -92,5 +93,24 @@ public class ApiCartController {
         }
         return ResponseEntity.badRequest().body("Cập nhật thất bại");
     }
+
+
+//    @PostMapping("/checkout")
+//    public ResponseEntity<?> checkout(@RequestBody List<Integer> productIds, Principal principal) {
+//        if (principal == null || principal.getName() == null) {
+//            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Bạn chưa đăng nhập");
+//        }
+//        User user = this.userService.getUserByUsername(principal.getName());
+//        int userId = user.getId();
+//        if (productIds == null || productIds.isEmpty()) {
+//            throw new IllegalArgumentException("Danh sách sản phẩm không được để trống");
+//        }
+//        CartDTO cartDTO = cartService.checkoutCart(userId, productIds);
+//        if (cartDTO == null) {
+//            return ResponseEntity.badRequest().body(null);
+//        }
+//        return new ResponseEntity<>(cartDTO, HttpStatus.OK);
+//    }
+
 
 }

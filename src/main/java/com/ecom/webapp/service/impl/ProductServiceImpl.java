@@ -34,8 +34,7 @@ public class ProductServiceImpl implements ProductService {
     @Autowired
     private CategoryRepository categoryRepository;
 
-
-    private ProductDTO convertProductToProductDTO(Product p) {
+    protected ProductDTO convertProductToProductDTO(Product p) {
         if (p == null) return null;
         ProductDTO dto = new ProductDTO();
         dto.setId(p.getId());
@@ -52,6 +51,7 @@ public class ProductServiceImpl implements ProductService {
         }
         if (p.getStore() != null) {
             dto.setStoreId(p.getStore().getId());
+            dto.setStoreName(p.getStore().getName());
         }
         return dto;
     }
@@ -144,6 +144,11 @@ public class ProductServiceImpl implements ProductService {
 
         this.productRepository.addOrUpdate(product);
         return product;
+    }
+
+    @Override
+    public void changeProductStatus(int productId) {
+        this.productRepository.changStatus(productId);
     }
 
 }
