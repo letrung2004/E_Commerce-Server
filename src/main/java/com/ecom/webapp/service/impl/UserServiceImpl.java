@@ -10,6 +10,7 @@ import com.ecom.webapp.repository.StoreRepository;
 import com.ecom.webapp.repository.UserRepository;
 import com.ecom.webapp.service.UserService;
 import jakarta.persistence.EntityNotFoundException;
+import jakarta.ws.rs.BadRequestException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.security.core.GrantedAuthority;
