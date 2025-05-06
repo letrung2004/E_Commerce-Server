@@ -11,4 +11,5 @@ public interface ProductRepository {
     Product getProductById(int id);
     void deleteProduct(int id);
     List<Product> getProductsByStore(int storeId, Map<String, String> params);
+    void changStatus(int productId);
 }

@@ -30,6 +30,7 @@ public class ProductRepositoryImpl implements ProductRepository {
         CriteriaBuilder b = session.getCriteriaBuilder();
         CriteriaQuery<Product> q = b.createQuery(Product.class);
         Root<Product> root = q.from(Product.class);
+        root.fetch("store");
         q.select(root);
 
         List<Predicate> predicates = new ArrayList<>();
@@ -60,6 +61,11 @@ public class ProductRepositoryImpl implements ProductRepository {
             String minRating = params.get("minRating");
             if (minRating != null && !minRating.isEmpty()) {
                 predicates.add(b.greaterThanOrEqualTo(root.get("starRate"), new BigDecimal(minRating)));
+            }
+
+            String isActive = params.get("isActive");
+            if (isActive != null && !isActive.isEmpty()) {
+                predicates.add(b.equal(root.get("active"), Byte.valueOf(isActive)));
             }
 
             String sort = params.get("sort");
@@ -106,10 +112,9 @@ public class ProductRepositoryImpl implements ProductRepository {
     @Override
     public void addOrUpdate(Product p) {
         Session session = this.sessionFactory.getObject().getCurrentSession();
-        if(p.getId()!=null) {
+        if (p.getId() != null) {
             session.merge(p);
-        }
-        else {
+        } else {
             session.persist(p);
         }
     }
@@ -133,6 +138,19 @@ public class ProductRepositoryImpl implements ProductRepository {
         return getProductsWithFilter(params, storeId);
     }
 
+    @Override
+    public void changStatus(int productId) {
+        Session session = this.sessionFactory.getObject().getCurrentSession();
+        Product p = getProductById(productId);
+        if (p != null) {
+            if (p.getActive() == (byte) 1) {
+                p.setActive((byte) 0);
+            } else {
+                p.setActive((byte) 1);
+            }
+            session.merge(p);
+        }
+    }
 
 
 }

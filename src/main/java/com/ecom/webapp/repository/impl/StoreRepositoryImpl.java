@@ -3,17 +3,16 @@ package com.ecom.webapp.repository.impl;
 import com.ecom.webapp.model.Store;
 import com.ecom.webapp.model.User;
 import com.ecom.webapp.repository.StoreRepository;
-import jakarta.persistence.criteria.CriteriaBuilder;
-import jakarta.persistence.criteria.CriteriaQuery;
-import jakarta.persistence.criteria.Join;
-import jakarta.persistence.criteria.Root;
+import jakarta.persistence.criteria.*;
 import org.hibernate.Session;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.orm.hibernate5.LocalSessionFactoryBean;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 @Repository
 @Transactional
@@ -23,12 +22,24 @@ public class StoreRepositoryImpl implements StoreRepository {
     private LocalSessionFactoryBean sessionFactory;
 
     @Override
-    public List<Store> getStores() {
+    public List<Store> getStores(Map<String, String> params) {
         Session session = sessionFactory.getObject().getCurrentSession();
         CriteriaBuilder builder = session.getCriteriaBuilder();
         CriteriaQuery<Store> criteria = builder.createQuery(Store.class);
         Root<Store> storeRoot = criteria.from(Store.class);
         criteria.select(storeRoot);
+
+        List<Predicate> predicates = new ArrayList<>();
+        if (params != null) {
+            String kw = params.get("q");
+            if (kw != null && !kw.isEmpty()) {
+                predicates.add(builder.like(storeRoot.get("name"), "%" + kw + "%"));
+            }
+        }
+        if (!predicates.isEmpty()) {
+            criteria.where(builder.and(predicates.toArray(new Predicate[0])));
+        }
+
         return session.createQuery(criteria).getResultList();
     }
 
