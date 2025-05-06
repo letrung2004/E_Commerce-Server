@@ -40,7 +40,9 @@ public class ProductRepositoryImpl implements ProductRepository {
         if (params != null) {
             String kw = params.get("q");
             if (kw != null && !kw.isEmpty()) {
-                predicates.add(b.like(root.get("name"), "%" + kw + "%"));
+                Predicate namePredicate = b.like(root.get("name"), "%" + kw + "%");
+                Predicate storePredicate = b.like(root.get("store").get("name"), "%" + kw + "%");
+                predicates.add(b.or(namePredicate, storePredicate));
             }
 
             String fromPrice = params.get("fromPrice");

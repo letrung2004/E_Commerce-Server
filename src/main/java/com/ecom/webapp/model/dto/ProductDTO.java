@@ -46,7 +46,7 @@ public class ProductDTO {
 
     private MultipartFile file;
     private String storeName;
-
+    private String matchReason;
 
     public ProductDTO(Product product) {
         this.id = product.getId();
