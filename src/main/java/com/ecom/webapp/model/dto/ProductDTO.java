@@ -45,6 +45,7 @@ public class ProductDTO {
     private Integer storeId;
 
     private MultipartFile file;
+    private String storeName;
 
 
     public ProductDTO(Product product) {

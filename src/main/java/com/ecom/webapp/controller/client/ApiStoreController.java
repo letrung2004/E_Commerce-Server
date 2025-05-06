@@ -170,4 +170,19 @@ public class ApiStoreController {
         return new ResponseEntity<>(this.storeService.getStoreById(storeId), HttpStatus.OK);
     }
 
+    @PostMapping("/secure/store/update-status/{productId}")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void updateStatusProduct(@PathVariable(value = "productId") int productId,
+                              Principal principal) {
+        if (principal == null || principal.getName() == null) {
+            ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Bạn chưa đăng nhập");
+        }
+        this.productService.changeProductStatus(productId);
+    }
+
+    @GetMapping("/stores")
+    public ResponseEntity<?> getStores(@RequestParam Map<String, String> params) {
+        return new ResponseEntity<>(this.storeService.getStores(params), HttpStatus.OK);
+    }
+
 }

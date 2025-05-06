@@ -13,4 +13,5 @@ public interface ProductService {
     List<ProductDTO> getProductsByStore(int storeId, Map<String, String> params);
     Product addProduct(ProductDTO productDto, int storeId);
     Product updateProduct(ProductDTO productDto, int storeId, int productId);
+    void changeProductStatus(int productId);
 }

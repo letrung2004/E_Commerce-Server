@@ -1,6 +1,7 @@
 package com.ecom.webapp.service.impl;
 
 import com.ecom.webapp.model.Address;
+import com.ecom.webapp.model.Product;
 import com.ecom.webapp.model.Store;
 import com.ecom.webapp.model.User;
 import com.ecom.webapp.model.dto.StoreDto;
@@ -15,6 +16,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 @Service
 @Transactional
@@ -96,9 +99,22 @@ public class StoreServiceImpl implements StoreService {
         return store;
     }
 
+    private StoreDto convertStoreToStoreDto(Store store) {
+        if (store == null) {return null;}
+        StoreDto storeDto = new StoreDto();
+        storeDto.setName(store.getName());
+        storeDto.setDescription(store.getDescription());
+        storeDto.setLogo(store.getLogo());
+        storeDto.setPhoneNumber(store.getPhoneNumber());
+        storeDto.setAddressId(store.getAddress().getId());
+        storeDto.setUsername(store.getOwner().getUsername());
+        return storeDto;
+    }
+
     @Override
-    public List<Store> getStores() {
-        return this.storeRepository.getStores();
+    public List<StoreDto> getStores(Map<String, String> params) {
+        List<Store> stores = this.storeRepository.getStores(params);
+        return stores.stream().map(this::convertStoreToStoreDto).collect(Collectors.toList());
     }
 
     @Override
