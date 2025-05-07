@@ -4,6 +4,7 @@ import com.ecom.webapp.model.Product;
 import com.ecom.webapp.model.Review;
 import com.ecom.webapp.model.Store;
 import com.ecom.webapp.repository.ReviewRepository;
+import jakarta.persistence.Query;
 import jakarta.persistence.criteria.CriteriaBuilder;
 import jakarta.persistence.criteria.CriteriaQuery;
 import jakarta.persistence.criteria.Predicate;
@@ -21,12 +22,12 @@ import java.util.Map;
 @Repository
 @Transactional
 public class ReviewRepositoryImpl implements ReviewRepository {
-
+    private static final int PAGE_SIZE = 2;
     @Autowired
     private LocalSessionFactoryBean sessionFactory;
 
     @Override
-    public List<Review> getReviews(Store store, Integer productId) {
+    public List<Review> getReviews(Store store, Integer productId, int page) {
         Session session = sessionFactory.getObject().getCurrentSession();
         CriteriaBuilder builder = session.getCriteriaBuilder();
         CriteriaQuery<Review> criteria = builder.createQuery(Review.class);
@@ -44,7 +45,11 @@ public class ReviewRepositoryImpl implements ReviewRepository {
         predicates.add(p);
         criteria.where(predicates.toArray(Predicate[]::new));
 
-        return session.createQuery(criteria).getResultList();
+        Query query = session.createQuery(criteria);
+        query.setFirstResult((page - 1) * PAGE_SIZE); // offset
+        query.setMaxResults(PAGE_SIZE);               // limit
+
+        return query.getResultList();
     }
 
     @Override

@@ -24,6 +24,7 @@ import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
 @Service
+@Transactional
 public class ProductServiceImpl implements ProductService {
     @Autowired
     private ProductRepository productRepository;

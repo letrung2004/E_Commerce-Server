@@ -37,13 +37,15 @@ public class ApiOrderController {
         );
         return new ResponseEntity<>(errors, HttpStatus.BAD_REQUEST);
     }
-    
+
     @GetMapping("/all")
-    public ResponseEntity<List<OrderResponse>> getOrders(Principal principal,
-           @RequestParam(value = "status", required = false, defaultValue = "") String status) {
+    public ResponseEntity<List<OrderResponse>> getOrders(
+            Principal principal,
+            @RequestParam(value = "status", required = false, defaultValue = "") String status,
+            @RequestParam(value = "page", required = false, defaultValue = "1") int page) {
         String username = principal.getName();
         System.out.println(username);
-        List<OrderResponse> orders = this.orderService.getOrdersByUsername(username, status);
+        List<OrderResponse> orders = this.orderService.getOrdersByUsername(username, status, page);
         return new ResponseEntity<>(orders, HttpStatus.OK);
     }
 
@@ -57,14 +59,14 @@ public class ApiOrderController {
 
 
     @PostMapping("/place-order")
-    public synchronized ResponseEntity<?> createOrder(
+    public ResponseEntity<?> createOrder(
             @Valid @RequestBody OrderDto orderDto,
             HttpServletRequest request,
             Principal principal) {
 
         String txnId = String.valueOf(System.currentTimeMillis());
         orderDto.setTransactionId(txnId);
-        System.out.println("ORDER-DTO: "+orderDto);
+        System.out.println("ORDER-DTO: " + orderDto);
 
         if (!orderDto.getPaymentMethod().equals("VNPay") && !orderDto.getPaymentMethod().equals("COD")) {
             return ResponseEntity.badRequest().body(new ErrorResponse("Phương thức thanh toán không hợp lệ!"));
@@ -82,7 +84,6 @@ public class ApiOrderController {
 
         return new ResponseEntity<>(orderDto, HttpStatus.CREATED);
     }
-
 
 
     @PatchMapping("/update")

@@ -17,7 +17,7 @@ import java.time.Instant;
 public class ReviewResponse {
     private int id;
 
-    private int userId;
+    private UserReviewResponse userReview;
 
     private int storeId;
 
@@ -34,7 +34,7 @@ public class ReviewResponse {
 
     public ReviewResponse(Review review) {
         this.id = review.getId();
-        this.userId = review.getUser().getId();
+        this.userReview = new UserReviewResponse(review.getUser());
         this.storeId = review.getStore().getId();
         this.productId = review.getProduct().getId();
         Comment comment = review.getComment();
