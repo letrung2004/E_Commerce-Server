@@ -41,12 +41,12 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     @Transactional
-    public List<OrderResponse> getOrdersByUsername(String username, String status) {
+    public List<OrderResponse> getOrdersByUsername(String username, String status, int page) {
         User user = this.userRepository.getUserByUsername(username);
         if (user == null) {
             throw new EntityNotFoundException("User not found with username: " + username);
         }
-        List<Order> orders = this.orderRepository.getOrdersByUser(user, status);
+        List<Order> orders = this.orderRepository.getOrdersByUser(user, status, page);
         return orders.stream().map(OrderResponse::new).toList();
     }
 
