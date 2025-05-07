@@ -60,10 +60,30 @@ public class ProductServiceImpl implements ProductService {
     @Override
     public List<ProductDTO> getProducts(Map<String, String> params) {
         List<Product> products = this.productRepository.getProducts(params);
-        return products.stream().map(this::convertProductToProductDTO).collect(Collectors.toList());
+        String kw = params.get("q") != null ? params.get("q").toLowerCase() : null;
+        return products.stream()
+                .map(p -> {
+                    ProductDTO dto = convertProductToProductDTO(p);
+
+                    if (kw != null && !kw.isEmpty()) {
+                        boolean matchProduct = p.getName() != null && p.getName().toLowerCase().contains(kw);
+                        boolean matchStore = p.getStore() != null && p.getStore().getName().toLowerCase().contains(kw);
+
+                        if (matchProduct && matchStore)
+                            dto.setMatchReason("both");
+                        else if (matchProduct)
+                            dto.setMatchReason("product");
+                        else if (matchStore)
+                            dto.setMatchReason("store");
+                    }
+
+                    return dto;
+                })
+                .collect(Collectors.toList());
     }
 
     @Override
+    @Transactional
     public ProductDTO getProductById(int id) {
         Product product = this.productRepository.getProductById(id);
         return convertProductToProductDTO(product);

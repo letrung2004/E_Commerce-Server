@@ -1,6 +1,9 @@
 package com.ecom.webapp.controller.client;
 
+import com.ecom.webapp.model.User;
+import com.ecom.webapp.model.dto.UserDto;
 import com.ecom.webapp.model.responseDto.UserResponse;
+import com.ecom.webapp.repository.UserRepository;
 import com.ecom.webapp.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -9,6 +12,7 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.web.bind.annotation.*;
 
 import java.security.Principal;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/api")
@@ -17,6 +21,10 @@ public class ApiUserController {
 
     @Autowired
     private UserService userDetailService;
+    @Autowired
+    private UserService userService;
+    @Autowired
+    private UserRepository userRepository;
 
     @GetMapping("/secure/profile")
     @ResponseBody
@@ -58,5 +66,28 @@ public class ApiUserController {
                     .body("Lỗi server khi tìm kiếm người dùng.");
         }
 
+    }
+
+    @PutMapping("/secure/update-profile")
+    public ResponseEntity<?> updateUserProfile(Principal principal,
+                                               @ModelAttribute UserDto userDto) {
+        if (principal == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Chua dang nhap!");
+        }
+        String username = principal.getName();
+        User currentUser = this.userService.getUserByUsername(username);
+
+        User userWithEmail = userRepository.findByEmail(userDto.getEmail());
+        if (userWithEmail != null && !userWithEmail.getId().equals(currentUser.getId())) {
+            return ResponseEntity.badRequest().body(Map.of("email", "Email đã tồn tại"));
+        }
+
+
+        this.userService.update(userDto);
+
+
+        User updatedUser = this.userService.getUserByUsername(username);
+        UserResponse userResponse = new UserResponse(updatedUser);
+        return ResponseEntity.ok(userResponse);
     }
 }
