@@ -20,7 +20,7 @@ import java.util.List;
 import java.util.Map;
 
 @RestController
-@RequestMapping("/api/secure/reviews")
+@RequestMapping("/api/reviews")
 public class ApiReviewController {
 
     @Autowired
@@ -49,7 +49,8 @@ public class ApiReviewController {
     @GetMapping("/{storeId}")
     public ResponseEntity<List<ReviewResponse>> getAllReviews(
             @PathVariable(value = "storeId") String storeId,
-            @RequestParam(value = "productId", required = false, defaultValue = "") String productId) {
+            @RequestParam(value = "productId", required = false, defaultValue = "") String productId,
+            @RequestParam(value = "page", required = false, defaultValue = "1") int page) {
 
         System.out.println("Product Id: " + productId);
         System.out.println("Store Id: " + storeId);
@@ -71,7 +72,7 @@ public class ApiReviewController {
         }
 
 
-        List<ReviewResponse> reviews = this.reviewService.getReviews(storeID, prodID);
+        List<ReviewResponse> reviews = this.reviewService.getReviews(storeID, prodID, page);
         return new ResponseEntity<>(reviews, HttpStatus.OK);
     }
 

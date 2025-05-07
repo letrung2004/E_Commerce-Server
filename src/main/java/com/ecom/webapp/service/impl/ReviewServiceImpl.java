@@ -31,12 +31,12 @@ public class ReviewServiceImpl implements ReviewService {
     private OrderDetailRepository orderDetailRepository;
 
     @Override
-    public List<ReviewResponse> getReviews(int storeId, Integer productId) {
+    public List<ReviewResponse> getReviews(int storeId, Integer productId, int page) {
         Store store = this.storeRepository.getStoreById(storeId);
         if (store == null) {
             throw new EntityNotFoundException("Store not found with id " + storeId);
         }
-        List<Review> reviews = this.reviewRepository.getReviews(store, productId);
+        List<Review> reviews = this.reviewRepository.getReviews(store, productId, page);
         return reviews.stream().map(ReviewResponse::new).toList();
     }
 

@@ -7,7 +7,7 @@ import com.ecom.webapp.model.responseDto.ReviewResponse;
 import java.util.List;
 
 public interface ReviewService {
-    List<ReviewResponse> getReviews(int storeId, Integer productId);
+    List<ReviewResponse> getReviews(int storeId, Integer productId, int page);
     void addReview(ReviewDto reviewDto);
     void updateReview(Review review);
     void deleteReview(Review review);
