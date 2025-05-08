@@ -69,4 +69,10 @@ public class ReviewRepositoryImpl implements ReviewRepository {
         Session session = sessionFactory.getObject().getCurrentSession();
         session.remove(review);
     }
+
+    @Override
+    public Review getReviewById(int reviewId) {
+        Session session = sessionFactory.getObject().getCurrentSession();
+        return session.get(Review.class, reviewId);
+    }
 }

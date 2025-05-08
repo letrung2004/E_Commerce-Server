@@ -7,6 +7,7 @@ import com.ecom.webapp.model.dto.OrderUpdateDto;
 import com.ecom.webapp.model.responseDto.OrderResponse;
 import com.ecom.webapp.repository.*;
 import com.ecom.webapp.service.OrderService;
+import com.ecom.webapp.service.StoreService;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -37,6 +38,8 @@ public class OrderServiceImpl implements OrderService {
     private CartRepository cartRepository;
     @Autowired
     private StoreRepository storeRepository;
+    @Autowired
+    private StoreService storeService;
 
 
     @Override
@@ -47,6 +50,17 @@ public class OrderServiceImpl implements OrderService {
             throw new EntityNotFoundException("User not found with username: " + username);
         }
         List<Order> orders = this.orderRepository.getOrdersByUser(user, status, page);
+        return orders.stream().map(OrderResponse::new).toList();
+    }
+
+    @Override
+    @Transactional
+    public List<OrderResponse> getOrdersByStoreId(int storeId, String status, int page) {
+       Store store = this.storeRepository.getStoreById(storeId);
+        if (store == null) {
+            throw new EntityNotFoundException("User not found with username: " + storeId);
+        }
+        List<Order> orders = this.orderRepository.getOrdersByStore(store, status, page);
         return orders.stream().map(OrderResponse::new).toList();
     }
 

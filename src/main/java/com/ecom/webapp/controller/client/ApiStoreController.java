@@ -5,14 +5,12 @@ import com.ecom.webapp.model.Product;
 import com.ecom.webapp.model.dto.CategoryDto;
 import com.ecom.webapp.model.dto.ProductDTO;
 import com.ecom.webapp.model.dto.StoreDto;
+import com.ecom.webapp.model.responseDto.OrderResponse;
 import com.ecom.webapp.model.responseDto.ProductResponse;
 import com.ecom.webapp.repository.CommentRepository;
 import com.ecom.webapp.repository.ReviewRepository;
 import com.ecom.webapp.repository.StoreRepository;
-import com.ecom.webapp.service.CategoryService;
-import com.ecom.webapp.service.ProductService;
-import com.ecom.webapp.service.StoreService;
-import com.ecom.webapp.service.UserService;
+import com.ecom.webapp.service.*;
 import jakarta.validation.Valid;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -44,6 +42,8 @@ public class ApiStoreController {
     private CategoryService categoryService;
     @Autowired
     private ProductService productService;
+    @Autowired
+    private OrderService orderService;
 
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
@@ -183,6 +183,17 @@ public class ApiStoreController {
     @GetMapping("/stores")
     public ResponseEntity<?> getStores(@RequestParam Map<String, String> params) {
         return new ResponseEntity<>(this.storeService.getStores(params), HttpStatus.OK);
+    }
+
+
+    @GetMapping("/secure/store/{storeId}/orders/all")
+    public ResponseEntity<List<OrderResponse>> getOrders(
+            @PathVariable("storeId") int storeId,
+            @RequestParam(value = "status", required = false, defaultValue = "") String status,
+            @RequestParam(value = "page", required = false, defaultValue = "1") int page) {
+
+        List<OrderResponse> orders = this.orderService.getOrdersByStoreId(storeId, status, page);
+        return new ResponseEntity<>(orders, HttpStatus.OK);
     }
 
 }

@@ -4,6 +4,8 @@ import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
 import lombok.Setter;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
 
 import java.time.Instant;
 
@@ -42,6 +44,16 @@ public class Review {
 
     @Column(name = "rate")
     private Integer rate;
+
+    @OneToOne(fetch = FetchType.LAZY)
+    @OnDelete(action = OnDeleteAction.CASCADE)
+    @JoinColumn(name = "response_id")
+    private Comment response;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @OnDelete(action = OnDeleteAction.SET_NULL)
+    @JoinColumn(name = "order_id")
+    private Order order;
 
     @PrePersist
     protected void onCreate() {
