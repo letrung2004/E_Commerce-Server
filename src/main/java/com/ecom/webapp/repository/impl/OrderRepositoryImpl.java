@@ -1,6 +1,7 @@
 package com.ecom.webapp.repository.impl;
 
 import com.ecom.webapp.model.Order;
+import com.ecom.webapp.model.Store;
 import com.ecom.webapp.model.User;
 import com.ecom.webapp.repository.OrderRepository;
 import jakarta.persistence.Query;
@@ -31,6 +32,33 @@ public class OrderRepositoryImpl implements OrderRepository {
         Root<Order> root = criteria.from(Order.class);
 
         Predicate userPredicate = builder.equal(root.get("user"), user);
+        Predicate finalPredicate;
+
+        if (status == null || status.isEmpty()) {
+            finalPredicate = userPredicate;
+        } else {
+            Predicate statusPredicate = builder.equal(root.get("deliveryStatus"), status);
+            finalPredicate = builder.and(userPredicate, statusPredicate);
+        }
+
+        criteria.where(finalPredicate);
+        criteria.orderBy(builder.desc(root.get("id")));
+
+        Query query = session.createQuery(criteria);
+        query.setFirstResult((page - 1) * PAGE_SIZE);
+        query.setMaxResults(PAGE_SIZE);
+
+        return query.getResultList();
+    }
+
+    @Override
+    public List<Order> getOrdersByStore(Store store, String status, int page) {
+        Session session = this.sessionFactory.getObject().getCurrentSession();
+        CriteriaBuilder builder = session.getCriteriaBuilder();
+        CriteriaQuery<Order> criteria = builder.createQuery(Order.class);
+        Root<Order> root = criteria.from(Order.class);
+
+        Predicate userPredicate = builder.equal(root.get("store"), store);
         Predicate finalPredicate;
 
         if (status == null || status.isEmpty()) {

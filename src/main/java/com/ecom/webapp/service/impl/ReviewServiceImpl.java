@@ -78,7 +78,7 @@ public class ReviewServiceImpl implements ReviewService {
             review.setUser(user);
             review.setProduct(orderDetail.getProduct());
             review.setStore(orderDetail.getProduct().getStore());
-
+            review.setOrder(orderDetail.getOrder());
             review.setRate(rates.get(i));
 
             if (reviewDto.getComments() != null && i < reviewDto.getComments().size()) {

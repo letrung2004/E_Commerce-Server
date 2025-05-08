@@ -17,5 +17,5 @@ public class CommentDto {
     private String content;
 
     @NotNull(message = "Không được bỏ trống mục này!")
-    private int commentParentId;
+    private int reviewId;
 }

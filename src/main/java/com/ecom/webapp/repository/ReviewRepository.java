@@ -11,5 +11,6 @@ public interface ReviewRepository {
     void addReview(Review review);
     void updateReview(Review review);
     void deleteReview(Review review);
+    Review getReviewById(int reviewId);
 
 }

@@ -1,9 +1,11 @@
 package com.ecom.webapp.service.impl;
 
 import com.ecom.webapp.model.Comment;
+import com.ecom.webapp.model.Review;
 import com.ecom.webapp.model.User;
 import com.ecom.webapp.model.dto.CommentDto;
 import com.ecom.webapp.repository.CommentRepository;
+import com.ecom.webapp.repository.ReviewRepository;
 import com.ecom.webapp.repository.UserRepository;
 import com.ecom.webapp.service.CommentService;
 import jakarta.persistence.EntityNotFoundException;
@@ -19,6 +21,9 @@ public class CommentServiceImpl implements CommentService {
     private CommentRepository commentRepository;
     @Autowired
     private UserRepository userRepository;
+    @Autowired
+    private ReviewRepository reviewRepository;
+
 
     @Override
     public List<Comment> getCommentsByCommentParentId(int commentParentId) {
@@ -32,19 +37,21 @@ public class CommentServiceImpl implements CommentService {
 
     @Override
     public void createComment(CommentDto commentDto) {
-        Comment commentParent = this.commentRepository.getCommentById(commentDto.getCommentParentId());
-        if (commentParent == null) {
-            throw new EntityNotFoundException("Comment parent not found with id: " + commentDto.getCommentParentId());
+        Review review = this.reviewRepository.getReviewById(commentDto.getReviewId());
+        if (review == null) {
+            throw new EntityNotFoundException("Review not found with id: " + commentDto.getReviewId());
         }
         User user = this.userRepository.getUserByUsername(commentDto.getUsername());
         if (user == null) {
             throw new EntityNotFoundException("User not found with id: " + commentDto.getUsername());
         }
         Comment comment = new Comment();
-        comment.setCommentParent(commentParent);
         comment.setUser(user);
         comment.setContent(commentDto.getContent());
         this.commentRepository.createComment(comment);
+
+        review.setResponse(comment);
+        this.reviewRepository.updateReview(review);
     }
 
     @Override

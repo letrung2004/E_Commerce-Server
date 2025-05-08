@@ -36,6 +36,8 @@ public class CommentRepositoryImpl implements CommentRepository {
         return session.get(Comment.class, id);
     }
 
+
+
     @Override
     public void createComment(Comment comment) {
         Session session = sessionFactory.getObject().getCurrentSession();
