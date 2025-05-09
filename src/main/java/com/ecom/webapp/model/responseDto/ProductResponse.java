@@ -4,6 +4,7 @@ package com.ecom.webapp.model.responseDto;
 import com.ecom.webapp.model.Category;
 import com.ecom.webapp.model.Product;
 import com.ecom.webapp.model.Store;
+import jakarta.persistence.criteria.CriteriaBuilder;
 import lombok.Data;
 
 import java.math.BigDecimal;
@@ -17,8 +18,8 @@ public class ProductResponse {
     private String productPrice;
     private String description;
     private Date dateCreated;
-    private int categoryId;
-    private int storeId;
+    private Integer categoryId;
+    private Integer storeId;
 
 
     public ProductResponse(Product product) {
@@ -28,7 +29,7 @@ public class ProductResponse {
         this.productPrice = product.getPrice().toString();
         this.description = product.getDescription();
         this.dateCreated = product.getDateCreated();
-        this.categoryId = product.getCategory().getId();
-        this.storeId = product.getStore().getId();
+        this.categoryId = (product.getCategory() != null) ? product.getCategory().getId() : null;
+        this.storeId = (product.getStore() != null) ? product.getStore().getId() : null;
     }
 }

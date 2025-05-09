@@ -21,7 +21,7 @@ public class OrderDetailResponse {
 
     public OrderDetailResponse(OrderDetail orderDetail) {
         this.id = orderDetail.getId();
-        this.product = new ProductResponse(orderDetail.getProduct());
+        this.product = orderDetail.getProduct() != null ? new ProductResponse(orderDetail.getProduct()) : null;
         this.quantity = orderDetail.getQuantity();
         this.subTotal = orderDetail.getSubTotal();
         this.isEvaluated = orderDetail.isEvaluated();
