@@ -134,7 +134,10 @@ public class ApiStoreController {
     @PutMapping("secure/store/products/{productId}")
     public ResponseEntity<?> updateStoreProduct(Principal principal,
                                                 @PathVariable(value = "productId") int productId,
-                                                @ModelAttribute ProductDTO productDTO) {
+                                                @Valid @ModelAttribute ProductDTO productDTO, BindingResult result) throws MethodArgumentNotValidException {
+        if (result.hasErrors()) {
+            throw new MethodArgumentNotValidException(null, result);
+        }
         if (principal == null || principal.getName() == null) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Bạn chưa đăng nhập");
         }

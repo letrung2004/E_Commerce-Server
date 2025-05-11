@@ -19,29 +19,29 @@ import java.util.Date;
 public class ProductDTO {
     private Integer id;
 
-    @NotNull(message = "Product name is required")
-    @Size(max = 255,min = 2, message = "Product name must be less than 255 and more than 2 characters")
+    @NotNull(message = "Vui lòng nhập tên sản phẩm")
+    @Size(max = 255,min = 2, message = "Tên sản phẩm phải ít nhất từ 3 ký tự")
     private String name;
 
-    @NotNull(message = "Manufacturer is required")
-    @Size(max = 100, message = "Manufacturer name must be less than 100 characters")
+    @NotNull(message = "Vui lòng nhập tên nhà sản xuất")
+    @Size(max = 100, message = "Tên nhà sản xuất không được vượt quá 100 ký tự")
     private String manufacturer;
 
-    @NotNull(message = "Price is required")
-    @DecimalMin(value = "0.01", message = "Price must be greater than 0")
+    @NotNull(message = "Vui lòng nhập giá sản phẩm")
+    @DecimalMin(value = "0.01", message = "Giá sản phẩm phải lớn hơn 0")
     private BigDecimal price;
 
-    @Size(max = 255, message = "Description must be less than 255 characters")
+    @Size(max = 255, message = "Mô tả sản phẩm không được vượt quá 250 ký tự")
     private String description;
     private String image;
     private Date dateCreated;
     private BigDecimal starRate;
     private Byte active;
 
-    @NotNull(message = "Category ID is required")
+    @NotNull(message = "Vui lòng chọn danh mục")
     private Integer categoryId;
 
-//    @NotNull(message = "Store ID is required")
+//    @NotNull(message = "Vui lòng chọn cửa hàng")
     private Integer storeId;
 
     private MultipartFile file;

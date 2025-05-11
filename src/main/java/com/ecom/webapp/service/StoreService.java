@@ -12,7 +12,7 @@ public interface StoreService {
     void updateStore(int store);
     Store getStoreByUsername(String username);
 
-    List<StoreDto> getStores(Map<String, String> params);
+    List<StoreResponse> getStores(Map<String, String> params);
     List<Object[]> getStoresUnprocessed();
     void deleteStore(int storeId);
     StoreResponse getStoreById(int storeId);

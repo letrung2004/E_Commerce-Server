@@ -99,22 +99,20 @@ public class StoreServiceImpl implements StoreService {
         return store;
     }
 
-    private StoreDto convertStoreToStoreDto(Store store) {
+    private StoreResponse convertStoreToStoreResponse(Store store) {
         if (store == null) {return null;}
-        StoreDto storeDto = new StoreDto();
-        storeDto.setName(store.getName());
-        storeDto.setDescription(store.getDescription());
-        storeDto.setLogo(store.getLogo());
-        storeDto.setPhoneNumber(store.getPhoneNumber());
-        storeDto.setAddressId(store.getAddress().getId());
-        storeDto.setUsername(store.getOwner().getUsername());
-        return storeDto;
+        StoreResponse storeResponse = new StoreResponse();
+        storeResponse.setName(store.getName());
+        storeResponse.setLogo(store.getLogo());
+        storeResponse.setAddressLine(store.getAddress().getAddress());
+        storeResponse.setId(store.getId());
+        return storeResponse;
     }
 
     @Override
-    public List<StoreDto> getStores(Map<String, String> params) {
+    public List<StoreResponse> getStores(Map<String, String> params) {
         List<Store> stores = this.storeRepository.getStores(params);
-        return stores.stream().map(this::convertStoreToStoreDto).collect(Collectors.toList());
+        return stores.stream().map(this::convertStoreToStoreResponse).collect(Collectors.toList());
     }
 
     @Override
