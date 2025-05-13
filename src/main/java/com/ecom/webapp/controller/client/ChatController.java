@@ -2,6 +2,7 @@ package com.ecom.webapp.controller.client;
 
 
 import com.ecom.webapp.model.ChatMessage;
+import com.ecom.webapp.model.dto.ChatMessageDto;
 import com.ecom.webapp.service.ChatMessageService;
 import com.ecom.webapp.service.UserService;
 import org.slf4j.Logger;
@@ -30,6 +31,52 @@ public class ChatController {
     private SimpMessagingTemplate messagingTemplate;
     @Autowired
     private UserService userService;
+
+
+    @MessageMapping("/chat/sendPrivateMessage")
+    public void sendMessage(@Payload ChatMessageDto chatMessage, Principal principal) {
+        String senderUsername = principal.getName();
+        System.out.println("[DEBUG] Principal username: " + senderUsername);
+        System.out.println("[DEBUG] Payload senderUsername: " + chatMessage.getSenderUsername());
+        System.out.println("[DEBUG] Payload recipientUsername: " + chatMessage.getRecipientUsername());
+        System.out.println("[DEBUG] Payload content: " + chatMessage.getContent());
+        chatMessage.setSenderUsername(senderUsername); // Đảm bảo sender là người đã login
+        Map<String, String> errorPayload = new HashMap<>();
+        errorPayload.put("type", "ERROR");
+        errorPayload.put("message", "Người nhận không tồn tại: " + chatMessage.getRecipientUsername());
+        // Kiểm tra người nhận tồn tại
+        if (userService.getUserByUsername(chatMessage.getRecipientUsername())==null) {
+            logger.error("Recipient {} does not exist", chatMessage.getRecipientUsername());
+            messagingTemplate.convertAndSendToUser(
+                    senderUsername,
+                    "/queue/errors",
+                    errorPayload
+            );
+            return;
+        }
+//        ChatMessage savedMessage = this.chatMessageService.saveChatMessage(chatMessage);
+
+        // Gửi message đến người nhận
+        logger.info("Sending to recipient: {}", chatMessage.getRecipientUsername());
+        messagingTemplate.convertAndSendToUser(
+                chatMessage.getRecipientUsername(),
+                "/queue/private/messages",
+                chatMessage
+        );
+
+        // Gửi xác nhận cho người gửi
+        messagingTemplate.convertAndSendToUser(
+                chatMessage.getSenderUsername(),
+                "/queue/private/sent",
+                chatMessage
+        );
+    }
+    
+
+}
+
+
+
 //
 //    @MessageMapping("/chat.sendMessage")
 //    public void sendMessage(@Payload ChatMessage chatMessage, Principal principal) {
@@ -73,46 +120,3 @@ public class ChatController {
 //        );
 //        System.out.println("[INFO] Message sent back to sender.");
 //    }
-
-    @MessageMapping("/chat.sendMessage")
-    public void sendMessage(@Payload ChatMessage chatMessage, Principal principal) {
-        String senderUsername = principal.getName();
-        System.out.println("[DEBUG] Principal username: " + senderUsername);
-        System.out.println("[DEBUG] Payload senderUsername: " + chatMessage.getSenderUsername());
-        System.out.println("[DEBUG] Payload recipientUsername: " + chatMessage.getRecipientUsername());
-        System.out.println("[DEBUG] Payload content: " + chatMessage.getContent());
-        chatMessage.setSenderUsername(senderUsername); // Đảm bảo sender là người đã login
-        Map<String, String> errorPayload = new HashMap<>();
-        errorPayload.put("type", "ERROR");
-        errorPayload.put("message", "Người nhận không tồn tại: " + chatMessage.getRecipientUsername());
-        // Kiểm tra người nhận tồn tại
-        if (userService.getUserByUsername(chatMessage.getRecipientUsername())==null) {
-            logger.error("Recipient {} does not exist", chatMessage.getRecipientUsername());
-            messagingTemplate.convertAndSendToUser(
-                    senderUsername,
-                    "/queue/errors",
-                    errorPayload
-            );
-            return;
-        }
-        ChatMessage savedMessage = this.chatMessageService.saveChatMessage(chatMessage);
-
-        // Gửi message đến người nhận
-        logger.info("Sending to recipient: {}", savedMessage.getRecipientUsername());
-        messagingTemplate.convertAndSendToUser(
-                savedMessage.getRecipientUsername(),
-                "/queue/messages",
-                savedMessage
-        );
-        System.out.println("[INFO] Message sent to recipient.");
-        // Gửi xác nhận cho người gửi
-        messagingTemplate.convertAndSendToUser(
-                savedMessage.getSenderUsername(),
-                "/queue/sent",
-                savedMessage
-        );
-        System.out.println("[INFO] Message sent back to sender.");
-    }
-    
-
-}
