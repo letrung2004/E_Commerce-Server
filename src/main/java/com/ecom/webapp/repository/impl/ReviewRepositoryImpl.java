@@ -44,7 +44,7 @@ public class ReviewRepositoryImpl implements ReviewRepository {
         Predicate p = builder.equal(root.get("store").get("id"), store.getId());
         predicates.add(p);
         criteria.where(predicates.toArray(Predicate[]::new));
-
+        criteria.orderBy(builder.desc(root.get("id")));
         Query query = session.createQuery(criteria);
         query.setFirstResult((page - 1) * PAGE_SIZE); // offset
         query.setMaxResults(PAGE_SIZE);               // limit
