@@ -2,6 +2,7 @@ package com.ecom.webapp.model;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
 import lombok.Getter;
 import lombok.Setter;
 import org.hibernate.annotations.OnDelete;
@@ -44,6 +45,10 @@ public class Review {
 
     @Column(name = "rate")
     private Integer rate;
+
+    @Size(max = 255)
+    @Column(name = "content")
+    private String content;
 
     @OneToOne(fetch = FetchType.LAZY)
     @OnDelete(action = OnDeleteAction.CASCADE)
