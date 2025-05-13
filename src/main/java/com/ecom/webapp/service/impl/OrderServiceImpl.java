@@ -3,6 +3,7 @@ package com.ecom.webapp.service.impl;
 import com.ecom.webapp.model.*;
 import com.ecom.webapp.model.dto.OrderDto;
 import com.ecom.webapp.model.dto.OrderItemDto;
+import com.ecom.webapp.model.dto.OrderNotificationDto;
 import com.ecom.webapp.model.dto.OrderUpdateDto;
 import com.ecom.webapp.model.responseDto.OrderResponse;
 import com.ecom.webapp.repository.*;
@@ -10,6 +11,7 @@ import com.ecom.webapp.service.OrderService;
 import com.ecom.webapp.service.StoreService;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -40,6 +42,9 @@ public class OrderServiceImpl implements OrderService {
     private StoreRepository storeRepository;
     @Autowired
     private StoreService storeService;
+    @Autowired
+    private SimpMessagingTemplate messagingTemplate;
+
 
 
     @Override
@@ -167,6 +172,18 @@ public class OrderServiceImpl implements OrderService {
             this.orderRepository.updateOrder(order);
 
             this.paymentRepository.createPayment(payment);
+            // tao thong bao cho seller/store
+            OrderNotificationDto notificationDto = new OrderNotificationDto();
+            notificationDto.setOrderId(order.getId());
+            notificationDto.setCustomerUsername(user.getUsername());
+            notificationDto.setStoreUsername(store.getOwner().getUsername());
+            notificationDto.setNotification("Bạn có đơn hàng mới từ " + user.getUsername());
+
+            messagingTemplate.convertAndSendToUser(
+                    notificationDto.getStoreUsername(),
+                    "/queue/messages",
+                    notificationDto
+            );
 
         }
 
