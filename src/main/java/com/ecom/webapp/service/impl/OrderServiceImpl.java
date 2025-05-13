@@ -179,6 +179,7 @@ public class OrderServiceImpl implements OrderService {
             notificationDto.setStoreUsername(store.getOwner().getUsername());
             notificationDto.setNotification("Bạn có đơn hàng mới từ " + user.getUsername());
 
+            // Day thong bao toi user
             messagingTemplate.convertAndSendToUser(
                     notificationDto.getStoreUsername(),
                     "/queue/messages",

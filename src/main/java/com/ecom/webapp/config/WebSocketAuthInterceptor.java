@@ -30,25 +30,6 @@ public class WebSocketAuthInterceptor implements HandshakeInterceptor {
                                    @NonNull WebSocketHandler wsHandler,
                                    @NonNull Map<String, Object> attributes) {
 
-////        if (request instanceof ServletServerHttpRequest servletRequest) {
-////            HttpServletRequest httpRequest = servletRequest.getServletRequest();
-////            String token = httpRequest.getParameter("token"); // Lấy JWT từ query param
-////
-////            if (token != null && token.startsWith("Bearer ")) {
-////                token = token.substring(7);
-////                System.out.println("Bearer token: " + token);
-////                try {
-////                    String username = JwtUtils.validateTokenAndGetUsername(token);
-////                    if (username != null) {
-////                        System.out.println(" USER from TOKEN: " + username);
-////                        attributes.put("username", username);
-////                        return true;
-////                    }
-////                } catch (Exception e) {
-////                    e.printStackTrace();
-////                }
-////            }
-//        }
         System.out.println("[WS Auth] --- Bắt đầu Handshake ---");
 
         if (request instanceof ServletServerHttpRequest servletRequest) {
