@@ -101,4 +101,17 @@ public class OrderRepositoryImpl implements OrderRepository {
         Session session = this.sessionFactory.getObject().getCurrentSession();
         session.remove(order);
     }
+
+    @Override
+    public boolean existOrderByUUIDKey(String uuidKey) {
+        Session session = this.sessionFactory.getObject().getCurrentSession();
+        CriteriaBuilder builder = session.getCriteriaBuilder();
+        CriteriaQuery<Order> criteria = builder.createQuery(Order.class);
+        Root<Order> root = criteria.from(Order.class);
+        criteria.select(root).where(builder.equal(root.get("uuidKey"), uuidKey));
+        List<Order> list = session.createQuery(criteria)
+                .setMaxResults(1)
+                .getResultList();
+        return !list.isEmpty();
+    }
 }

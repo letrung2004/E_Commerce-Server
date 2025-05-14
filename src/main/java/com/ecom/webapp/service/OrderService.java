@@ -9,10 +9,16 @@ import java.util.List;
 
 public interface OrderService {
     List<OrderResponse> getOrdersByUsername(String username, String status, int page);
+
     List<OrderResponse> getOrdersByStoreId(int storeId, String status, int page);
+
     OrderResponse getOrdersById(int id);
+
     void createOrder(OrderDto order);
+
     void updateOrder(OrderUpdateDto order);
+
     void deleteOrder(int id);
 
+    boolean existOrderByUUIDKey(String uuidKey);
 }
