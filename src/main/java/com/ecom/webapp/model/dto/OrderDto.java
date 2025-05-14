@@ -29,5 +29,6 @@ public class OrderDto {
 
     private Set<OrderItemDto> subOrderItems;
     private String transactionId;
+    private String uuidKey;
 
 }

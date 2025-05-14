@@ -66,6 +66,10 @@ public class Order implements Serializable {
     @JoinColumn(name = "store_id")
     private Store store;
 
+    @Size(max = 45)
+    @Column(name = "uuid_key", length = 45)
+    private String uuidKey;
+
 
     @PrePersist
     protected void onCreate() {
