@@ -26,6 +26,11 @@ public class AdminController {
         return "admin/login";
     }
 
+    @GetMapping("/custom-login")
+    public String loginPage() {
+        return "admin/login"; // return tên file login.html hoặc login.jsp
+    }
+
     @GetMapping("/admin/my-account")
     public String getCurrentUser(Model model, @AuthenticationPrincipal UserDetails userDetails) {
         if (userDetails == null) {

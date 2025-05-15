@@ -67,18 +67,19 @@ public class SecurityConfig {
     }
 
 
-
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
                 .cors(cors -> cors.configurationSource(corsConfigurationSource()))
                 .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/api/auth/**","/oauth2/**", "/login/oauth2/**", "/login", "/api/**", "/ws/**").permitAll()
+                                .requestMatchers("/custom-login", "/api/auth/**", "/oauth2/**", "/login/oauth2/**", "/api/**", "/ws/**").permitAll()
 //                        .requestMatchers("/api/**", "/ws/**", "/api/chat/history/**").permitAll()
-                        .anyRequest().authenticated()
+                                .anyRequest().authenticated()
                 )
                 .formLogin(form -> form
+                        .loginPage("/custom-login")
+                        .loginProcessingUrl("/login")
                         .defaultSuccessUrl("/redirectByRole", true)
                 )
                 .oauth2Login(oauth2 -> oauth2
@@ -92,7 +93,6 @@ public class SecurityConfig {
 
         return http.build();
     }
-
 
 
     @Bean

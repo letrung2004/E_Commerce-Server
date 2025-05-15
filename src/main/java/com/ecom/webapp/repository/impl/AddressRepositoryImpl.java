@@ -3,6 +3,7 @@ package com.ecom.webapp.repository.impl;
 import com.ecom.webapp.model.Address;
 import com.ecom.webapp.model.User;
 import com.ecom.webapp.repository.AddressRepository;
+import jakarta.persistence.NoResultException;
 import jakarta.persistence.criteria.CriteriaBuilder;
 import jakarta.persistence.criteria.CriteriaQuery;
 import jakarta.persistence.criteria.Predicate;
@@ -58,7 +59,12 @@ public class AddressRepositoryImpl implements AddressRepository {
                 root.get("user"), user),
                 builder.equal(root.get("defaultAddress"), true)));
 
-        return session.createQuery(criteria).getSingleResult();
+        try {
+            return session.createQuery(criteria).getSingleResult();
+        } catch (NoResultException ex) {
+            return null;
+        }
+
     }
 
 
