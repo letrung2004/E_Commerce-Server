@@ -37,11 +37,16 @@ public class UserController {
     public String getUserDetailPage(Model model, @PathVariable("id") Integer id) {
         User user = this.userService.getUserById(id);
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
-        model.addAttribute("dateOfBirth_", user.getDateOfBirth().format(formatter));
 
+        String formattedDob = (user.getDateOfBirth() != null)
+                ? user.getDateOfBirth().format(formatter)
+                : "Chưa cập nhật";
+
+        model.addAttribute("dateOfBirth_", formattedDob);
         model.addAttribute("user", user);
         return "admin/user/detail";
     }
+
 
     @PostMapping("/admin/user/update")
     public String updateUser(@Valid @ModelAttribute("user") UserDto userDto, BindingResult bindingResult, Model model) {
