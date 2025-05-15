@@ -46,10 +46,6 @@ public class Review {
     @Column(name = "rate")
     private Integer rate;
 
-    @Size(max = 255)
-    @Column(name = "content")
-    private String content;
-
     @OneToOne(fetch = FetchType.LAZY)
     @OnDelete(action = OnDeleteAction.CASCADE)
     @JoinColumn(name = "response_id")
