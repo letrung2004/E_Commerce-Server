@@ -1,0 +1,363 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Thống Kê Sàn Giao Dịch</title>
+    <th:block th:replace="layout/base :: styles"></th:block>
+    <style>
+        .stats-card {
+            transition: transform 0.3s;
+            border-radius: 8px;
+            border: none;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .stats-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .stats-icon {
+            font-size: 2rem;
+            padding: 15px;
+            border-radius: 50%;
+            margin-bottom: 10px;
+        }
+
+        .chart-container {
+            padding: 20px;
+            border-radius: 8px;
+            background-color: #fff;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            margin-bottom: 20px;
+        }
+
+        .filter-section {
+            background-color: #f8f9fa;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+
+        .table-responsive {
+            border-radius: 8px;
+            overflow: hidden;
+        }
+    </style>
+</head>
+<body>
+<header th:replace="layout/base :: header"></header>
+
+<div id="layoutSidenav">
+
+    <div th:replace="layout/base :: sidebar" id="layoutSidenav_nav"></div>
+
+
+    <div id="layoutSidenav_content">
+        <main>
+            <div class="container-fluid px-4">
+                <h1 class="mt-4">Thống Kê Sàn Giao Dịch</h1>
+                <ol class="breadcrumb mb-4">
+                    <li class="breadcrumb-item"><a href="index.html">Dashboard</a></li>
+                    <li class="breadcrumb-item active">Thống Kê</li>
+                </ol>
+
+                <div class="filter-section mb-4">
+                    <form th:action="@{/admin/statistic}" method="get">
+                        <div class="row">
+                            <div class="col-md-3">
+                                <div class="form-group">
+                                    <label for="timeRange">Khoảng thời gian:</label>
+                                    <select class="form-control" id="timeRange" name="timeRange"
+                                            th:value="${timeRange}">
+                                        <option value="month" th:selected="${timeRange == 'month'}">Tháng</option>
+                                        <option value="quarter" th:selected="${timeRange == 'quarter'}">Quý</option>
+                                        <option value="year" th:selected="${timeRange == 'year'}">Năm</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="form-group">
+                                    <label for="specificTime">Chọn cụ thể:</label>
+                                    <select class="form-control" id="specificTime" name="specificTime"
+                                            th:value="${specificTime}"></select>
+                                </div>
+                            </div>
+                            <div class="col-md-3 d-flex align-items-end">
+                                <button type="submit" class="btn btn-primary w-100">Áp dụng bộ lọc</button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+
+
+                <!-- Stats Cards -->
+                <div class="row">
+                    <div class="col-md-4">
+                        <div class="card bg-primary text-white mb-4 stats-card">
+                            <div class="card-body">
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <div>
+                                        <h3 class="mb-0" th:text="${overallStats.totalOrders}">0</h3>
+                                        <div class="small">Tổng đơn hàng</div>
+                                    </div>
+                                    <div class="stats-icon bg-white text-primary">
+                                        <i class="fas fa-shopping-cart"></i>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="card bg-success text-white mb-4 stats-card">
+                            <div class="card-body">
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <div>
+                                        <h3 class="mb-0" th:text="${#numbers.formatDecimal(overallStats.totalRevenue, 0, 'POINT', 3, 'COMMA')} + '₫'">0₫</h3>
+                                        <div class="small">Tổng doanh thu</div>
+                                    </div>
+                                    <div class="stats-icon bg-white text-success">
+                                        <i class="fas fa-dollar-sign"></i>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="card bg-warning text-white mb-4 stats-card">
+                            <div class="card-body">
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <div>
+                                        <h3 class="mb-0" th:text="${overallStats.totalProductsSold}">0</h3>
+                                        <div class="small">Tổng sản phẩm bán ra</div>
+                                    </div>
+                                    <div class="stats-icon bg-white text-warning">
+                                        <i class="fas fa-box"></i>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Charts -->
+
+                <div>
+                    <div class="chart-container">
+                        <h4>Biểu đồ doanh thu theo thời gian</h4>
+                        <div id="revenueChart" style="height: 350px;"></div>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-lg-6">
+                        <div class="chart-container">
+                            <h4>Top 5 cửa hàng có doanh thu cao nhất</h4>
+                            <div id="topStoresChart" style="height: 300px;"></div>
+                        </div>
+                    </div>
+                    <div class="col-lg-6">
+                        <div class="chart-container">
+                            <h4>Top 5 sản phẩm bán chạy nhất</h4>
+                            <div id="topProductsChart" style="height: 300px;"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Store Performance Table -->
+                <div class="card mb-4">
+                    <div class="card-header d-flex justify-content-between align-items-center">
+                        <div>
+                            <i class="fas fa-table me-1"></i>
+                            Hiệu suất cửa hàng
+                        </div>
+
+                    </div>
+                    <div class="card-body">
+                        <div class="table-responsive">
+                            <table class="table table-striped table-hover" id="storePerformanceTable">
+                                <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Tên cửa hàng</th>
+                                    <th>Số sản phẩm</th>
+                                    <th>Số đơn hàng</th>
+                                    <th>Sản phẩm bán ra</th>
+                                    <th>Tổng doanh thu</th>
+                                    <th>Tăng trưởng</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                <tr th:each="s : ${storePerformances}">
+                                    <td th:text="${s.storeId}">1</td>
+                                    <td th:text="${s.storeName}">Ten ch</td>
+                                    <td th:text="${s.productCount}">32</td>
+                                    <td th:text="${s.orderCount}">578</td>
+                                    <td th:text="${s.productsSold}">845</td>
+                                    <td th:text="${#numbers.formatDecimal(s.totalRevenue, 0, 'POINT', 3, 'COMMA')} + '₫'">0₫</td>
+                                    <td>
+                                          <span th:text="${s.growthPercentage != null ? (s.growthPercentage > 0 ? '+' : '') + #numbers.formatDecimal(s.growthPercentage, 1, 'POINT', 1, 'COMMA') + '%'
+                                                                : '0%'}"
+                                                th:classappend="${s.growthPercentage > 0 ? 'text-success' : s.growthPercentage < 0 ? 'text-danger' : 'text-muted'}">
+                                            +0%
+                                          </span>
+                                    </td>
+                                </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+
+
+        <footer th:replace="layout/base :: footer" class="py-4 bg-light mt-auto"></footer>
+    </div>
+</div>
+
+<th:block th:replace="layout/base :: scripts"></th:block>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
+
+<script th:inline="javascript">
+    // Revenue Chart
+    const revenueLabels = /*[[${chartLabels}]]*/ [];
+    const revenueValues = /*[[${chartValues}]]*/ [];
+
+    const revenueCtx = document.createElement('canvas');
+    document.getElementById('revenueChart').appendChild(revenueCtx);
+
+    new Chart(revenueCtx, {
+        type: 'line',
+        data: {
+            labels: revenueLabels,
+            datasets: [{
+                label: 'Doanh thu (VND)',
+                data: revenueValues,
+                borderColor: 'rgba(75, 192, 192, 1)',
+                backgroundColor: 'rgba(75, 192, 192, 0.2)',
+                tension: 0.4,
+                fill: true
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: {
+                    position: 'top',
+                }
+            },
+            scales: {
+                y: {
+                    beginAtZero: false
+                }
+            }
+        }
+    });
+
+    // Top Stores Chart
+    const storeLabels = /*[[${storeLabels}]]*/ [];
+    const storeValues = /*[[${storeValues}]]*/ [];
+    const topStoresCtx = document.createElement('canvas');
+    document.getElementById('topStoresChart').appendChild(topStoresCtx);
+
+    new Chart(topStoresCtx, {
+        type: 'bar',
+        data: {
+            labels: storeLabels,
+            datasets: [{
+                label: 'Doanh thu (VND)',
+                data: storeValues,
+                backgroundColor: 'rgba(54, 162, 235, 0.7)',
+                borderColor: 'rgba(54, 162, 235, 1)',
+                borderWidth: 1
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            indexAxis: 'y',
+            plugins: {
+                legend: {
+                    display: false
+                }
+            }
+        }
+    });
+
+    // Top Products Chart
+    const productLabels = /*[[${productLabels}]]*/ [];
+    const productValues = /*[[${productValues}]]*/ [];
+    const topProductsCtx = document.createElement('canvas');
+    document.getElementById('topProductsChart').appendChild(topProductsCtx);
+
+    new Chart(topProductsCtx, {
+        type: 'bar',
+        data: {
+            labels: productLabels,
+            datasets: [{
+                label: 'Số lượng bán ra',
+                data: productValues,
+                backgroundColor: 'rgba(75, 192, 192, 0.7)',
+                borderColor: 'rgba(75, 192, 192, 1)',
+                borderWidth: 1
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            indexAxis: 'y',
+            plugins: {
+                legend: {
+                    display: false
+                }
+            }
+        }
+    });
+
+
+    function updateTimeOptions() {
+        const timeRangeValue = document.getElementById('timeRange').value;
+        const specificTimeSelect = document.getElementById('specificTime');
+        specificTimeSelect.innerHTML = '';
+
+        const currentYear = new Date().getFullYear();
+        const selectedTime = /*[[${specificTime}]]*/ '1'; // Thymeleaf inline
+
+        if (timeRangeValue === 'month') {
+            for (let i = 1; i <= 12; i++) {
+                const option = document.createElement('option');
+                option.value = i.toString();
+                option.text = `Tháng ${i}/${currentYear}`;
+                if (i.toString() === selectedTime) option.selected = true;
+                specificTimeSelect.appendChild(option);
+            }
+        } else if (timeRangeValue === 'quarter') {
+            for (let i = 1; i <= 4; i++) {
+                const option = document.createElement('option');
+                option.value = i.toString();
+                option.text = `Quý ${i}/${currentYear}`;
+                if (i.toString() === selectedTime) option.selected = true;
+                specificTimeSelect.appendChild(option);
+            }
+        } else if (timeRangeValue === 'year') {
+            for (let i = currentYear; i >= currentYear - 3; i--) {
+                const option = document.createElement('option');
+                option.value = i.toString();
+                option.text = `Năm ${i}`;
+                if (i.toString() === selectedTime) option.selected = true;
+                specificTimeSelect.appendChild(option);
+            }
+        }
+    }
+
+
+    document.addEventListener('DOMContentLoaded', function () {
+        document.getElementById('timeRange').addEventListener('change', updateTimeOptions);
+        updateTimeOptions();
+    });
+</script>
+
+</body>
+</html>
