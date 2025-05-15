@@ -15,15 +15,13 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.*;
 import org.slf4j.Logger;
-import org.slf4j.LoggerFactory; // Lớp dùng để lấy instance của Logger
+import org.slf4j.LoggerFactory;
 
 import java.security.Principal;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.TimeUnit;
-import java.util.UUID;
 
 @RestController
 @RequestMapping("/api/secure/orders")
@@ -69,8 +67,15 @@ public class ApiOrderController {
     @PostMapping("/place-order")
     public ResponseEntity<?> createOrder(
             @Valid @RequestBody OrderDto orderDto,
+            @RequestHeader(value = "uuidKey") String uuidKey,
             HttpServletRequest request,
             Principal principal) {
+
+        if (this.orderService.existOrderByUUIDKey(uuidKey)) {
+            return ResponseEntity.status(HttpStatus.CONFLICT)
+                    .body(new ErrorResponse("Đơn đặt hàng đã được xử lý trước đó."));
+        }
+        orderDto.setUuidKey(uuidKey);
 
         String txnId = String.valueOf(System.currentTimeMillis());
         orderDto.setTransactionId(txnId);
@@ -93,69 +98,7 @@ public class ApiOrderController {
         return new ResponseEntity<>(orderDto, HttpStatus.CREATED);
     }
 
-//    @PostMapping("/place-order")
-//    public ResponseEntity<?> createOrder(
-//            @Valid @RequestBody OrderDto orderDto,
-//            HttpServletRequest request,
-//            Principal principal) {
-//
-//        // Generate a more unique transaction ID
-//        String txnId = UUID.randomUUID().toString();
-//        orderDto.setTransactionId(txnId);
-//
-//        // Log with proper logging framework instead of System.out
-//        log.info("ORDER-DTO: {}", orderDto);
-//
 
-    /// /        if (!orderDto.getPaymentMethod().equals("VNPay") && !orderDto.getPaymentMethod().equals("COD")) {
-    /// /            return ResponseEntity.badRequest().body(new ErrorResponse("Phương thức thanh toán không hợp lệ!"));
-    /// /        }
-//        List<String> validMethods = List.of("VNPay", "COD");
-//        if (!validMethods.contains(orderDto.getPaymentMethod())) {
-//            return ResponseEntity.badRequest().body(new ErrorResponse("Phương thức thanh toán không hợp lệ!"));
-//        }
-//
-//
-//        String username = principal.getName();
-//        orderDto.setUsername(username);
-//
-//        String userLockKey = "order-lock-" + username;
-//        boolean lockAcquired = false;
-//
-//        try {
-//            // Add distributed lock for this user's orders
-//            // Use tryLock with timeout to avoid indefinite blocking
-//            lockAcquired = redisLockManager.tryAcquire(userLockKey, 5, 30, TimeUnit.SECONDS); // Giả định acquireLock trả về boolean
-//
-//            if (!lockAcquired) {
-//                // Could not acquire lock within the timeout, likely another request from the same user is in progress
-//                log.warn("Could not acquire lock for user: {}", username);
-//                return ResponseEntity.status(HttpStatus.TOO_MANY_REQUESTS)
-//                        .body(new ErrorResponse("Bạn đang có đơn hàng khác đang được xử lý. Vui lòng thử lại sau giây lát."));
-//            }
-//
-//            // Process the order after acquiring the lock
-//            // This method should handle internal concurrency (transactions, db locks for shared resources)
-//            this.orderService.createOrder(orderDto);
-//
-//            // Handle VNPAY payment
-//            if ("VNPay".equalsIgnoreCase(orderDto.getPaymentMethod())) {
-//                String paymentUrl = vnPayService.createPaymentUrl(request, orderDto);
-//                return ResponseEntity.ok(Collections.singletonMap("paymentUrl", paymentUrl));
-//            }
-//
-//            return new ResponseEntity<>(orderDto, HttpStatus.CREATED);
-//
-//        } catch (Exception e) {
-//            log.error("Error creating order for user: {}", username, e);
-//            // Handle specific exceptions if needed, e.g., insufficient stock
-//            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ErrorResponse("Lỗi khi xử lý đơn hàng: " + e.getMessage()));
-//        } finally {
-//            if (lockAcquired) {
-//                redisLockManager.releaseLock(userLockKey);
-//            }
-//        }
-//    }
     @PatchMapping("/update")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void updateOrder(@Valid @RequestBody OrderUpdateDto orderUpdateDto) {

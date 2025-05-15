@@ -46,7 +46,6 @@ public class OrderServiceImpl implements OrderService {
     private SimpMessagingTemplate messagingTemplate;
 
 
-
     @Override
     @Transactional
     public List<OrderResponse> getOrdersByUsername(String username, String status, int page) {
@@ -61,7 +60,7 @@ public class OrderServiceImpl implements OrderService {
     @Override
     @Transactional
     public List<OrderResponse> getOrdersByStoreId(int storeId, String status, int page) {
-       Store store = this.storeRepository.getStoreById(storeId);
+        Store store = this.storeRepository.getStoreById(storeId);
         if (store == null) {
             throw new EntityNotFoundException("User not found with username: " + storeId);
         }
@@ -87,7 +86,8 @@ public class OrderServiceImpl implements OrderService {
         if (address == null) throw new EntityNotFoundException("Address not found with id: " + orderDto.getAddressId());
         for (OrderItemDto orderItemDto : orderDto.getSubOrderItems()) {
             Store store = this.storeRepository.getStoreById(orderItemDto.getStoreId());
-            if (store == null) throw new EntityNotFoundException("Store not found with id: " + orderItemDto.getStoreId());
+            if (store == null)
+                throw new EntityNotFoundException("Store not found with id: " + orderItemDto.getStoreId());
 
             Order order = new Order();
             order.setTotal(BigDecimal.ZERO);
@@ -99,6 +99,7 @@ public class OrderServiceImpl implements OrderService {
             order.setDeliveryStatus("Chờ xác nhận");
             order.setPaymentMethod(orderDto.getPaymentMethod());
             order.setStore(store);
+            order.setUuidKey(orderDto.getUuidKey());
             this.orderRepository.createOrder(order);
 
 
@@ -210,5 +211,10 @@ public class OrderServiceImpl implements OrderService {
         this.paymentRepository.updatePayment(payment);
         this.orderRepository.deleteOrder(order);
 
+    }
+
+    @Override
+    public boolean existOrderByUUIDKey(String uuidKey) {
+        return this.orderRepository.existOrderByUUIDKey(uuidKey);
     }
 }

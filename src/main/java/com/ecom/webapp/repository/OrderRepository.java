@@ -13,4 +13,5 @@ public interface OrderRepository {
     void createOrder(Order order);
     void updateOrder(Order order);
     void deleteOrder(Order order);
+    boolean existOrderByUUIDKey(String uuidKey);
 }
