@@ -186,7 +186,13 @@
                                     <th>Tăng trưởng</th>
                                 </tr>
                                 </thead>
-                                <tbody>
+                                <tbody th:if="${#lists.isEmpty(storePerformances)}">
+                                <tr>
+                                    <td colspan="7" class="text-center text-muted">Không có dữ liệu cho khoảng thời gian đã chọn.</td>
+                                </tr>
+                                </tbody>
+
+                                <tbody th:if="${not #lists.isEmpty(storePerformances)}">
                                 <tr th:each="s : ${storePerformances}">
                                     <td th:text="${s.storeId}">1</td>
                                     <td th:text="${s.storeName}">Ten ch</td>

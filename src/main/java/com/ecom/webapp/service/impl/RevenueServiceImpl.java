@@ -16,10 +16,7 @@ import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.time.LocalDate;
 import java.time.Year;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
@@ -120,10 +117,11 @@ public class RevenueServiceImpl implements RevenueService {
         }
 
         return new StatisticsDTO(
-                result.get("totalOrders", Long.class),
-                result.get("totalRevenue", BigDecimal.class).doubleValue(),
-                result.get("totalProductsSold", Long.class)
+                Optional.ofNullable(result.get("totalOrders", Long.class)).orElse(0L),
+                Optional.ofNullable(result.get("totalRevenue", BigDecimal.class)).orElse(BigDecimal.ZERO).doubleValue(),
+                Optional.ofNullable(result.get("totalProductsSold", Long.class)).orElse(0L)
         );
+
     }
 
     @Override
@@ -154,7 +152,7 @@ public class RevenueServiceImpl implements RevenueService {
         return tuples.stream().map(t -> {
             ProductAndCategoryRevenueDTO dto = new ProductAndCategoryRevenueDTO();
             dto.setName(t.get("productName", String.class));
-            dto.setQuantitySold(t.get("totalProductsSold", Long.class));
+            dto.setQuantitySold(Optional.ofNullable(t.get("totalProductsSold", Long.class)).orElse(0L));
             return dto;
         }).collect(Collectors.toList());
     }
@@ -195,7 +193,7 @@ public class RevenueServiceImpl implements RevenueService {
 
         return currentTuples.stream().map(t -> {
             Integer storeId = t.get("storeId", Integer.class);
-            BigDecimal currentRevenue = t.get("totalRevenue", BigDecimal.class);
+            BigDecimal currentRevenue = Optional.ofNullable(t.get("totalRevenue", BigDecimal.class)).orElse(BigDecimal.ZERO);
             BigDecimal previousRevenue = previousRevenueMap.getOrDefault(storeId, BigDecimal.ZERO);
 
             Double growth = 0.0;
@@ -223,7 +221,7 @@ public class RevenueServiceImpl implements RevenueService {
         return tuples.stream().map(t -> {
             ProductAndCategoryRevenueDTO dto = new ProductAndCategoryRevenueDTO();
             dto.setName(t.get("storeName", String.class));
-            dto.setTotalRevenue(t.get("totalRevenue", BigDecimal.class));
+            dto.setTotalRevenue(Optional.ofNullable(t.get("totalRevenue", BigDecimal.class)).orElse(BigDecimal.ZERO));
             return dto;
         }).collect(Collectors.toList());
     }
