@@ -119,8 +119,8 @@ public class SecurityConfig {
 
     private ClientRegistration googleClientRegistration() {
         return ClientRegistration.withRegistrationId("google")
-                .clientId("220492960211-3957l4734hahunahben823ecp1m0cvu3.apps.googleusercontent.com")
-                .clientSecret("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")
+                .clientId("your-client-id")
+                .clientSecret("your-client-secret")
                 .clientAuthenticationMethod(ClientAuthenticationMethod.CLIENT_SECRET_BASIC)
                 .authorizationGrantType(AuthorizationGrantType.AUTHORIZATION_CODE)
                 .redirectUri("http://localhost:8080/webapp_war_exploded/login/oauth2/code/google")
