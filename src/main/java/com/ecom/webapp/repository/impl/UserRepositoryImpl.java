@@ -87,33 +87,23 @@ public class UserRepositoryImpl implements UserRepository {
     }
 
 
+    @Override
     public boolean existUsername(String username) {
-        try {
-            User user = getUserByUsername(username);
-            return user != null;
-        } catch (NoResultException e) {
-            return false;
-        }
+        return getUserByUsername(username) != null;
     }
 
     @Override
     public boolean existEmail(String email) {
-        try (Session session = this.sf.openSession()) {
-            Query<User> query = session.createQuery("from User where email = :e", User.class);
-            query.setParameter("e", email);
-            User user = query.uniqueResult();
-            return user != null;
-        }
+        return findByEmail(email) != null;
     }
 
     @Override
     public User findByEmail(String email) {
         try (Session session = this.sf.openSession()) {
-            Query query = session.createQuery("from User where email=:e");
+            Query<User> query = session.createQuery("from User where email = :e", User.class);
             query.setParameter("e", email);
-            return (User) query.getSingleResult();
-        }
-        catch (NoResultException e) {
+            return query.getSingleResult();
+        } catch (NoResultException e) {
             return null;
         }
     }
@@ -121,11 +111,14 @@ public class UserRepositoryImpl implements UserRepository {
     @Override
     public User getUserByUsername(String username) {
         try (Session session = this.sf.openSession()) {
-            Query query = session.createQuery("from User where username=:u");
+            Query<User> query = session.createQuery("from User where username = :u", User.class);
             query.setParameter("u", username);
-            return (User) query.getSingleResult();
+            return query.getSingleResult();
+        } catch (NoResultException e) {
+            return null;
         }
     }
+
 
 
 }
