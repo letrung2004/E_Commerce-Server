@@ -1,12 +1,10 @@
 package com.ecom.webapp.controller.client;
 
 
-import com.ecom.webapp.model.Cart;
 import com.ecom.webapp.model.User;
 import com.ecom.webapp.model.dto.CartDTO;
 import com.ecom.webapp.service.CartService;
 import com.ecom.webapp.service.UserService;
-import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -15,7 +13,6 @@ import org.springframework.web.bind.annotation.*;
 
 import java.security.Principal;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 @RestController

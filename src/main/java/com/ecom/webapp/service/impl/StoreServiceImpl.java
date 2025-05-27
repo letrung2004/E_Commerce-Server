@@ -1,7 +1,6 @@
 package com.ecom.webapp.service.impl;
 
 import com.ecom.webapp.model.Address;
-import com.ecom.webapp.model.Product;
 import com.ecom.webapp.model.Store;
 import com.ecom.webapp.model.User;
 import com.ecom.webapp.model.dto.StoreDto;

@@ -1,13 +1,11 @@
 package com.ecom.webapp.repository.impl;
 
 import com.ecom.webapp.model.SubCart;
-import com.ecom.webapp.model.SubCartItem;
 import com.ecom.webapp.repository.SubCartRepository;
 import jakarta.persistence.NoResultException;
 import jakarta.persistence.criteria.CriteriaBuilder;
 import jakarta.persistence.criteria.CriteriaQuery;
 import jakarta.persistence.criteria.Root;
-import com.ecom.webapp.repository.SubCartRepository;
 import org.hibernate.Session;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.orm.hibernate5.LocalSessionFactoryBean;

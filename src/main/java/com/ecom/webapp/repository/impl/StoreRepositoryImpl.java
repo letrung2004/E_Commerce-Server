@@ -3,6 +3,7 @@ package com.ecom.webapp.repository.impl;
 import com.ecom.webapp.model.Store;
 import com.ecom.webapp.model.User;
 import com.ecom.webapp.repository.StoreRepository;
+import jakarta.persistence.NoResultException;
 import jakarta.persistence.criteria.*;
 import org.hibernate.Session;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -78,7 +79,11 @@ public class StoreRepositoryImpl implements StoreRepository {
         CriteriaQuery<Store> criteria = builder.createQuery(Store.class);
         Root<Store> storeRoot = criteria.from(Store.class);
         criteria.where(builder.equal(storeRoot.get("owner").get("username"), username));
-        return session.createQuery(criteria).getSingleResult();
+        try {
+            return session.createQuery(criteria).getSingleResult();
+        } catch (NoResultException ex) {
+            return null;
+        }
     }
 
     @Override
